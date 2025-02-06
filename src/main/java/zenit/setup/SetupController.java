@@ -21,6 +21,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import main.java.zenit.GetOperatingSystem;
 import main.java.zenit.Zenit;
 import main.java.zenit.filesystem.WorkspaceHandler;
 import main.java.zenit.filesystem.jreversions.JREVersions;
@@ -102,13 +103,11 @@ public class SetupController extends AnchorPane {
 		
 		//Set dark mode
 		var stylesheets = stage.getScene().getStylesheets();
-		var darkMode = getClass().getResource("/zenit/ui/projectinfo/mainStyle.css")
-				.toExternalForm();
+		var darkMode = getClass().getResource("/zenit/ui/projectinfo/mainStyle.css").toExternalForm();
 		stylesheets.add(darkMode);
 		
 		//Load logo
-		logo.setImage(new Image(getClass().getResource("/zenit/setup/zenit.png")
-				.toExternalForm()));
+		logo.setImage(new Image(getClass().getResource("/zenit/setup/zenit.png").toExternalForm()));
 		logo.setFitWidth(55);
 		
 		//Load OS default JDKs if none are saved
@@ -299,7 +298,7 @@ public class SetupController extends AnchorPane {
 			String userPath = System.getProperty("user.home");
 			String documentsPath = getDocumentsPath();
 			File defaultWorkspace = new File(userPath + File.separator + documentsPath +
-					"Zenit" + File.separator + "Default Workspace");
+					File.separator + "IntelliK" + File.separator + "Default Workspace");
 			if (!defaultWorkspace.exists()) {
 				defaultWorkspace.mkdirs();
 			}
@@ -308,7 +307,7 @@ public class SetupController extends AnchorPane {
 		
 		if (!workspaceFile.exists() || !JDKDat.exists() || !defaultJDKDat.exists()) {
 			DialogBoxes.errorDialog("Missing files", "", "Please enter the required information to"
-					+ " launch Zenit");
+					+ " launch IntelliK");
 		} else {
 			WorkspaceHandler.createWorkspace(workspaceFile);
 			stage.close();
@@ -353,18 +352,15 @@ public class SetupController extends AnchorPane {
 	/**
 	 * Sets the path to document folder depending on current OS
 	 * @return path from OS.home to documents folder
+	 * @author Philip Boyde
 	 */
 	private String getDocumentsPath() {
-		String OS = Zenit.OS;
-		if (OS.equals("Mac OS X")) {
-			return "documents" + File.separator;
-		} else if (OS.startsWith("Windows")) {
-			return "Documents";
-		} else if (OS.equals("Linux")) {
-			return "Documents";
-		} else {
-			return null;
-		}
+		GetOperatingSystem.OperatingSystem OS = Zenit.OS;
+
+        return switch (OS) {
+            case MAC -> "documents" + File.separator;
+            case LINUX, WINDOWS -> "Documents";
+        };
 	}
 	
 	/**

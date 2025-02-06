@@ -189,6 +189,18 @@ public class FileTree {
 		else if (itemName.equals("src")) {
 			type = FileTreeItem.SRC;
 		}
+		else if (itemName.equals("controller")) {
+			type = FileTreeItem.CONTROLLER;
+		}
+
+		else if (itemName.equals("view")) {
+			type = FileTreeItem.VIEW;
+		}
+
+		else if (itemName.equals("model")) {
+			type = FileTreeItem.MODEL;
+		}
+
 		//Folder
 		else if (projectFile.getMetadata() == null && file.isDirectory()) {
 			type = FileTreeItem.FOLDER;

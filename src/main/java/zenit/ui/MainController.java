@@ -63,7 +63,7 @@ import main.java.zenit.zencodearea.ZenCodeArea;
  *
  */
 public class MainController extends VBox implements ThemeCustomizable {
-	private Stage stage;
+	private final Stage stage;
 	
 	private FileController fileController;
 
@@ -195,7 +195,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 
 			scene.getStylesheets().add(getClass().getResource("/zenit/ui/keywords.css").toExternalForm());
 			stage.setScene(scene);
-			stage.setTitle("Zenit - " + workspace.getPath());
+			stage.setTitle("IntelliK - " + workspace.getPath());
 
 			initialize();
 			

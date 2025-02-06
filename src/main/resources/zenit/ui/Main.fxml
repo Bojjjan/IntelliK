@@ -20,9 +20,8 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<fx:root prefHeight="640.0" prefWidth="900.0" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root prefHeight="640.0" prefWidth="900.0" type="VBox" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" >
 	<children>
 		<MenuBar fx:id="menuBar" VBox.vgrow="NEVER">
 			<menus>
@@ -47,7 +46,7 @@
                   </Menu>
 						<MenuItem fx:id="openFile" onAction="#openFile" text="Open…">
                      <accelerator>
-                        <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                       <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                      </accelerator></MenuItem>
 						<Menu disable="true" mnemonicParsing="false" text="Open Recent" visible="false" />
 						<SeparatorMenuItem mnemonicParsing="false" />
@@ -188,7 +187,7 @@
 														<AnchorPane fx:id="consolePane" minHeight="34" prefHeight="269.0" prefWidth="667.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
 															<children>
 																<fx:include source="/zenit/console/ConsolePane.fxml" fx:id="console"></fx:include>
-															</children> 
+															</children>
 														</AnchorPane>
 													</children>
 												</AnchorPane>
