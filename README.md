@@ -61,8 +61,10 @@ git clone https://github.com/Bojjjan/IntelliK.git
 ### 3. VM arguemnts
 
 ```` plaintext
---module-path lib/javafx-sdk-21.0.6/lib/ --add-modules=javafx.controls,javafx.fxml,javafx.web
- --add-opens
+--module-path
+lib/javafx-sdk-21.0.6/lib/
+--add-modules=javafx.controls,javafx.fxml,javafx.web
+--add-opens
 javafx.graphics/javafx.scene.text=ALL-UNNAMED
 --add-exports
 javafx.graphics/com.sun.javafx.text=ALL-UNNAMED
@@ -75,6 +77,8 @@ javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED
 --add-exports
 javafx.graphics/com.sun.javafx.geom=ALL-UNNAMED
 -Dprism.allowhidpi=true
+--add-opens=javafx.graphics/javafx.stage=ALL-UNNAMED
+--add-opens=javafx.graphics/com.sun.javafx.tk.quantum=ALL-UNNAMED
 ````
 
 

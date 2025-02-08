@@ -68,7 +68,7 @@ public class NewFolderController extends AnchorPane {
 
 	private void initialize() {
 		
-		logo.setImage(new Image(getClass().getResource("/zenit/setup/zenit.png").toExternalForm()));
+		logo.setImage(new Image(getClass().getResource("/zenit/setup/logo.png").toExternalForm()));
 		logo.setFitWidth(45);
 		
 		filepath.getItems().clear();

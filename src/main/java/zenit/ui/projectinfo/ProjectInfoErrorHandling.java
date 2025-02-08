@@ -18,7 +18,7 @@ public class ProjectInfoErrorHandling {
 	public static int metadataMissing() {
 		return DialogBoxes.twoChoiceDialog("Metadata missing", "Metadata missing from "
 				+ "project", "It seems this is the first time you are using this project in "
-				+ "Zenit. Do you want to generate a new metadata file about this project?",
+				+ "IntelliK. Do you want to generate a new metadata file about this project?",
 				"Yes, generate", "No, close window");
 	}
 	
