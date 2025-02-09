@@ -69,6 +69,7 @@ public class FolderHandler {
 	 * file or folder inside couldn't be deleted.
 	 */
 	protected static void deleteFolder(File file) throws IOException {
+
 		if (file.isDirectory()) {
 			File[] entries = file.listFiles();
 			if (entries != null) {
@@ -80,5 +81,5 @@ public class FolderHandler {
 		if (!file.delete()) {
 			throw new IOException("Failed to delete " + file);
 		}
+		}
 	}
-}

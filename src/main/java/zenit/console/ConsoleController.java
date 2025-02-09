@@ -296,7 +296,9 @@ public class ConsoleController implements Initializable {
 	 * Clears the active consoleArea
 	 */
 	public void clearConsole() {
-		activeConsole.clear();
+		if (activeConsole != null) {
+			activeConsole.clear();
+		}
 	}
 	
 	
