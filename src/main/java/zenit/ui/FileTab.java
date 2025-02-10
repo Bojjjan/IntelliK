@@ -172,26 +172,26 @@ public class FileTab extends Tab {
 	 * Checks what tab index the new line should begin at. Also adds a } if needed.
 	 * @author Pontus Laos
 	 */
+
+
 	public void navigateToCorrectTabIndex() {
-		int previousLine = zenCodeArea.getCurrentParagraph() - 1;
+		if (zenCodeArea.getParagraphs().isEmpty()) {
+			zenCodeArea.appendText("\n");
+			return;
+		}
+
+		int previousLine = Math.max(0, zenCodeArea.getCurrentParagraph() - 1);
 		String previousText = zenCodeArea.getParagraph(previousLine).getText();
-		
-		int count = StringUtilities.countLeadingSpaces(previousText);
-		
-		String spaces = "";
-		for (int i = 0; i < count; i++) {
-			spaces += " ";
+
+		String spaces = " ".repeat(StringUtilities.countLeadingSpaces(previousText));
+		if (previousText.trim().endsWith("{")) {
+			spaces += "    ";
 		}
-		
-		if (previousText.endsWith("{")) {
-			spaces += "    "; // lol
-			zenCodeArea.insertText(zenCodeArea.getCaretPosition(), spaces);
-			addMissingCurlyBrace(previousLine + 2, 0, spaces);
-		} else {
-			zenCodeArea.insertText(zenCodeArea.getCaretPosition(), spaces);
-		}
+
+		zenCodeArea.insertText(zenCodeArea.getCaretPosition(), "\n" + spaces);
 	}
-	
+
+
 	/**
 	 * Adds a curly brace on the appropriate line if one is missing.
 	 * @param row The row (line number) to add the curly brace to.
