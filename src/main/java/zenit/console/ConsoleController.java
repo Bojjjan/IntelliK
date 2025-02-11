@@ -53,7 +53,7 @@ public class ConsoleController implements Initializable {
 //	private HashMap<ConsoleArea, Process> consoleList = new HashMap<ConsoleArea, Process>();
 	private ArrayList<ConsoleArea> consoleList = new ArrayList<ConsoleArea>();
 	private ArrayList<Terminal> terminalList = new ArrayList<Terminal>();
-	
+
 	@FXML 
 	private TabPane consoleTabPane;
 
@@ -109,7 +109,7 @@ public class ConsoleController implements Initializable {
 		this.mainController = mainController;
 		
 	}
-	
+
 	public List<String> getStylesheets() {
 		return rootNode.getStylesheets();
 	}
@@ -129,12 +129,15 @@ public class ConsoleController implements Initializable {
 
 		terminalChoiceBox.setVisible(false);
 		terminalChoiceBox.setDisable(true);
+
 		consoleChoiceBox.setVisible(true);
 		consoleChoiceBox.setDisable(false);
+
 		btnNewTerminal.setVisible(false);
 		btnNewConsole.setVisible(true);
 		btnClearConsole.setDisable(false);
 		btnClearConsole.setVisible(true);
+
 		iconTerminateProcess.setVisible(true);
 		iconTerminateProcess.setDisable(false);
 		iconCloseConsoleInstance.setVisible(true);
@@ -214,7 +217,7 @@ public class ConsoleController implements Initializable {
 	 * Creates a new ConsoleArea, adds it to the console AnchorPane and puts it as an option in the
 	 * choiceBox.
 	 */
-	
+
 	public void newConsole(ConsoleArea consoleArea) {
 		consoleAnchorPane = new AnchorPane();
 		consoleArea.setId("consoleArea");
@@ -242,7 +245,7 @@ public class ConsoleController implements Initializable {
 	 *  AnchorPane and puts it as an option in the
 	 * choiceBox.
 	 */
-	public void newTerminal() {		
+	public void newTerminal() {
 		Terminal terminal = new Terminal(createTerminalConfig(), FileSystems.getDefault().getPath(".").toAbsolutePath());
 		terminal.setId("Terminal ("+terminalList.size()+")");
 		terminalAnchorPane = new AnchorPane();
@@ -261,7 +264,7 @@ public class ConsoleController implements Initializable {
 		showTerminalTabs();
 		
 	}
-	
+
 	private TerminalConfig createTerminalConfig() {
 		TerminalConfig windowsConfig = new TerminalConfig();
 		windowsConfig.setBackgroundColor(Color.BLACK);
@@ -299,12 +302,12 @@ public class ConsoleController implements Initializable {
 		activeConsole.clear();
 	}
 	
-	
+
 	public void closeComponent() {
 		mainController.closeConsoleComponent();
 	}
 	
-	
+
 	public void changeAllConsoleAreaColors(String color) {
 		for(ConsoleArea c : consoleList) {
 			c.setBackgroundColor(color);

@@ -170,7 +170,7 @@
 																		<FontIcon fx:id="iconRun" iconLiteral="fa-play-circle" iconColor="green" iconSize="24"/>
 																	</graphic>
 																</Button>
-																<Button id="btnStop" fx:id="btnStop" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0">																	onMouseEntered="#onMouseEvent" onMouseExited="#onMouseEvent" prefHeight="0.0" prefWidth="15.0">
+																<Button id="btnStop" fx:id="btnStop" minHeight="20.0" minWidth="20.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="20.0">
 																	<padding>
 																		<Insets top="1.0" />
 																	</padding>
@@ -182,15 +182,25 @@
 														</HBox>
 													</children>
 												</AnchorPane>
-												<AnchorPane fx:id="consoleRoot" prefHeight="269.0" prefWidth="667.0">
-													<children>
-														<AnchorPane fx:id="consolePane" minHeight="34" prefHeight="269.0" prefWidth="667.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
-															<children>
-																<fx:include source="/zenit/console/ConsolePane.fxml" fx:id="console"></fx:include>
-															</children>
-														</AnchorPane>
-													</children>
-												</AnchorPane>
+
+
+													<AnchorPane fx:id="consoleRoot" prefHeight="269.0" prefWidth="667.0">
+												<
+                                                <children>
+
+                                                <AnchorPane fx:id="consolePane" minHeight="34" prefHeight="269.0" prefWidth="667.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
+
+
+                                                    <children>
+                                                        <fx:include source="/zenit/console/ConsolePane.fxml" fx:id="console"></fx:include>
+                                                    </children>
+
+                                                    </AnchorPane>
+
+                                                        </children>
+
+                                                    </AnchorPane>
+
 											</items>
 										</SplitPane>
 									</children>

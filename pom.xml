@@ -59,6 +59,17 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.techsenger.jeditermfx</groupId>
+			<artifactId>jeditermfx-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.techsenger.jeditermfx</groupId>
+			<artifactId>jeditermfx-ui</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.kordamp.ikonli</groupId>
 			<artifactId>ikonli-javafx</artifactId>
 			<version>11.3.3</version>

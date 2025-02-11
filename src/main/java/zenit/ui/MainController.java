@@ -84,8 +84,13 @@ public class MainController extends VBox implements ThemeCustomizable {
 	
 	private Tuple<File, String> deletedFile = new Tuple<>();
 
+
+
 	@FXML
 	private AnchorPane consolePane;
+
+
+
 		
 	@FXML 
 	private SplitPane splitPane;
@@ -140,6 +145,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 
 	@FXML
 	private Button btnStop;
+
 
 	@FXML
 	private ConsoleController consoleController;
@@ -255,9 +261,12 @@ public class MainController extends VBox implements ThemeCustomizable {
 	 * 
 	 * @author Sigge Labor
 	 */
+
+
 	public void openSettingsPanel() {
 		new SettingsPanelController(this, zenCodeAreasTextSize, zenCodeAreasFontFamily, consoleController);
 	}
+
 
 	/**
 	 * Sets the zenCodeAreasTextSize to a new value.
@@ -1318,7 +1327,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 	
 	
 	
-	
+
 	public void closeConsoleComponent() {
 		
 		splitPane.setDividerPosition(0, 1.0);
@@ -1351,6 +1360,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 		
 		
 	}
+
 	
 	
 	
