@@ -113,36 +113,26 @@ public class JavaFileHandler extends FileHandler {
 			throw new IOException(ex.getMessage());
 		}
 	}
-	
-	/**
-	 * Tries to rename the file.
-	 * @param oldFile File to be renamed
-	 * @param newFilename The new filename
-	 * @return The renamed file
-	 * @throws IOException Throws IOException if file already exists with same name or 
-	 * if file couldn't be renamed
-	 */
+
+
 	protected static File renameFile(File oldFile, String newFilename) throws IOException {
-		
-		File tempFile = FileNameHelpers.getFilepathWithoutTopFile(oldFile); //Removes file name
-		
-		//Create new file with new name
-		String newFilepath = tempFile.getPath() + "/" + newFilename;
-		File newFile = new File(newFilepath);
-		
+		File parentDir = oldFile.getParentFile();
+		File newFile = new File(parentDir, newFilename);
+
 		if (newFile.exists()) {
-			throw new IOException("File already exists");
+			throw new IOException("File already exists: " + newFile.getAbsolutePath());
 		}
 
 		boolean success = oldFile.renameTo(newFile);
-		
+
 		if (!success) {
 			throw new IOException("Couldn't rename file");
 		}
-		
+
 		return newFile;
 	}
-	
+
+
 	/**
 	 * Tries to delete the file.
 	 * @param file The file to delete
