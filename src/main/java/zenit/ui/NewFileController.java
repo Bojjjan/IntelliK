@@ -64,14 +64,14 @@ public class NewFileController extends AnchorPane {
 			stage.showAndWait();
 				
 		} catch (IOException e) {
-			
+			System.err.println(e.getMessage());
 		}
 
 	}
 
 	private void initialize() {
 		
-		logo.setImage(new Image(getClass().getResource("/zenit/setup/zenit.png").toExternalForm()));
+		logo.setImage(new Image(getClass().getResource("/zenit/setup/logo.png").toExternalForm()));
 		logo.setFitWidth(45);
 		
 		filepath.getItems().clear();
@@ -106,6 +106,7 @@ public class NewFileController extends AnchorPane {
 		
 		if (!filename.equals("")) {
 			filename += fileEnding.getSelectionModel().getSelectedItem();
+			System.out.println(filename);
 			
 			String filePath = this.filepath.getSelectionModel().getSelectedItem() + File.separator
 					+ filename;

@@ -55,14 +55,20 @@ public class CodeSnippets {
 		
 		int index = classname.indexOf(".java");
 		classname = classname.substring(0, index);
-		
+
 		String codesnippet =
-				"package " + packagename + "\n" + 
+				"package " + packagename + "\n" +
 				"\n" +
 				"public interface " + classname + " {\n" +
-				"\n" + 
+				"\n" +
 				"}";
-				
+
 		return codesnippet;
+	}
+
+	private static String newMain (String classname, String packagename){
+		StringBuilder codesnippet = new StringBuilder();
+
+		return codesnippet.toString();
 	}
 }

@@ -49,7 +49,7 @@ public class FileController {
 	public File createFile(File file, String content, int typeCode) {
 		if (file != null) {
 			try {
-				return JavaFileHandler.createFile(file, content, typeCode);
+				return JavaFileHandler.createFile(file, content, typeCode, workspace.getAbsolutePath());
 			} catch (IOException ex) {
 				System.out.println(ex.getMessage());
 			}

@@ -61,7 +61,7 @@ public class TreeContextMenu extends ContextMenu implements EventHandler<ActionE
 		renameItem.setText(renameItemTitle);
 		deleteItem.setText(deleteItemTitle);
 				
-		if (selectedNode.equals("src") && !createItem.getItems().contains(createPackage)) {
+		if (!createItem.getItems().contains(createPackage)) {
 			createItem.getItems().add(createPackage);
 		} else {
 			createItem.getItems().remove(createPackage);

@@ -36,6 +36,7 @@ public class Zenit extends Application {
 	/**
 	 * Starts the application.
 	 *
+	 * @author Philip Boyde
 	 * @param stage The primary stage for this application.
 	 * @throws Exception if an error occurs during application startup.
 	 */
