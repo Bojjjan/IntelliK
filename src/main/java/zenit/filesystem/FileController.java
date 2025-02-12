@@ -104,7 +104,7 @@ public class FileController {
 	 * Null if the file could not be read.
 	 */
 	public static String readFile(File file) {
-		if (file == null) {
+		if (file == null || file.isDirectory()) {
 			return "";
 		}
 		
