@@ -2,62 +2,27 @@
   -fx-fill: #fff;
 }
 
-.styled-text-area .keyword {
-  /*-fx-fill: purple;*/
-  -fx-fill: #569cc3;
-  -fx-font-weight: bold;
-}
-
-.styled-text-area .semicolon {
-  -fx-font-weight: bold;
-}
-
-.styled-text-area .paren {
-  /*-fx-fill: firebrick;*/
-  -fx-fill: #d4c28f;
-  -fx-font-weight: bold;
-}
-
-.styled-text-area .bracket {
-  /*-fx-fill: darkgreen;*/
-  -fx-fill: lightgreen;
-  -fx-font-weight: bold;
-}
-
-.styled-text-area .brace {
-  -fx-fill: teal;
-  -fx-font-weight: bold;
-}
-
-.styled-text-area .string {
-  /*-fx-fill: blue;*/
-  -fx-fill: #c36537;
-}
-
-.styled-text-area .comment {
-  /*-fx-fill: cadetblue;*/
-  -fx-fill: #00ee00;
-}
-
 .paragraph-box:has-caret {
   -fx-border-width: 1px;
-  -fx-border-color: #ffffff1f;
+  -fx-border-color: #262626;
   -fx-border-style: solid inside;
 }
 
 .paragraph-box {
-  -fx-background-color: #444;
+  -fx-background-color: #1e1e1e;
   -fx-border-width: 1px;
   -fx-border-color: transparent;
   -fx-border-style: solid inside;
 }
 
+
+/* Text selection */
 .styled-text-area .selection {
-  -fx-fill: #666 !important;
+  -fx-fill: #264e77 !important;
 }
 
 .styled-text-area .lineno {
-  -fx-background-color: #333;
+  -fx-background-color: #1e1e1e;
   -fx-fill: #fff;
   -fx-pref-width: 50px;
 }
@@ -77,3 +42,45 @@
 .search-light-mode {
   -fx-effect: dropshadow(gaussian, yellow, 3, 1, 0, 0);
 }
+
+
+/*
+-------------------------------------
+        Syntax highlight styles
+*/
+
+/* Blue for access modifiers, class-related keywords, etc. */
+.styled-text-area .access-modifier {-fx-fill: #47A2ED;}
+
+/* Keywords like if, while, for, switch, etc. */
+.styled-text-area .keyword { -fx-fill: #c686dc;}
+
+/* Data types e.g. int, short, long, boolean, etc. */
+.styled-text-area .datatype {-fx-fill: #47A2ED;}
+
+/* Strings */
+.styled-text-area .strings {-fx-fill: #CD9069; }
+
+/* Numbers */
+.styled-text-area .literal{ -fx-fill: #B4CDA8;}
+
+/* Method Name */
+.styled-text-area .method-name {-fx-fill: #E6E6AA;}
+
+/* Comments */
+.styled-text-area .comment {-fx-fill: #699856;}
+
+/* Variables */
+.styled-text-area .variable {-fx-fill: #94DBFD;}
+
+/* Class Name */
+.styled-text-area .class-name {-fx-fill: #47CCB1;}
+
+/*bracket characters e.g. [, {, ( */
+.styled-text-area .bracket { -fx-fill: #D3D3D3; -fx-font-weight: bold;}
+
+
+/* Default, if none of the above are found*/
+.styled-text-area .identifier {-fx-fill: #D3D3D3;}
+.styled-text-area .default {-fx-fill: #D3D3D3;}
+

@@ -33,8 +33,7 @@ public class JDKVerifier {
 						"Home" + File.separator + "bin" + File.separator + tool;
 				break;
 
-			case LINUX:
-			case WINDOWS:
+			case LINUX, WINDOWS:
 				path = JDKPath + File.separator + "bin" + File.separator + tool;
 				break;
 
