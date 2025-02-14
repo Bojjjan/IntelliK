@@ -38,6 +38,7 @@ public class FileTab extends Tab {
 	 */
 	public FileTab(ZenCodeArea zenCodeArea, MainController mc) {
 		this.zenCodeArea = zenCodeArea;
+		zenCodeArea.setTabAssociation(this);
 		this.mc = mc;
 		initialTitle = "Untitled";
 		
@@ -47,6 +48,7 @@ public class FileTab extends Tab {
 		
 		initializeUI();
 	}
+
 	
 	/**
 	 * Initializes the UI. Attaches an AnchorPane with a TextArea that fills it, 
@@ -105,7 +107,7 @@ public class FileTab extends Tab {
 		if (file == null) {
 			return;
 		}
-		
+
 		String text = zenCodeArea.getText();
 		int caretPosition = zenCodeArea.getCaretPosition();
 		
@@ -129,14 +131,15 @@ public class FileTab extends Tab {
 			);
 			zenCodeArea.moveTo(caretPosition + 37);
 		}
-		else if (caretPosition >= 2 && text.substring(
-			caretPosition - 2, caretPosition).equals("pv")) 
+		else if (caretPosition >= 6 && text.substring(
+			caretPosition - 6, caretPosition).equals("sout"))
 		{
-			zenCodeArea.replaceText(caretPosition - 2, caretPosition, "public void ");
+			zenCodeArea.replaceText(caretPosition - 2, caretPosition, "System.out.println();");
 			zenCodeArea.moveTo(caretPosition + 10);
 		}
 	}
-	
+
+
 	/**
 	 * Checks if the caret is after any given shortcut string (start of a comment in which case it
 	 * is replaced by the 'full' multi-line comment, and the caret is moved to a suitable position.
@@ -146,28 +149,28 @@ public class FileTab extends Tab {
 		if (file == null) {
 			return;
 		}
-		
+
 		String text = zenCodeArea.getText();
 		int caretPosition = zenCodeArea.getCaretPosition();
-		
+
 		if (caretPosition >= 2 && text.substring(
-			caretPosition - 2, caretPosition).equals("/*")) 
+			caretPosition - 2, caretPosition).equals("/*"))
 		{
 			zenCodeArea.replaceText(caretPosition - 2, caretPosition, "/*\n* \n*/");
 			zenCodeArea.moveTo(caretPosition + 3);
 		}
 		else if (caretPosition >= 3 && text.substring(
-			caretPosition - 3, caretPosition).equals("/**")) 
+			caretPosition - 3, caretPosition).equals("/**"))
 		{
 			zenCodeArea.replaceText(caretPosition - 3, caretPosition, "/**\n* \n* @author \n*/");
 			zenCodeArea.moveTo(caretPosition + 3);
-			
+
 		}
 		else {
 			zenCodeArea.replaceText(caretPosition, caretPosition, "\n");
 		}
 	}
-	
+
 	/**
 	 * Checks what tab index the new line should begin at. Also adds a } if needed.
 	 * @author Pontus Laos
