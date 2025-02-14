@@ -159,7 +159,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 	 */
 	public MainController(Stage s) {
 		this.stage = s;
-		this.zenCodeAreasTextSize = 12;
+		this.zenCodeAreasTextSize = 13;
 		this.zenCodeAreasFontFamily = "Menlo";
 		this.activeZenCodeAreas = new LinkedList<ZenCodeArea>();
 		this.customThemeCSS = new File("/customtheme/mainCustomTheme.css");
@@ -320,8 +320,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 	 * event handler for clicking nodes in the tree.
 	 */
 	private void initTree() {
-		FileTreeItem<String> rootItem = new FileTreeItem<String>(fileController.getWorkspace(), "workspace",
-				FileTreeItem.WORKSPACE);
+		FileTreeItem<String> rootItem = new FileTreeItem<String>(fileController.getWorkspace(), "workspace", FileTreeItem.WORKSPACE);
 		File workspace = fileController.getWorkspace();
 		if (workspace != null) {
 			FileTree.createNodes(rootItem, workspace);
@@ -339,6 +338,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 			return (t1.getValue().compareTo(t2.getValue()));
 		});
 	}
+
 
 	/**
 	 * Input name from dialog box and creates a new file in specified parent folder.
@@ -382,9 +382,12 @@ public class MainController extends VBox implements ThemeCustomizable {
 	public void commentsShortcutsTrigger() {
 		FileTab selectedTab = getSelectedTab();
 
+
 		if (selectedTab != null) {
 			selectedTab.commentsShortcutsTrigger();
 		}
+
+
 	}
 
 	public void navigateToCorrectTabIndex() {
