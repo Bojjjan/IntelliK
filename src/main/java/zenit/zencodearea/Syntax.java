@@ -14,8 +14,6 @@ public class Syntax {
 	public Syntax(Grammar grammar, Map<String, String> styleMap){
 		this.grammar = grammar;
 		styles = styleMap;
-
-
 	}
 
 	public Map<String, String> getStyles() {
