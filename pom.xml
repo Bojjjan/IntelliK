@@ -4,6 +4,10 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+	<properties>
+		<java.version>21</java.version>
+	</properties>
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>zenit</groupId>
 	<artifactId>zenit</artifactId>
@@ -12,13 +16,13 @@
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
-			<version>21.0.6</version>
+			<version>21</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-fxml</artifactId>
-			<version>21.0.6</version>
+			<version>21</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-web -->
 		<dependency>
@@ -27,12 +31,40 @@
 			<version>21.0.6</version>
 		</dependency>
 
+			<!-- TestFX Core -->
+			<dependency>
+				<groupId>org.testfx</groupId>
+				<artifactId>testfx-core</artifactId>
+				<version>4.0.18</version>
+			</dependency>
+
+			<!-- TestFX for JUnit5 -->
+			<dependency>
+				<groupId>org.testfx</groupId>
+				<artifactId>testfx-junit5</artifactId>
+				<version>4.0.18</version>
+			</dependency>
+
+			<!-- JUnit 5 -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>5.9.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>5.9.2</version>
+			</dependency>
+
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>2.2</version>
 		</dependency>
+
+
 		<dependency>
 			<groupId>org.fxmisc.richtext</groupId>
 			<artifactId>richtextfx</artifactId>
@@ -68,6 +100,7 @@
 			<artifactId>terminalfx</artifactId>
 			<version>1.2.0</version>
 		</dependency>
+
 
 		<dependency>
 			<groupId>org.kordamp.ikonli</groupId>

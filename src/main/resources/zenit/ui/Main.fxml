@@ -25,7 +25,7 @@
 	<children>
 		<MenuBar fx:id="menuBar" VBox.vgrow="NEVER">
 			<menus>
-				<Menu mnemonicParsing="false" text="File">
+				<Menu fx:id="FileOpt" mnemonicParsing="false" text="File">
 					<items>
                   <Menu mnemonicParsing="false" text="New...">
                      <items>
