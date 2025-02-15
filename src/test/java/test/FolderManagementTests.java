@@ -2,6 +2,9 @@ package test;
 
 import javafx.stage.Stage;
 import main.java.zenit.Zenit;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.framework.junit5.TestFx;
 import org.testfx.matcher.control.TextMatchers;
@@ -12,10 +15,10 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 
 /**
  * Test class using JUNIT5 FxRobot and the ApplicationTest TestFx framework
- * Scope: TFH104, TFH106
+ * Scope: TFH104, TFH106, TFH108.2
  * @author Emrik Dahl Jändel
  */
-
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FolderManagementTests extends ApplicationTest {
 
     @Override
@@ -24,9 +27,10 @@ public class FolderManagementTests extends ApplicationTest {
     }
 
     /**
-     * Test case TFH104.1 -> Create folders, error message
+     * Test case TFH104.1 -> Create folder, error message
      */
     @TestFx
+    @Order(1)
     void createFolderErrorTest() {
         clickOn("File")
                 .clickOn("New...")
@@ -39,9 +43,10 @@ public class FolderManagementTests extends ApplicationTest {
     }
 
     /**
-     * Test case TFH104.1 -> Create folders
+     * Test case TFH104.1 -> Create folder
      */
     @TestFx
+    @Order(2)
     void createFolderTest(){
         clickOn("File")
                 .clickOn("New...")
@@ -55,13 +60,28 @@ public class FolderManagementTests extends ApplicationTest {
     }
 
     /**
+     * Test case TFH108.2 -> Rename folder
+     */
+    @TestFx
+    @Order(3)
+    void renameFolderTest(){
+        rightClickOn("TestFolder")
+                .clickOn("Rename \"TestFolder\"");
+        write("RenamedTestFolder");
+        clickOn("OK");
+        sleep(500);
+        verifyThat("RenamedTestFolder", isVisible());
+    }
+
+    /**
      * Test case TFH106.1 -> Delete folders
      */
     @TestFx
+    @Order(4)
     void deleteFolderTest(){
-        rightClickOn("TestFolder")
-                .clickOn("Delete \"TestFolder\"");
+        rightClickOn("RenamedTestFolder")
+                .clickOn("Delete \"RenamedTestFolder\"");
         sleep(500);
-        assertEquals(0, lookup(TextMatchers.hasText("TestFolder")).queryAll().size());
+        assertEquals(0, lookup(TextMatchers.hasText("RenamedTestFolder")).queryAll().size());
     }
 }
