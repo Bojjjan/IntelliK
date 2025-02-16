@@ -3,14 +3,12 @@ package main.java.zenit.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 
 import java.util.LinkedList;
 import java.util.ArrayList;
-
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,16 +20,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.SplitPane.Divider;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import main.java.zenit.GetOperatingSystem;
 import main.java.zenit.Zenit;
 import main.java.zenit.console.ConsoleArea;
 import main.java.zenit.console.ConsoleController;
@@ -52,7 +51,6 @@ import main.java.zenit.ui.tree.FileTreeItem;
 import main.java.zenit.ui.tree.TreeClickListener;
 import main.java.zenit.ui.tree.TreeContextMenu;
 import main.java.zenit.util.Tuple;
-import main.java.zenit.ui.FileTab;
 import main.java.zenit.ui.projectinfo.ProjectMetadataController;
 import main.java.zenit.zencodearea.ZenCodeArea;
 
@@ -157,10 +155,11 @@ public class MainController extends VBox implements ThemeCustomizable {
 	/**
 	 * Loads a file Main.fxml, sets this MainController as its Controller, and loads
 	 * it.
+	 * @author Philip Boyde
 	 */
 	public MainController(Stage s) {
 		this.stage = s;
-		this.zenCodeAreasTextSize = 12;
+		this.zenCodeAreasTextSize = 13;
 		this.zenCodeAreasFontFamily = "Menlo";
 		this.activeZenCodeAreas = new LinkedList<ZenCodeArea>();
 		this.customThemeCSS = new File("/customtheme/mainCustomTheme.css");
@@ -186,6 +185,9 @@ public class MainController extends VBox implements ThemeCustomizable {
 				fileController.changeWorkspace(workspace);
 			}
 
+			Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/zenit/setup/logo.png")));
+			stage.getIcons().add(icon);
+
 			loader.setRoot(this);
 			loader.setController(this);
 			loader.load();
@@ -195,7 +197,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 
 			scene.getStylesheets().add(getClass().getResource("/zenit/ui/keywords.css").toExternalForm());
 			stage.setScene(scene);
-			stage.setTitle("IntelliK - " + workspace.getPath());
+			stage.setTitle("IntelliK - " + workspace.getName());
 
 			initialize();
 			
@@ -205,6 +207,12 @@ public class MainController extends VBox implements ThemeCustomizable {
 			this.activeStylesheet = getClass().getResource("/zenit/ui/mainStyle.css").toExternalForm();
 			
 			stage.setOnCloseRequest(event -> quit());
+
+			GetOperatingSystem.OperatingSystem OS = Zenit.OS;
+            if (OS == GetOperatingSystem.OperatingSystem.WINDOWS) {
+                win32api.setDarkMode(stage, isDarkMode);
+            }
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -312,8 +320,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 	 * event handler for clicking nodes in the tree.
 	 */
 	private void initTree() {
-		FileTreeItem<String> rootItem = new FileTreeItem<String>(fileController.getWorkspace(), "workspace",
-				FileTreeItem.WORKSPACE);
+		FileTreeItem<String> rootItem = new FileTreeItem<String>(fileController.getWorkspace(), "workspace", FileTreeItem.WORKSPACE);
 		File workspace = fileController.getWorkspace();
 		if (workspace != null) {
 			FileTree.createNodes(rootItem, workspace);
@@ -331,6 +338,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 			return (t1.getValue().compareTo(t2.getValue()));
 		});
 	}
+
 
 	/**
 	 * Input name from dialog box and creates a new file in specified parent folder.
@@ -374,9 +382,12 @@ public class MainController extends VBox implements ThemeCustomizable {
 	public void commentsShortcutsTrigger() {
 		FileTab selectedTab = getSelectedTab();
 
+
 		if (selectedTab != null) {
 			selectedTab.commentsShortcutsTrigger();
 		}
+
+
 	}
 
 	public void navigateToCorrectTabIndex() {

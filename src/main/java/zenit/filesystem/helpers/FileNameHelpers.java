@@ -1,6 +1,7 @@
 package main.java.zenit.filesystem.helpers;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * Static classes for manipulating filenames and structures
@@ -34,23 +35,17 @@ public class FileNameHelpers {
 	}
 	
 	/**
-	 * Returns the packagename from a filepath, if the project contains a src-folder and 
+	 * Returns the packagename from a filepath, if the project contains a src-folder and
 	 * the package is put in that src-folder.
-	 * @param file Filepath to search through
+	 *
+	 * @param file          Filepath to search through
+	 * @param workspacePath
 	 * @return Returns the name of the package if found, otherwise null
 	 */
-	public static String getPackagenameFromFile(File file) {
+	public static String getPackagenameFromFile(File file, String workspacePath) {
 		String packagename = null;
-		
 		if (file != null) {
-
-			String[] folders = getFoldersAsStringArray(file);
-			
-			int srcIndex = getSrcFolderIndex(folders);
-
-			if (srcIndex != -1 && folders.length > srcIndex) { //Filepath is deeper that src-folder
-				packagename = folders[srcIndex + 1]; //Package folder is one step down from src-folder
-			}
+			packagename = internalPathExtractor(file.getAbsolutePath(), workspacePath);
 		}
 		
 		return packagename;
@@ -166,7 +161,8 @@ public class FileNameHelpers {
 	public static int getSrcFolderIndex(String[] folders) {
 		int srcIndex = -1; //Indicates how deep in the filestructure the src-folder is
 		int counter = 0;
-		
+
+
 		for (String folder : folders) {
 			if (folder.equals("src")) {
 				srcIndex = counter;
@@ -179,14 +175,56 @@ public class FileNameHelpers {
 	
 	/**
 	 * Converts a filepath into a string-array of folder names
+	 *
+	 * @author Philip Boyde
 	 * @param file The filepath to convert
 	 * @return A string-array of folder names
 	 */
 	public static String[] getFoldersAsStringArray(File file) {
 		String[] folders;
 		String filepath = file.getAbsolutePath(); //Get the path in string
-		folders = filepath.split("/"); //Split path into the different folders
-		
+		folders = filepath.split(Pattern.quote(File.separator));// Split path into the different folders
+
 		return folders;
+	}
+
+	/**
+	 * Extracts the internal path from the given file path relative to the workspace path.
+	 * Converts the internal path to a package name format.
+	 *
+	 * @author Philip Boyde
+	 * @param filePath      The absolute file path.
+	 * @param workspacePath The workspace path to be removed from the file path.
+	 * @return The package name derived from the internal path, or a single space if the file path is shorter than the workspace path.
+	 */
+	private static String internalPathExtractor(String filePath, String workspacePath){
+		int rmLength = workspacePath.length() + 1;
+		StringBuilder packagename = new StringBuilder();
+
+		if (filePath.length() > rmLength) {
+			String internalPath = filePath.substring(rmLength);
+			String[] folders = internalPath.split(Pattern.quote(File.separator));
+
+			// remove the file type from file name
+			String lastFolder = folders[folders.length - 1];
+			int dotIndex = lastFolder.lastIndexOf('.');
+			if (dotIndex != -1) {
+				folders[folders.length - 1] = lastFolder.substring(0, dotIndex);
+			}
+
+			// make a string with package format e.g. (src.main.test)
+			for (int i = 0; i <= (folders.length-1); i++){
+				packagename.append(folders[i]);
+
+				if (i < folders.length - 1) {
+					packagename.append(".");
+				}
+
+			}
+
+			return packagename.toString();
+		} else {
+			return " ";
+		}
 	}
 }

@@ -36,6 +36,9 @@ public class FileTreeItem<T> extends TreeItem<T> {
 	public static final int CONTROLLER = 108;
 	public static final int VIEW = 109;
 	public static final int MODEL = 110;
+	public static final int RUNNABLE_CLASS = 111;
+	public static final int INTERFACE_CLASS = 112;
+	public static final int ENUM_CLASS = 113;
 
 
     private ImageView icon;
@@ -95,7 +98,12 @@ public class FileTreeItem<T> extends TreeItem<T> {
 		return switch (type){
 			case PROJECT -> "/zenit/ui/tree/project.png";
 			case PACKAGE -> "/zenit/ui/tree/package.png";
+
+			// Java files
 			case CLASS -> "/zenit/ui/tree/class.png";
+			case RUNNABLE_CLASS -> "";
+			case INTERFACE_CLASS -> "";
+			case ENUM_CLASS -> "";
 
 			//Folder
 			case FOLDER -> "/zenit/ui/tree/folder.png";
