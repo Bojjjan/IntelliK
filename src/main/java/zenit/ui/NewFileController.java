@@ -1,5 +1,6 @@
 package main.java.zenit.ui;
 
+import main.java.zenit.ui.tree.RunnableClassIndicator;
 import java.io.File;
 import java.io.IOException;
 
@@ -39,8 +40,9 @@ public class NewFileController extends AnchorPane {
 	public NewFileController(File workspace, boolean darkmode) {
 		this.workspace = workspace;
 		this.darkmode = darkmode;
+
 	}
-	
+
 	/**
 	 * Opens new Project Info window.
 	 */
@@ -99,13 +101,14 @@ public class NewFileController extends AnchorPane {
 	    	   }
 	    	});
 	}
-	
+
 	@FXML
 	private void create() {
 		String filename = tfName.getText();
-		
+
 		if (!filename.equals("")) {
 			filename += fileEnding.getSelectionModel().getSelectedItem();
+
 			System.out.println(filename);
 			
 			String filePath = this.filepath.getSelectionModel().getSelectedItem() + File.separator
@@ -114,22 +117,22 @@ public class NewFileController extends AnchorPane {
 			try {
 				if (!newFile.createNewFile()) {
 					DialogBoxes.errorDialog("File name already exist", "", "A file with the name "
-				+ filename + " already exist. Please input a different name.");
+							+ filename + " already exist. Please input a different name.");
 					newFile = null;
 				}
 			} catch (IOException e) {
 				DialogBoxes.errorDialog("Couldn't create new file", "", "Couldn't create new file");
 				newFile = null;
 			}
-			
+
 			stage.close();
 		} else {
 			DialogBoxes.errorDialog("No name selected", "", "No name has been given to the new file"
 					+ ". Please input a new name to create file.");
 		}
-		
+
 	}
-	
+
 	@FXML
 	private void cancel() {
 		stage.close();

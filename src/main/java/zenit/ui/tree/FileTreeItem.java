@@ -6,9 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
@@ -56,21 +58,33 @@ public class FileTreeItem<T> extends TreeItem<T> {
 
 	/**
 	 * Sets the icon for the TreeItem based on its type.
-	 * @author Philip Boyde
+	 * - Om det är en .java-fil med en main-metod, visas en grön ▶-ikon.
+	 * - Annars visas standardikonen.
+	 * Ikonen hämtas via getIconPath() och justeras till 16x16 pixlar.
+
+	 * @author Philip Boyde, Abdulkadir Adde
 	 */
-	public void setIcon() {
+
+	 public void setIcon() {
 		try {
 			String url = getIconPath();
 			if (url == null) return;
 
-			icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResource(url)).toExternalForm()));
+			ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResource(url)).toExternalForm()));
 			icon.setFitHeight(16);
 			icon.setFitWidth(16);
 			icon.setSmooth(true);
-			this.setGraphic(icon);
 
-		}catch (IllegalStateException e){
-			System.err.println(e.getMessage());
+			if (type == CLASS && file.getName().endsWith(".java") && RunnableClassIndicator.containsMainMethod(file.toPath())) {
+				Label playIcon = new Label("▶");
+				playIcon.setTextFill(Color.LIMEGREEN);
+				playIcon.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+				setGraphic(new HBox(5, icon, playIcon));
+			} else {
+				setGraphic(icon);
+			}
+		} catch (IOException | IllegalStateException e) {
+			System.err.println("Icon error: " + e.getMessage());
 		}
 	}
 
