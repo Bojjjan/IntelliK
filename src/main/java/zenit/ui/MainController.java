@@ -670,9 +670,9 @@ public class MainController extends VBox implements ThemeCustomizable {
 //		fileHistory.add(0, file);
 //		historyIndex++;
 //		System.out.println(historyIndex);
-		
+
 		deletedFile.set(file, FileController.readFile(file));
-		
+
 		fileController.deleteFile(file);
 		
 		var tabs = tabPane.getTabs();
