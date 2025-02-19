@@ -32,6 +32,7 @@ public class FileTab extends Tab {
 	private ZenCodeArea zenCodeArea;
 	
 	private boolean hasChanged;
+	private boolean isFileLoaded;
 	
 	/**
 	 * Constructs a new FileTab without a file, setting the title to "Untitled".
@@ -65,13 +66,18 @@ public class FileTab extends Tab {
 		
 		setContent(anchorPane);
 		setText(initialTitle);
-		
+
 		zenCodeArea.textProperty().addListener((observable, oldText, newText) -> {
 			String initialFileContent = FileController.readFile(initialFile);
-			
+
+			initialFileContent = initialFileContent.trim().replaceAll("\r\n", "\n");
+			newText = newText.trim().replaceAll("\r\n", "\n");
+
 			hasChanged = !initialFileContent.equals(newText);
+
 			updateUI();
 		});
+
 
 		setStyle("-fx-background-color: #444;");
 		setStyle("-fx-stroke: #fff;");
@@ -225,8 +231,10 @@ public class FileTab extends Tab {
 	private void updateUI() {
 		if (hasChanged) {
 			setText(initialTitle + " *");
+			setStyle("-fx-background-color: #81b622;");
 		} else {
 			setText(initialTitle);
+			setStyle("-fx-background-color: #444;");
 		}
 	}
 	
