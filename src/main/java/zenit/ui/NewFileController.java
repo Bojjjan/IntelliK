@@ -1,6 +1,6 @@
 package zenit.ui;
 
-import main.java.zenit.ui.tree.RunnableClassIndicator;
+import zenit.ui.tree.RunnableClassIndicator;
 import java.io.File;
 import java.io.IOException;
 

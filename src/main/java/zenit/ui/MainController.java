@@ -2,12 +2,10 @@ package zenit.ui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
+import java.net.URL;
+import java.util.*;
 import java.util.regex.Matcher;
 
-import java.util.LinkedList;
-import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -165,8 +163,15 @@ public class MainController extends VBox implements ThemeCustomizable {
 		this.customThemeCSS = new File("/customtheme/mainCustomTheme.css");
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/zenit/ui/Main.fxml"));
-			
+			URL fxmlLocation = getClass().getResource("/zenit/ui/Main.fxml");
+			if (fxmlLocation == null) {
+				System.err.println("FXML file not found!");
+			} else {
+				FXMLLoader loader = new FXMLLoader(fxmlLocation);
+			}
+
+
+			//FXMLLoader loader = new FXMLLoader(getClass().getResource("/zenit/ui/Main.fxml"));
 			File workspace = null;
 
 			try {
@@ -187,7 +192,6 @@ public class MainController extends VBox implements ThemeCustomizable {
 
 			Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/zenit/setup/logo.png")));
 			stage.getIcons().add(icon);
-
 			loader.setRoot(this);
 			loader.setController(this);
 			loader.load();
@@ -204,7 +208,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 			stage.show();
 			KeyboardShortcuts.setupMain(scene, this);
 
-			this.activeStylesheet = getClass().getResource("/zenit/ui/mainStyle.css").toExternalForm();
+			this.activeStylesheet = getClass().getResource("../zenit/ui/mainStyle.css").toExternalForm();
 			
 			stage.setOnCloseRequest(event -> quit());
 

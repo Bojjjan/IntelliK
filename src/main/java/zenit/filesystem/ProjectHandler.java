@@ -1,6 +1,6 @@
 package zenit.filesystem;
 
-import main.java.zenit.filesystem.metadata.Metadata;
+import zenit.filesystem.metadata.Metadata;
 
 import java.io.File;
 import java.io.IOException;

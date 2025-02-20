@@ -25,8 +25,8 @@ import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
 
-import lexer.JavaParser;
-import lexer.JavaLexer;
+import generated.JavaLexer;
+import generated.JavaParser;
 
 /**
  * ZenCodeArea is a custom code editor component that extends CodeArea.
@@ -71,6 +71,7 @@ public class ZenCodeArea extends CodeArea {
 					return Optional.empty();
 				})
 				.subscribe(this::applyHighlighting);
+
 
 
 		executor = Executors.newSingleThreadExecutor();

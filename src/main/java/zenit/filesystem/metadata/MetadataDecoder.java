@@ -1,4 +1,4 @@
-package main.java.zenit.filesystem.metadata;
+package zenit.filesystem.metadata;
 
 import java.io.BufferedReader;
 import java.io.File;

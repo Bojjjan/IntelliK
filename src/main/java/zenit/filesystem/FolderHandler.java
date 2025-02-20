@@ -3,7 +3,7 @@ package zenit.filesystem;
 import java.io.File;
 import java.io.IOException;
 
-import main.java.zenit.filesystem.helpers.FileNameHelpers;
+import zenit.filesystem.helpers.FileNameHelpers;
 
 /**
  * Methods for creating, renaming and deleting folders.

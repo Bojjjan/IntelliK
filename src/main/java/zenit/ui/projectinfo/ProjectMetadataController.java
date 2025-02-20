@@ -26,7 +26,7 @@ import zenit.filesystem.FileController;
 import zenit.filesystem.ProjectFile;
 import zenit.filesystem.RunnableClass;
 import zenit.filesystem.metadata.Metadata;
-import main.java.zenit.filesystem.metadata.MetadataVerifier;
+import zenit.filesystem.metadata.MetadataVerifier;
 import zenit.ui.DialogBoxes;
 import zenit.ui.MainController;
 
@@ -192,7 +192,7 @@ public class ProjectMetadataController extends AnchorPane {
 
 		File JREVersion = new File(metadata.getJREVersion());
 		
-		List<String> JDKs = main.java.zenit.filesystem.jreversions.JREVersions.readString();
+		List<String> JDKs = zenit.filesystem.jreversions.JREVersions.readString();
 		if (JREVersion != null) {
 			JREVersions.getItems().addAll(JDKs);
 			JREVersions.getSelectionModel().select(JREVersion.getName());
@@ -313,7 +313,7 @@ public class ProjectMetadataController extends AnchorPane {
 	@FXML
 	private void changeJREVersion() {
 		String JDKName = JREVersions.getSelectionModel().getSelectedItem();
-		String JDK = main.java.zenit.filesystem.jreversions.JREVersions.getFullPathFromName(JDKName);
+		String JDK = zenit.filesystem.jreversions.JREVersions.getFullPathFromName(JDKName);
 		metadata.setJREVersion(JDK);
 		metadata.encode();
 	}

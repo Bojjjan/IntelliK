@@ -6,10 +6,10 @@
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/src/main/antlr4/JavaParser.g4" />
           <option name="autoGen" value="true" />
-          <option name="outputDir" value="main/java/generated.lexer" />
-          <option name="libDir" value="$PROJECT_DIR$/src/main/antlr4" />
+          <option name="outputDir" value="C:\Users\Philip\Documents\Github\IntelliK\src\main\antlr4\generated" />
+          <option name="libDir" value="C:\Users\Philip\Documents\Github\IntelliK\src\main\antlr4" />
           <option name="encoding" value="" />
-          <option name="pkg" value="lexer" />
+          <option name="pkg" value="" />
           <option name="language" value="Java" />
           <option name="generateVisitor" value="true" />
         </PerGrammarGenerationSettings>
@@ -34,5 +34,5 @@
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="zulu-21" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK" />
 </project>
