@@ -30,12 +30,12 @@ git clone https://github.com/Bojjjan/IntelliK.git
 1. **Open IntelliJ IDEA**
 2. Navigate to **Run** → **Edit Configurations...**
 3. Click **Add New Run Configuration...** and select **Application**
-4. In the **Main class** field, enter: ``main.java.zenit.Zenit``
+4. In the **Main class** field, enter: ``zenit.Zenit``
 5. Press **ALT + V**, then in the **VM Options** field, paste the VM options found in the [VM arguemnts](#3.-VM-arguemnts) section below
 6. Click **Apply**, then **Run**
 
 > [!Note]
-> If the program does not start make sure that project structures source folder is ``SRC``
+> If the program does not start make sure that project structures source folder is ``java``
 
 <br>
 

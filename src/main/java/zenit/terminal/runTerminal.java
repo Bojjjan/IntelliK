@@ -1,4 +1,4 @@
-package main.java.zenit.terminal;
+package zenit.terminal;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

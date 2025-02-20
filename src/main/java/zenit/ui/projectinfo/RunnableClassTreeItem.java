@@ -1,4 +1,4 @@
-package main.java.zenit.ui.projectinfo;
+package zenit.ui.projectinfo;
 
 import java.io.File;
 

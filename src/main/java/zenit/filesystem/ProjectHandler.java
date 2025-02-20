@@ -1,4 +1,4 @@
-package main.java.zenit.filesystem;
+package zenit.filesystem;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import main.java.zenit.filesystem.metadata.Metadata;
+import zenit.filesystem.metadata.Metadata;
 
 /**
  * Project specific methods for manipulating the file system.

@@ -27,12 +27,21 @@
 			<version>21.0.6</version>
 		</dependency>
 
+
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.9.2</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.9.2</version>
+			<scope>test</scope>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.fxmisc.richtext</groupId>
 			<artifactId>richtextfx</artifactId>
@@ -102,7 +111,7 @@
 		<repository>
 			<id>central</id>
 			<name>jcenter</name>
-			<url>http://jcenter.bintray.com</url>
+			<url>https://repo.maven.apache.org/maven2/</url>
 		</repository>
 
 		<repository>
@@ -112,25 +121,10 @@
 
 	</repositories>
 
-	<build>
 
+
+	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr4-maven-plugin</artifactId>
-				<version>4.13.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>antlr4</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<packageName>main.java.generated</packageName>
-					<outputDirectory>${project.build.directory}/generated-sources/antlr4</outputDirectory>
-				</configuration>
-			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -142,6 +136,21 @@
 					<target>21</target>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>4.13.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>

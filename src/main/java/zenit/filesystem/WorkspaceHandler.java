@@ -1,4 +1,4 @@
-package main.java.zenit.filesystem;
+package zenit.filesystem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

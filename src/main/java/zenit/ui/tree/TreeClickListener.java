@@ -1,11 +1,11 @@
-package main.java.zenit.ui.tree;
+package zenit.ui.tree;
 
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
-import main.java.zenit.ui.MainController;
+import zenit.ui.MainController;
 
 /**
  * Handles events for a TreeView instance. Implements EventHandler.

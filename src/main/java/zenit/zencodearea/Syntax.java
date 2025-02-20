@@ -1,4 +1,4 @@
-package main.java.zenit.zencodearea;
+package zenit.zencodearea;
 
 import java.util.Map;
 

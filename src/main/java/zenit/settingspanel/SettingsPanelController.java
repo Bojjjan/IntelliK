@@ -1,4 +1,4 @@
-package main.java.zenit.settingspanel;
+package zenit.settingspanel;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,9 +29,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import main.java.zenit.console.ConsoleController;
-import main.java.zenit.ui.MainController;
-import main.java.zenit.zencodearea.ZenCodeArea;
+import zenit.console.ConsoleController;
+import zenit.ui.MainController;
+import zenit.zencodearea.ZenCodeArea;
 
 /**
  * Controller class for the NewTextSize window,

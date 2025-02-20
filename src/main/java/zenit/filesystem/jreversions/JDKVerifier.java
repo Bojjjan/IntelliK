@@ -1,9 +1,9 @@
-package main.java.zenit.filesystem.jreversions;
+package zenit.filesystem.jreversions;
 
 import java.io.File;
 
-import main.java.zenit.GetOperatingSystem;
-import main.java.zenit.Zenit;
+import zenit.GetOperatingSystem;
+import zenit.Zenit;
 
 public class JDKVerifier {
 	

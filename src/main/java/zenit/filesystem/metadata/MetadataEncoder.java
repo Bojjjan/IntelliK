@@ -1,4 +1,4 @@
-package main.java.zenit.filesystem.metadata;
+package zenit.filesystem.metadata;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-import main.java.zenit.filesystem.RunnableClass;
+import zenit.filesystem.RunnableClass;
 
 /**
  * Encodes a {@link Metadata} object to file.

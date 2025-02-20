@@ -1,4 +1,4 @@
-package main.java.zenit.javacodecompiler;
+package zenit.javacodecompiler;
 
 public class ProcessBuffer implements Buffer<Process>{
 	

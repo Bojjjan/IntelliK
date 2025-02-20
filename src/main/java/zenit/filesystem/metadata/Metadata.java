@@ -1,8 +1,8 @@
-package main.java.zenit.filesystem.metadata;
+package zenit.filesystem.metadata;
 
 import java.io.File;
 
-import main.java.zenit.filesystem.RunnableClass;
+import zenit.filesystem.RunnableClass;
 
 /**
  * Abstract data type containing data from metadata file. Decodes a metadata file upon creation.

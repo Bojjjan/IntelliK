@@ -1,4 +1,4 @@
-package main.java.zenit.exceptions;
+package zenit.exceptions;
 
 /**
  * To be thrown when CodeSnippets are being accessed with a non-existing TypeCode.

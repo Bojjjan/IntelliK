@@ -1,4 +1,4 @@
-package main.java.zenit;
+package zenit;
 
 import java.io.IOException;
 import java.io.OutputStream;

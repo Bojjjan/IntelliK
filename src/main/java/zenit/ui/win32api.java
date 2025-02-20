@@ -1,4 +1,4 @@
-package main.java.zenit.ui;
+package zenit.ui;
 
 import javafx.stage.Stage;
 import com.sun.jna.Pointer;
