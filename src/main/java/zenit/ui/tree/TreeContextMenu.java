@@ -1,19 +1,14 @@
-package main.java.zenit.ui.tree;
-
-import java.io.File;
+package zenit.ui.tree;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
+import zenit.filesystem.ProjectFile;
+import zenit.filesystem.helpers.CodeSnippets;
+import zenit.ui.MainController;
 
-import main.java.zenit.filesystem.ProjectFile;
-import main.java.zenit.filesystem.helpers.CodeSnippets;
-import main.java.zenit.ui.MainController;
+import java.io.File;
 
 /**
  * Class that extends {@link javafx.scene.control.ContextMenu} with static menu items with dynamic

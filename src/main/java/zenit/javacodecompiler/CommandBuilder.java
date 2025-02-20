@@ -1,4 +1,4 @@
-package main.java.zenit.javacodecompiler;
+package zenit.javacodecompiler;
 
 import java.io.File;
 import java.util.regex.Matcher;

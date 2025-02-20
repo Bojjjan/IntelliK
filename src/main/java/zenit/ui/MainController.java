@@ -1,4 +1,4 @@
-package main.java.zenit.ui;
+package zenit.ui;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,29 +30,29 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import main.java.zenit.GetOperatingSystem;
-import main.java.zenit.Zenit;
-import main.java.zenit.console.ConsoleArea;
-import main.java.zenit.console.ConsoleController;
-import main.java.zenit.filesystem.FileController; // Aggregation
-import main.java.zenit.filesystem.ProjectFile;
-import main.java.zenit.filesystem.RunnableClass;
-import main.java.zenit.filesystem.WorkspaceHandler;
-import main.java.zenit.filesystem.metadata.Metadata;
-import main.java.zenit.javacodecompiler.DebugError;
-import main.java.zenit.javacodecompiler.DebugErrorBuffer;
-import main.java.zenit.javacodecompiler.JavaSourceCodeCompiler;
-import main.java.zenit.javacodecompiler.ProcessBuffer;
-import main.java.zenit.settingspanel.SettingsPanelController;
-import main.java.zenit.settingspanel.ThemeCustomizable; // Implements
-import main.java.zenit.searchinfile.Search;
-import main.java.zenit.ui.tree.FileTree;
-import main.java.zenit.ui.tree.FileTreeItem;
-import main.java.zenit.ui.tree.TreeClickListener;
-import main.java.zenit.ui.tree.TreeContextMenu;
-import main.java.zenit.util.Tuple;
-import main.java.zenit.ui.projectinfo.ProjectMetadataController;
-import main.java.zenit.zencodearea.ZenCodeArea;
+import zenit.GetOperatingSystem;
+import zenit.Zenit;
+import zenit.console.ConsoleArea;
+import zenit.console.ConsoleController;
+import zenit.filesystem.FileController; // Aggregation
+import zenit.filesystem.ProjectFile;
+import zenit.filesystem.RunnableClass;
+import zenit.filesystem.WorkspaceHandler;
+import zenit.filesystem.metadata.Metadata;
+import zenit.javacodecompiler.DebugError;
+import zenit.javacodecompiler.DebugErrorBuffer;
+import zenit.javacodecompiler.JavaSourceCodeCompiler;
+import zenit.javacodecompiler.ProcessBuffer;
+import zenit.settingspanel.SettingsPanelController;
+import zenit.settingspanel.ThemeCustomizable; // Implements
+import zenit.searchinfile.Search;
+import zenit.ui.tree.FileTree;
+import zenit.ui.tree.FileTreeItem;
+import zenit.ui.tree.TreeClickListener;
+import zenit.ui.tree.TreeContextMenu;
+import zenit.util.Tuple;
+import zenit.ui.projectinfo.ProjectMetadataController;
+import zenit.zencodearea.ZenCodeArea;
 
 /**
  * The controller part of the main GUI.

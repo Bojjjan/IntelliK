@@ -1,4 +1,4 @@
-package main.java.zenit.terminal;
+package zenit.terminal;
 
 import com.kodedu.terminalfx.TerminalBuilder;
 import com.kodedu.terminalfx.TerminalTab;

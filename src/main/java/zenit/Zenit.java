@@ -1,13 +1,12 @@
-package main.java.zenit;
-
-import java.io.File;
+package zenit;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import zenit.setup.SetupController;
+import zenit.ui.MainController;
 
-import main.java.zenit.setup.SetupController;
-import main.java.zenit.ui.MainController;
+import java.io.File;
 
 /**
  * Main class used to launch the application.

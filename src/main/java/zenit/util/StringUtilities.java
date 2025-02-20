@@ -1,4 +1,4 @@
-package main.java.zenit.util;
+package zenit.util;
 
 public class StringUtilities {
 	/**

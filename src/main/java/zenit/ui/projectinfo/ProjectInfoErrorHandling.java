@@ -1,6 +1,6 @@
-package main.java.zenit.ui.projectinfo;
+package zenit.ui.projectinfo;
 
-import main.java.zenit.ui.DialogBoxes;
+import zenit.ui.DialogBoxes;
 
 /**
  * Handles different kinds of errors by displaying dialog boxes and if needed returns the

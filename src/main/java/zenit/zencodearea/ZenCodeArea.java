@@ -1,11 +1,11 @@
-package main.java.zenit.zencodearea;
+package zenit.zencodearea;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.concurrent.Task;
 
-import main.java.zenit.ui.FileTab;
-import main.java.zenit.ui.MainController;
+import zenit.ui.FileTab;
+import zenit.ui.MainController;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.Token;
 

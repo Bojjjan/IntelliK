@@ -1,4 +1,4 @@
-package main.java.zenit.ui;
+package zenit.ui;
 
 import main.java.zenit.ui.tree.RunnableClassIndicator;
 import java.io.File;

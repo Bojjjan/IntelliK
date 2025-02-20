@@ -1,4 +1,4 @@
-package main.java.zenit.util;
+package zenit.util;
 
 /**
  * General purpose boilerplate for a pair or 2-tuple.

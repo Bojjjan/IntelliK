@@ -1,6 +1,6 @@
-package main.java.zenit.filesystem.helpers;
+package zenit.filesystem.helpers;
 
-import main.java.zenit.exceptions.TypeCodeException;
+import zenit.exceptions.TypeCodeException;
 
 /**
  * Snippets of code to insert into classes. Accessed via newSnippet method and constants.

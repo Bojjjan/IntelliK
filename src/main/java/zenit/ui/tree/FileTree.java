@@ -1,11 +1,11 @@
-package main.java.zenit.ui.tree;
+package zenit.ui.tree;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 import javafx.scene.control.TreeItem;
-import main.java.zenit.filesystem.ProjectFile;
+import zenit.filesystem.ProjectFile;
 
 /**
  * Handles the nodes of a filetree

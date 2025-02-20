@@ -1,4 +1,4 @@
-package main.java.zenit.ui.projectinfo;
+package zenit.ui.projectinfo;
 
 import java.io.File;
 import java.util.List;
@@ -22,13 +22,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import main.java.zenit.filesystem.FileController;
-import main.java.zenit.filesystem.ProjectFile;
-import main.java.zenit.filesystem.RunnableClass;
-import main.java.zenit.filesystem.metadata.Metadata;
+import zenit.filesystem.FileController;
+import zenit.filesystem.ProjectFile;
+import zenit.filesystem.RunnableClass;
+import zenit.filesystem.metadata.Metadata;
 import main.java.zenit.filesystem.metadata.MetadataVerifier;
-import main.java.zenit.ui.DialogBoxes;
-import main.java.zenit.ui.MainController;
+import zenit.ui.DialogBoxes;
+import zenit.ui.MainController;
 
 /**
  * Window containing run and compile information about a project. Also ability to modify that

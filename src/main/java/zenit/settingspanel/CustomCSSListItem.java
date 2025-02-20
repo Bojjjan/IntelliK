@@ -1,11 +1,11 @@
-package main.java.zenit.settingspanel;
-
-import java.io.IOException;
+package zenit.settingspanel;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+
+import java.io.IOException;
 
 /**
  * JavaFX component for the ListView in the settingspanel.

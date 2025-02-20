@@ -1,9 +1,9 @@
-package main.java.zenit;
+package zenit;
+
+import javafx.scene.control.TextArea;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
-import javafx.scene.control.TextArea;
 
 public class TextAreaOutputStream extends OutputStream {
 

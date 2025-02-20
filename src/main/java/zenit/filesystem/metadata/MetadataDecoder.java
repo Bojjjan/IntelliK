@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import main.java.zenit.filesystem.RunnableClass;
+import zenit.filesystem.RunnableClass;
 
 /**
  * Decodes a .metadata file and adds data to a {@link Metadata} object.

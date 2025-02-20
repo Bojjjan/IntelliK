@@ -1,4 +1,4 @@
-package main.java.zenit.filesystem.helpers;
+package zenit.filesystem.helpers;
 
 import java.io.File;
 import java.util.regex.Pattern;

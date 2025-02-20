@@ -1,4 +1,4 @@
-package main.java.zenit.filesystem;
+package zenit.filesystem;
 
 /**
  * Super class for file handling concerning files. Should be extended.

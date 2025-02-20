@@ -1,7 +1,7 @@
-package main.java.zenit.zencodearea;
+package zenit.zencodearea;
 
 import lexer.JavaParser;
-import main.java.generated.lexer.JavaParserBaseListener;
+import generated.lexer.JavaParserBaseListener;
 
 import java.util.*;
 

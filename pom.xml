@@ -127,7 +127,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<packageName>main.java.generated</packageName>
+					<sourceDirectory>src/main/antlr4</sourceDirectory>
 					<outputDirectory>${project.build.directory}/generated-sources/antlr4</outputDirectory>
 				</configuration>
 			</plugin>

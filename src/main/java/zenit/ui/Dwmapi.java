@@ -1,4 +1,4 @@
-package main.java.zenit.ui;
+package zenit.ui;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;

@@ -1,18 +1,11 @@
-package main.java.zenit.filesystem.jreversions;
+package zenit.filesystem.jreversions;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import zenit.GetOperatingSystem;
+import zenit.Zenit;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import main.java.zenit.GetOperatingSystem;
-import main.java.zenit.Zenit;
 
 public class JREVersions {
 

@@ -1,4 +1,4 @@
-package main.java.zenit.ui;
+package zenit.ui;
 
 import javafx.application.Application;
 import javafx.application.Platform;

@@ -1,16 +1,13 @@
-package main.java.zenit.javacodecompiler;
+package zenit.javacodecompiler;
+
+import zenit.console.ConsoleController;
+import zenit.filesystem.RunnableClass;
+import zenit.filesystem.metadata.Metadata;
+import zenit.ui.MainController;
 
 import java.io.File;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
-
-import javafx.application.Platform;
-import main.java.zenit.ConsoleRedirect;
-import main.java.zenit.console.ConsoleArea;
-import main.java.zenit.console.ConsoleController;
-import main.java.zenit.filesystem.RunnableClass;
-import main.java.zenit.filesystem.metadata.Metadata;
-import main.java.zenit.ui.MainController;
 
 /**
  * 

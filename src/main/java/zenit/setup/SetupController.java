@@ -1,4 +1,4 @@
-package main.java.zenit.setup;
+package zenit.setup;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,11 +22,11 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import main.java.zenit.GetOperatingSystem;
-import main.java.zenit.Zenit;
-import main.java.zenit.filesystem.WorkspaceHandler;
-import main.java.zenit.filesystem.jreversions.JREVersions;
-import main.java.zenit.ui.DialogBoxes;
+import zenit.GetOperatingSystem;
+import zenit.Zenit;
+import zenit.filesystem.WorkspaceHandler;
+import zenit.filesystem.jreversions.JREVersions;
+import zenit.ui.DialogBoxes;
 
 /**
  * Controller for the setup window of the application.

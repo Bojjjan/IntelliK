@@ -1,4 +1,4 @@
-package main.java.zenit.ui.tree;
+package zenit.ui.tree;
 
 import java.io.IOException;
 import java.nio.file.Files;
