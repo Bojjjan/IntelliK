@@ -255,7 +255,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 		btnRun.setOnAction(event -> compileAndRun());
 		btnStop.setOnAction(event -> terminate());
 		initTree();
-		//consoleController.setMainController(this);
+		consoleController.setMainController(this);
 	}
 
 	/**
