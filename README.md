@@ -35,7 +35,7 @@ git clone https://github.com/Bojjjan/IntelliK.git
 6. Click **Apply**, then **Run**
 
 > [!Note]
-> If the program does not start make sure that project structures source folder is ``java``
+> If the program does not start make sure that project structures source folder is ``java`` and  ``antlr4``
 
 <br>
 
