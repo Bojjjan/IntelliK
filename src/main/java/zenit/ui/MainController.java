@@ -968,7 +968,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 			boolean success = fileController.changeWorkspace(workspace);
 			if (success) {	
 				try {
-//					new TestUI().start(stage);
+					new TestUI().start(stage);
 					new Zenit().start(stage);
 				} catch (Exception ex) {
 					System.err.println("MainController.changeWorkspace: IOException: " + ex.getMessage());
@@ -1347,7 +1347,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 	
 	public void openConsoleComponent() {
 		
-		consolePane.setVisible(true);
+		consolePane.setVisible(false);
 		consolePane.setDisable(false);
 		splitPane.setDividerPosition(0, 0.85);
 		consolePane.setMinHeight(34.0);

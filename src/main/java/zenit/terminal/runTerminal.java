@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import zenit.console.ConsoleController;
 
 public class runTerminal extends Application {
 
@@ -14,12 +15,11 @@ public class runTerminal extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("/zenit/terminal/Terminal.fxml"));
-			
-			
-			TerminalController controller = new TerminalController();
-			loader.setController(controller);
-			Parent root = loader.load();
-			Scene scene = new Scene(root);
+			TerminalController terminalController = new TerminalController();
+
+			loader.setController(terminalController);
+			//Parent root = loader.load()
+			Scene scene = new Scene(terminalController.getTerminal().getPane());
 			stage.setScene(scene);
 			stage.setTitle("Zenit");
 	

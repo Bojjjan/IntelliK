@@ -1,4 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+		<!ELEMENT project (modelVersion|groupId|artifactId|version|dependencies|repositories|build)*>
+		<!ATTLIST project
+				xmlns CDATA #REQUIRED
+				xmlns:xsi CDATA #REQUIRED
+				xsi:schemaLocation CDATA #REQUIRED>
+		<!ELEMENT modelVersion (#PCDATA)>
+		<!ELEMENT groupId (#PCDATA)>
+		<!ELEMENT artifactId (#PCDATA)>
+		<!ELEMENT version (#PCDATA)>
+		<!ELEMENT dependencies (dependency)*>
+		<!ELEMENT dependency (groupId|artifactId|version|scope)*>
+		<!ELEMENT scope (#PCDATA)>
+		<!ELEMENT repositories (repository)*>
+		<!ELEMENT repository (id|name|url)*>
+		<!ELEMENT id (#PCDATA)>
+		<!ELEMENT name (#PCDATA)>
+		<!ELEMENT url (#PCDATA)>
+		<!ELEMENT build (plugins)*>
+		<!ELEMENT plugins (plugin)*>
+		<!ELEMENT plugin (groupId|artifactId|version|executions|configuration)*>
+		<!ELEMENT executions (execution)*>
+		<!ELEMENT execution (goals|id|phase|configuration)*>
+		<!ELEMENT goals (goal)*>
+		<!ELEMENT goal (#PCDATA)>
+		<!ELEMENT configuration (release|source|target|mainClass|sources)*>
+		<!ELEMENT release (#PCDATA)>
+		<!ELEMENT source (#PCDATA)>
+		<!ELEMENT target (#PCDATA)>
+		<!ELEMENT mainClass (#PCDATA)>
+		<!ELEMENT phase (#PCDATA)>
+		<!ELEMENT sources (source)*>
+		]>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
@@ -94,6 +127,17 @@
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna-platform</artifactId>
 			<version>5.10.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.techsenger.jeditermfx</groupId>
+			<artifactId>jeditermfx-core</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.techsenger.jeditermfx</groupId>
+			<artifactId>jeditermfx-ui</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 
 	</dependencies>
