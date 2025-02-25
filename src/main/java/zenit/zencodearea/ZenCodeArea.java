@@ -82,9 +82,10 @@ public class ZenCodeArea extends CodeArea {
 
 	/**
 	 * Updates the syntax highlighting of the code area.
+	 * returns the updated {@link StyleSpans} object containing syntax highlighting information for testing.
 	 */
-	public void update() {
-		applyHighlighting(computeHighlighting(getText()));
+	public StyleSpans<Collection<String>> update() {
+		return computeHighlighting(getText());
 	}
 
 	/**
@@ -126,8 +127,9 @@ public class ZenCodeArea extends CodeArea {
 	 *
 	 * @author Philip Boyde
 	 * @param highlighting The {@link StyleSpans} containing syntax highlighting information.
+	 * @return The {@link StyleSpans} object with syntax highlighting applied for testing
 	 */
-	private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
+	private StyleSpans<Collection<String>> applyHighlighting(StyleSpans<Collection<String>> highlighting) {
 		setStyleSpans(0, highlighting);
 
 		// TAB Key for indentation
@@ -148,6 +150,7 @@ public class ZenCodeArea extends CodeArea {
 
 		Nodes.addInputMap(this, imTab);
 		Nodes.addInputMap(this, imBraces);
+		return highlighting;
 	}
 
 	/**
