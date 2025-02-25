@@ -1,4 +1,4 @@
-package zenit.terminal;
+package zenit.terminal.oldcode;
 
 import com.techsenger.jeditermfx.core.TtyConnector;
 import org.jetbrains.annotations.NotNull;

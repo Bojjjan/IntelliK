@@ -1,46 +1,32 @@
 package zenit.console;
 
-import java.io.IOException;
-import java.io.PipedReader;
-import java.io.PipedWriter;
 import java.net.URL;
-import java.nio.file.FileSystems;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
-import com.sun.jna.platform.win32.WinBase;
-import com.techsenger.jeditermfx.core.TtyConnector;
-import com.techsenger.jeditermfx.core.model.JediTerminal;
 import com.techsenger.jeditermfx.ui.JediTermFxWidget;
 import com.techsenger.jeditermfx.ui.TerminalSession;
 import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
+import javafx.application.Application;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import zenit.ConsoleRedirect;
-import zenit.terminal.ExampleTtyConnector;
-import zenit.terminal.LocalTtyConnector;
-import zenit.terminal.TerminalController;
+import zenit.terminal.AbstractTerminalApplication;
+import zenit.terminal.JediTermFx;
+import zenit.terminal.oldcode.LocalTtyConnector;
 import zenit.ui.MainController;
 
 /**
@@ -299,38 +285,36 @@ public class ConsoleController implements Initializable {
 
 	public void newTerminal() {
 		try {
-			// Create a JediTermFxWidget with appropriate settings
-			JediTermFxWidget terminal = new JediTermFxWidget(80, 24, new DefaultSettingsProvider());
+			JediTermFx terminalApp = new JediTermFx();
+			//terminalApp.start();
+			JediTermFxWidget terminalWidget = terminalApp.createTerminalWidget(new DefaultSettingsProvider());
 
-			// Create and configure the terminal connector
-			LocalTtyConnector ttyConnector = new LocalTtyConnector();
 
-			// Create a terminal session and start it
-			TerminalSession session = terminal.createTerminalSession(ttyConnector);
-			session.start();
-			terminal.setTtyConnector(ttyConnector);
-			terminal.start();
-
-			// Configure UI elements
-			terminal.getPane().setId("Terminal (" + terminalList.size() + ")");
-			terminalAnchorPane = new AnchorPane();
+			Platform.runLater(() -> {
+				terminalAnchorPane.getChildren().add(terminalWidget.getPane());
+			});
+			terminalAnchorPane.requestLayout();
 			terminalAnchorPane.setStyle("-fx-background-color:black");
+			terminalAnchorPane.setVisible(true);
+			terminalAnchorPane.setMinSize(100, 100);
+			terminalWidget.getPane().setVisible(true);
+			//terminalWidget.start();
 
-			terminal.getPane().setMinHeight(5);
-			fillAnchor(terminal.getPane());
+			terminalWidget.getPane().setMinHeight(5);
+			fillAnchor(terminalWidget.getPane());
 			fillAnchor(terminalAnchorPane);
 
 			// Add the terminal to the UI
-			terminalAnchorPane.getChildren().add(terminal.getPane());
 			rootAnchor.getChildren().add(terminalAnchorPane);
 
+
 			// Update tracking lists and UI state
-			terminalList.add(terminal);
-			terminalChoiceBox.getItems().add(terminal);
-			terminalChoiceBox.getSelectionModel().select(terminal);
+			terminalList.add(terminalWidget);
+			terminalChoiceBox.getItems().add(terminalWidget);
+			terminalChoiceBox.getSelectionModel().select(terminalWidget);
 
 			// Focus the terminal
-			Platform.runLater(() -> terminal.getPane().requestFocus());
+			Platform.runLater(() -> terminalWidget.getPane().requestFocus());
 
 			// Show terminal tabs
 			showTerminalTabs();
@@ -347,6 +331,8 @@ public class ConsoleController implements Initializable {
 			}));
 		}
 	}
+
+
 
 /*
 

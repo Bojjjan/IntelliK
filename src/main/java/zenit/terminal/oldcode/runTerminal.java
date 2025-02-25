@@ -1,11 +1,9 @@
-package zenit.terminal;
+package zenit.terminal.oldcode;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import zenit.console.ConsoleController;
 
 public class runTerminal extends Application {
 

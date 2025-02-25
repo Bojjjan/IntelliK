@@ -1,18 +1,13 @@
-package zenit.terminal;
+package zenit.terminal.oldcode;
 
 
-import com.techsenger.jeditermfx.core.TtyConnector;
-import com.techsenger.jeditermfx.core.model.JediTerminal;
 import com.techsenger.jeditermfx.ui.JediTermFxWidget;
-import com.techsenger.jeditermfx.ui.TerminalSession;
 import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-
-import java.io.IOException;
 
 
 public class TerminalController {
