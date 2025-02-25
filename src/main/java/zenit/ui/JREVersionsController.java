@@ -1,4 +1,4 @@
-package main.java.zenit.ui;
+package zenit.ui;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
-import main.java.zenit.filesystem.jreversions.JREVersions;
+import zenit.filesystem.jreversions.JREVersions;
 
 public class JREVersionsController extends AnchorPane {
 	

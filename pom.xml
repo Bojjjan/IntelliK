@@ -16,13 +16,13 @@
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>
-			<version>21</version>
+			<version>21.0.6</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-fxml</artifactId>
-			<version>21</version>
+			<version>21.0.6</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-web -->
 		<dependency>
@@ -96,10 +96,6 @@
 			<artifactId>hamcrest</artifactId>
 			<version>2.2</version>
 		</dependency>
-
-
-
-
 		<dependency>
 			<groupId>org.fxmisc.richtext</groupId>
 			<artifactId>richtextfx</artifactId>
@@ -135,6 +131,14 @@
 			<artifactId>terminalfx</artifactId>
 			<version>1.2.0</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>4.13.2</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.kordamp.ikonli</groupId>
@@ -175,6 +179,19 @@
 
 		<plugins>
 			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>4.13.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.0</version>
@@ -198,6 +215,26 @@
 				<configuration>
 					<mainClass>org.openjfx.MainApp</mainClass>
 				</configuration>
+			</plugin>
+
+			<!-- To find antlr4 generated and java folder -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+				<execution>
+					<id>add-source</id>
+					<phase>generate-sources</phase>
+					<goals><goal>add-source</goal>
+					</goals><configuration>
+					<sources>
+						<source>${project.basedir}/src/main/antlr4</source>
+						<source>${project.basedir}/src/main/java</source>
+					</sources>
+				</configuration>
+				</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -1,11 +1,11 @@
-package main.java.zenit.filesystem;
+package zenit.filesystem;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 
-import main.java.zenit.filesystem.jreversions.JREVersions;
-import main.java.zenit.filesystem.metadata.Metadata;
+import zenit.filesystem.jreversions.JREVersions;
+import zenit.filesystem.metadata.Metadata;
 
 /**
  * Method for creating a metadata file used during compilation

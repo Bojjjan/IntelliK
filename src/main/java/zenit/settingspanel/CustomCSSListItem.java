@@ -1,4 +1,4 @@
-package main.java.zenit.settingspanel;
+package zenit.settingspanel;
 
 import java.io.IOException;
 

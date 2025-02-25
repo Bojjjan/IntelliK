@@ -1,15 +1,9 @@
-// Generated from C:/Users/phili/Documents/GitHub/IntelliK/src/main/antlr4/JavaParser.g4 by ANTLR 4.13.2
-package lexer;
+package generated;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
-
-import java.util.Arrays;
 import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
 public class JavaParser extends Parser {
@@ -2187,7 +2181,6 @@ public class JavaParser extends Parser {
 			if ( visitor instanceof JavaParserVisitor ) return ((JavaParserVisitor<? extends T>)visitor).visitMethodDeclaration(this);
 			else return visitor.visitChildren(this);
 		}
-
 	}
 
 	public final MethodDeclarationContext methodDeclaration() throws RecognitionException {

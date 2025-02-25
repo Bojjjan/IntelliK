@@ -1,5 +1,4 @@
-// Generated from C:/Users/phili/Documents/GitHub/IntelliK/src/main/antlr4/JavaLexer.g4 by ANTLR 4.13.2
-package lexer;
+package generated;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

@@ -6,10 +6,10 @@
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/src/main/antlr4/JavaParser.g4" />
           <option name="autoGen" value="true" />
-          <option name="outputDir" value="C:\Users\phili\Documents\GitHub\IntelliK\src\main\java\generated" />
+          <option name="outputDir" value="C:\Users\phili\Documents\GitHub\IntelliK\src\main\antlr4\generated" />
           <option name="libDir" value="C:\Users\phili\Documents\GitHub\IntelliK\src\main\antlr4" />
           <option name="encoding" value="" />
-          <option name="pkg" value="lexer" />
+          <option name="pkg" value="" />
           <option name="language" value="Java" />
           <option name="generateVisitor" value="true" />
         </PerGrammarGenerationSettings>

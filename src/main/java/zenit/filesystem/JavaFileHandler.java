@@ -1,4 +1,4 @@
-package main.java.zenit.filesystem;
+package zenit.filesystem;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-import main.java.zenit.exceptions.TypeCodeException;
-import main.java.zenit.filesystem.helpers.CodeSnippets;
-import main.java.zenit.filesystem.helpers.FileNameHelpers;
+import zenit.exceptions.TypeCodeException;
+import zenit.filesystem.helpers.CodeSnippets;
+import zenit.filesystem.helpers.FileNameHelpers;
 
 /**
  * Methods for creating, reading, writing, renaming and deleting .java files in file system.

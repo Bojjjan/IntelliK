@@ -1,8 +1,8 @@
-package main.java.zenit.filesystem.metadata;
+package zenit.filesystem.metadata;
 
 import java.io.File;
 
-import main.java.zenit.filesystem.MetadataFileHandler;
+import zenit.filesystem.MetadataFileHandler;
 
 /**
  * Used to verify that a metadata-file is good to use.

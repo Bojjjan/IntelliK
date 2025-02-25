@@ -1,4 +1,4 @@
-package main.java.zenit.settingspanel;
+package zenit.settingspanel;
 
 public enum CustomColor {
 	primaryColor, primaryTint, secondaryColor, secondaryTint

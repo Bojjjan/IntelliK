@@ -1,10 +1,10 @@
-package main.java.zenit.javacodecompiler;
+package zenit.javacodecompiler;
 
 import java.io.File;
 import java.util.regex.Matcher;
 
-import main.java.zenit.filesystem.jreversions.JDKVerifier;
-import main.java.zenit.filesystem.jreversions.JREVersions;
+import zenit.filesystem.jreversions.JDKVerifier;
+import zenit.filesystem.jreversions.JREVersions;
 
 public class CommandBuilder {
 

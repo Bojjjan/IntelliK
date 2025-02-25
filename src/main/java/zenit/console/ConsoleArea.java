@@ -1,4 +1,4 @@
-package main.java.zenit.console;
+package zenit.console;
 
 import org.fxmisc.richtext.InlineCssTextArea;
 import javafx.application.Platform;

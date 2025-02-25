@@ -1,4 +1,4 @@
-package main.java.zenit;
+package zenit;
 
 public class GetOperatingSystem {
 

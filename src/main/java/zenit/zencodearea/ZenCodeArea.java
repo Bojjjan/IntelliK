@@ -1,15 +1,13 @@
-package main.java.zenit.zencodearea;
+package zenit.zencodearea;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.concurrent.Task;
 
-import main.java.zenit.ui.FileTab;
-import main.java.zenit.ui.MainController;
+import zenit.ui.FileTab;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.Token;
 
-import java.io.File;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -25,8 +23,8 @@ import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
 
-import lexer.JavaParser;
-import lexer.JavaLexer;
+import generated.JavaParser;
+import generated.JavaLexer;
 
 /**
  * ZenCodeArea is a custom code editor component that extends CodeArea.

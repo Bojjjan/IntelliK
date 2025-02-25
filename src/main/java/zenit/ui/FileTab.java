@@ -1,4 +1,4 @@
-package main.java.zenit.ui;
+package zenit.ui;
 
 import java.io.File;
 import java.util.Arrays;
@@ -14,9 +14,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 
-import main.java.zenit.filesystem.FileController;
-import main.java.zenit.util.StringUtilities;
-import main.java.zenit.zencodearea.ZenCodeArea;
+import zenit.filesystem.FileController;
+import zenit.util.StringUtilities;
+import zenit.zencodearea.ZenCodeArea;
 
 /**
  * A Tab extension that holds a File.
