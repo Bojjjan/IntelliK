@@ -58,11 +58,46 @@
 				<version>5.9.2</version>
 			</dependency>
 
+			<!-- TestFX Core -->
+			<dependency>
+				<groupId>org.testfx</groupId>
+				<artifactId>testfx-core</artifactId>
+				<version>4.0.18</version>
+			</dependency>
+
+			<!-- TestFX for JUnit5 -->
+			<dependency>
+				<groupId>org.testfx</groupId>
+				<artifactId>testfx-junit5</artifactId>
+				<version>4.0.18</version>
+			</dependency>
+
+			<!-- JUnit 5 -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>5.9.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>5.15.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>5.9.2</version>
+			</dependency>
+
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest</artifactId>
 			<version>2.2</version>
 		</dependency>
+
+
 
 
 		<dependency>

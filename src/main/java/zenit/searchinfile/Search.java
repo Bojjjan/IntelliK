@@ -36,7 +36,7 @@ public class Search {
 	
 	private List<Integer> line;
 	private List<Integer> wordPos;
-	private List<Tuple<Integer, Integer>> absolutePos;
+	public List<Tuple<Integer, Integer>> absolutePos;
 
 	private int numberOfTimes = 0;
 	private int numberOfLines = -1;
@@ -46,7 +46,7 @@ public class Search {
 	private String searchWord = "";
 	
 	private boolean isDarkMode;	
-	private boolean caseSensetive = false; 
+	public boolean caseSensetive = false;
 	
 	/**
 	 * Opens a TextInputDialog and let's you type in a word to search for 
