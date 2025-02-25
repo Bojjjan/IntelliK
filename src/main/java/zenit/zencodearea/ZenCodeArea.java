@@ -1,5 +1,7 @@
 package zenit.zencodearea;
 
+import javafx.geometry.Bounds;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.concurrent.Task;
@@ -41,6 +43,9 @@ public class ZenCodeArea extends CodeArea {
 	private final ExecutorService executor;
 	private JavaClassType oldJClass;
 	private FileTab tab;
+	private ContextMenu contextMenu;
+	private ArrayList<Character> typedChars;
+	private String wordBeforeDot = null;
 
 	/**
 	 * Constructs a {@code ZenCodeArea} with the specified text size and font.
@@ -57,6 +62,17 @@ public class ZenCodeArea extends CodeArea {
 	 * @param font The font to be used for displaying text.
 	 */
 	public ZenCodeArea(int textSize, String font) {
+		contextMenu = new ContextMenu();
+		typedChars = new ArrayList<>();
+		this.addEventHandler(KeyEvent.KEY_TYPED, event -> {
+			char typedChar = event.getCharacter().charAt(0);
+			typedChars.add(typedChar);
+			// Trigger suggestions for alphabetic characters or dot (.) or open parenthesis '('
+			if (Character.isAlphabetic(typedChar) || typedChar == '.' || typedChar == '(') {
+				showSuggestions();
+			}
+		});
+
 		setParagraphGraphicFactory(LineNumberFactory.get(this));
 
 		// Async syntax highlighting
@@ -74,7 +90,6 @@ public class ZenCodeArea extends CodeArea {
 		executor = Executors.newSingleThreadExecutor();
 		updateAppearance(font, textSize);
 	}
-
 
 
 
@@ -108,7 +123,6 @@ public class ZenCodeArea extends CodeArea {
 		};
 		executor.execute(task);
 		return task;
-
 	}
 
 	/**
@@ -309,6 +323,143 @@ public class ZenCodeArea extends CodeArea {
 	 */
 	public void updateAppearance(String fontFamily, int size) {setStyle("-fx-font-family: " + fontFamily + "; -fx-font-size: " + size + ";");}
 
-
 	public void setTabAssociation(FileTab tab){this.tab =  tab;}
+
+	private void showSuggestions() {
+		String currentWord = getCurrentWord();
+		System.out.println("Current Word: " + currentWord);
+
+		char lastTypedChar = typedChars.get(typedChars.size() - 1);
+
+		if (lastTypedChar == '.') {
+			typedChars.clear();
+			wordBeforeDot = getCurrentWord();
+			System.out.println("Word before dot: " + wordBeforeDot);
+		}
+
+		List<String> suggestions = getSuggestionsForWord(currentWord);
+
+		displaySuggestions(suggestions);
+	}
+
+	private String getCurrentWord() {
+		StringBuilder word = new StringBuilder();
+
+		// Combine all typed characters into a word
+		for (Character c : typedChars) {
+			word.append(c);
+		}
+
+		System.out.println(word);
+		return word.toString();
+	}
+
+	private List<String> getSuggestionsForWord(String word) {
+		List<String> suggestions = new ArrayList<>();
+		if(wordBeforeDot != null){
+			if (word.endsWith(".")) {
+				suggestions.add("toString");
+				suggestions.add("length");
+			}
+		}
+		else{
+			if (word.startsWith("S")) {
+				suggestions.add("System");
+				suggestions.add("Syntax");
+			}
+		}
+		// Example suggestion based on the word being typed
+
+
+		// Optionally, filter suggestions based on the typed character (e.g., dot or parentheses)
+
+
+		return suggestions;
+	}
+
+	private void displaySuggestions(List<String> suggestions) {
+		contextMenu.hide();
+		contextMenu.getItems().clear();
+
+		for (String suggestion : suggestions) {
+			MenuItem item = new MenuItem(suggestion);
+			item.setOnAction(event -> {
+				// Replace the word with the selected suggestion
+				replaceCurrentWordWithSuggestion(suggestion);
+			});
+			contextMenu.getItems().add(item);
+		}
+
+		// Show context menu at the current caret position
+		Optional<Bounds> optBounds = getCaretBounds();
+		if (optBounds.isPresent()) {
+			Bounds wordBounds = optBounds.get();
+			contextMenu.show(this, wordBounds.getMinX(), wordBounds.getMinY() + 20);
+		}
+	}
+
+	private void replaceCurrentWordWithSuggestion(String suggestion) {
+		int caretPosition = getCaretPosition();
+		int start = caretPosition;
+
+		// Move backwards to find the start of the word
+		while (start > 0 && Character.isLetterOrDigit(getText().charAt(start - 1))) {
+			start--;
+		}
+
+		// Replace the word with the suggestion
+		replaceText(start, caretPosition, suggestion);
+	}
+
+	private String getLastWord(String text) {
+		String[] words = text.split("\\s+|\\(|\\)|\\{|\\}|;");
+
+		if (words.length > 0) {
+			return words[words.length - 1];
+		} else {
+			return "";
+		}
+	}
+
+	private List<String> getSuggestions(String prefix) {
+		Map<String, List<String>> suggestionsMap = new HashMap<>();
+		suggestionsMap.put("System", List.of("out", "err", "in"));
+		suggestionsMap.put("System.out", List.of("println()", "print()"));
+
+		suggestionsMap.put("if", List.of("else"));
+		suggestionsMap.put("for", List.of("(", ";", ")"));
+		suggestionsMap.put("while", List.of("("));
+		suggestionsMap.put("switch", List.of("case", "default"));
+
+		// List to hold suggestions
+		List<String> suggestions = new ArrayList<>();
+
+		for (String key : suggestionsMap.keySet()) {
+			if (key.startsWith(prefix)) {
+				suggestions.add(key);
+			}
+		}
+
+		// Return the matching suggestions or an empty list if no matches
+		return suggestions.isEmpty() ? Collections.emptyList() : suggestions;
+	}
+
+	private void showSuggestionPopup(List<String> suggestions) {
+		contextMenu.hide();
+		contextMenu = new ContextMenu();
+
+
+		for (String suggestion : suggestions) {
+			MenuItem item = new MenuItem(suggestion);
+			contextMenu.getItems().add(item);
+		}
+
+		Optional<Bounds> optBounds = getCaretBounds();
+
+		if (optBounds.isPresent()) {
+			Bounds wordBounds = optBounds.get();
+			contextMenu.show(this, wordBounds.getMinX(), wordBounds.getMinY() + 20);
+		}
+	}
+
 }

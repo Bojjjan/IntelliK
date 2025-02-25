@@ -134,8 +134,8 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
     /**
      * Retrieves the set of method names found during the parsing process.
      *
-     * @author Philip Boyde
      * @return A {@link Set} of method names.
+     * @author Philip Boyde
      */
     public Set<String> getMethodNames() { return methodNames; }
 
