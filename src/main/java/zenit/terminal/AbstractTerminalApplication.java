@@ -11,7 +11,6 @@ import com.techsenger.jeditermfx.core.model.TerminalSelection;
 import com.techsenger.jeditermfx.ui.JediTermFxWidget;
 import com.techsenger.jeditermfx.ui.TerminalPanel;
 import com.techsenger.jeditermfx.ui.TerminalWidget;
-import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
 import com.techsenger.jeditermfx.ui.settings.SettingsProvider;
 import zenit.terminal.debug.TerminalDebugView;
 import kotlin.Pair;
@@ -107,7 +106,6 @@ public abstract class AbstractTerminalApplication extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {
-
         stage.setTitle("JediTermFX");
         stage.setOnCloseRequest(e -> {
             System.exit(0);
@@ -126,7 +124,6 @@ public abstract class AbstractTerminalApplication extends Application{
             myWidget.close();
             System.exit(exitCode); // unneeded, but speeds up the JVM termination
         });
-
         stage.show();
     }
 
@@ -135,7 +132,7 @@ public abstract class AbstractTerminalApplication extends Application{
         return myWidget;
     }
     protected AbstractTerminalApplication() {
-        myWidget = createTerminalWidget(new DefaultSettingsProvider());
+        myWidget = createTerminalWidget(new CustomSettingsProvider());
     }
     void setConsoleController(ConsoleController _consoleController){
         consoleController = _consoleController;

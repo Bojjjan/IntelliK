@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.util.*;
 
 import com.pty4j.PtyProcessBuilder;
+import com.techsenger.jeditermfx.core.TerminalColor;
+import com.techsenger.jeditermfx.core.TextStyle;
 import com.techsenger.jeditermfx.core.TtyConnector;
 import com.techsenger.jeditermfx.ui.JediTermFxWidget;
 import com.techsenger.jeditermfx.ui.TerminalSession;
@@ -40,14 +42,18 @@ import zenit.ui.MainController;
 
 
 /**
- * The controller class for ConsoleArea
- * 
- * @author siggelabor
+ * ConsoleController manages the console and terminal components of the application.
+ * It handles creation, switching, and management of both console and terminal instances.
  *
- */
-/**
- * @author Admin
+ * This controller provides the following functionality:
+ * - Creating and managing multiple console instances
+ * - Creating and managing multiple terminal instances
+ * - Switching between console/terminal modes
+ * - Process termination for console instances
+ * - UI management for the console component
  *
+ * @author Kevin Nordkvist
+ * @author Huy Khanh Dang
  */
 public class ConsoleController implements Initializable {
 
@@ -58,8 +64,8 @@ public class ConsoleController implements Initializable {
 	private ArrayList<ConsoleArea> consoleList = new ArrayList<ConsoleArea>();
 
 	private ArrayList<JediTermFxWidget> terminalList = new ArrayList<JediTermFxWidget>();
-	
-	@FXML 
+
+	@FXML
 	private TabPane consoleTabPane;
 
 	@FXML
@@ -69,45 +75,45 @@ public class ConsoleController implements Initializable {
 	private Button btnConsole;
 
 	@FXML
-	private ChoiceBox<ConsoleArea> consoleChoiceBox; 
+	private ChoiceBox<ConsoleArea> consoleChoiceBox;
 
 	@FXML
 	private ChoiceBox<JediTermFxWidget> terminalChoiceBox;
-	
+
 	@FXML
 	private AnchorPane rootAnchor;
-	
+
 	@FXML
 	private AnchorPane rootNode;
 
 	@FXML
 	private Button btnNewTerminal;
-	
+
 	@FXML
 	private Button btnNewConsole;
-	
+
 	@FXML
 	private Button btnClearConsole;
-	
+
 	@FXML
 	private FontIcon iconCloseConsoleInstance;
-	
+
 	@FXML
 	private FontIcon iconTerminateProcess;
-	
+
 	@FXML
 	private FontIcon iconCloseTerminalInstance;
-		
-	private AnchorPane terminalAnchorPane; 
-	
+
+	private AnchorPane terminalAnchorPane;
+
 	private AnchorPane consoleAnchorPane;
-	
+
 	private ConsoleArea activeConsole;
-	
+
 	private JediTermFxWidget activeTerminal;
-	
+
 	private AnchorPane noConsolePane;
-		
+
 	private MainController mainController;
 
 	//private JediTermFxWidget terminal;
@@ -116,23 +122,16 @@ public class ConsoleController implements Initializable {
 	public void setMainController(MainController mainController) {
 		this.mainController = mainController;
 	}
-	
+
 	public List<String> getStylesheets() {
 		return rootNode.getStylesheets();
 	}
-	
-	
-	/**
-	 * Shows the choiceBox with console areas, and sets the choiceBox with terminal tabs to not 
-	 * visible. Also sets text color of the labels.
-	 */
-	
 
 	public void showConsoleTabs() {
-		
+
 		btnTerminal.setStyle("");
 		btnConsole.setStyle("-fx-text-fill:white; -fx-border-color:#666; -fx-border-width: 0 0 2 0;");
-		
+
 
 		terminalChoiceBox.setVisible(false);
 		terminalChoiceBox.setDisable(true);
@@ -148,21 +147,18 @@ public class ConsoleController implements Initializable {
 		iconCloseConsoleInstance.setDisable(false);
 		iconCloseTerminalInstance.setVisible(false);
 		iconCloseTerminalInstance.setDisable(true);
-		
-			
+
+
 		if (consoleAnchorPane != null) {
 				consoleAnchorPane.toFront();
 		}
-		
+
 		if(consoleList.size() == 0) {
 			createEmptyConsolePane();
 		}
-		
-	
-		
 	}
-	
-	
+
+
 	/*
 	 * Creates and displays an anchorPane when there is no console to display in the console-window
 	 */
@@ -181,17 +177,17 @@ public class ConsoleController implements Initializable {
 		rootAnchor.getChildren().add(noConsolePane);
 		noConsolePane.toFront();
 	}
-	
-	
+
+
 	/**
-	 * Shows the choiceBox with terminal panes, and sets the choiceBox with console tabs to not 
+	 * Shows the choiceBox with terminal panes, and sets the choiceBox with console tabs to not
 	 * visible. Also sets text color of the labels.
 	 */
 	public void showTerminalTabs() {
 		btnConsole.setStyle("");
 		btnTerminal.setStyle("-fx-text-fill:white; -fx-border-color:#666; -fx-border-width: 0 0 2 0;");
-		
-		
+
+
 		if(terminalList.isEmpty()) {
 			newTerminal();
 		}
@@ -213,82 +209,32 @@ public class ConsoleController implements Initializable {
 		iconCloseConsoleInstance.setDisable(true);
 		iconCloseTerminalInstance.setVisible(true);
 		iconCloseTerminalInstance.setDisable(false);
-				
+
 	}
 
 	/**
 	 * Creates a new ConsoleArea, adds it to the console AnchorPane and puts it as an option in the
 	 * choiceBox.
 	 */
-	
+
 	public void newConsole(ConsoleArea consoleArea) {
 		consoleAnchorPane = new AnchorPane();
 		consoleArea.setId("consoleArea");
 		consoleAnchorPane.setId("consoleAnchor");
 		fillAnchor(consoleArea);
 		fillAnchor(consoleAnchorPane);
-		
-		
-		
+
 		consoleAnchorPane.getChildren().add(consoleArea);
 		rootAnchor.getChildren().add(consoleAnchorPane);
-		
+
 		consoleList.add(consoleArea);
-		
+
 		consoleChoiceBox.getItems().add(consoleArea);
 		consoleChoiceBox.getSelectionModel().select(consoleArea);
-		
-		new ConsoleRedirect(consoleArea);	
+
+		new ConsoleRedirect(consoleArea);
 		showConsoleTabs();
 	}
-
-
-	
-	/*
-	 * Creates a new Terminal, adds it to the terminal
-	 *  AnchorPane and puts it as an option in the
-	 * choiceBox.
-	 */
-	/*
-	public void newTerminal() {
-
-		PipedWriter terminalWriter = new PipedWriter();
-		//PipedReader terminalReader = new PipedReader(terminalWriter);
-
-
-
-
-		JediTermFxWidget terminal = new JediTermFxWidget(80, 24, new DefaultSettingsProvider());
-
-		try{
-			TtyConnector ttyConnector = new ExampleTtyConnector(terminalWriter);
-			//TtyConnector ttyConnector = new LocalTtyConnector();
-			terminal.setTtyConnector(ttyConnector);
-			terminal.start();
-			TerminalSession terminalSession = terminal.createTerminalSession(ttyConnector);
-			terminalSession.start();
-		} catch(Exception e){
-			throw new RuntimeException(e);
-		}
-
-		terminal.getPane().setId("Terminal ("+terminalList.size()+")");
-		terminalAnchorPane = new AnchorPane();
-		terminalAnchorPane.setStyle("-fx-background-color:black");
-
-		terminal.getPane().setMinHeight(5);
-		fillAnchor(terminal.getPane());
-		fillAnchor(terminalAnchorPane);
-		
-		terminalAnchorPane.getChildren().add(terminal.getPane());
-		rootAnchor.getChildren().add(terminalAnchorPane);
-		terminalList.add(terminal);
-		terminalChoiceBox.getItems().add(terminal);
-		terminalChoiceBox.getSelectionModel().select(terminal);
-		terminal.start();
-		showTerminalTabs();
-    }
-
-	 */
 
 	private final Map<String, String> configureEnvironmentVariables() {
 		HashMap envs = new HashMap<String, String>(System.getenv());
@@ -300,6 +246,16 @@ public class ConsoleController implements Initializable {
 		}
 		return envs;
 	}
+
+	/**
+	 * Creates a TtyConnector for terminal communication.
+	 * Sets up the appropriate shell based on the platform (PowerShell for Windows, bash for others).
+	 * Configures and starts a PTY process for terminal interaction.
+	 *
+	 * @return A configured TtyConnector for terminal communication
+	 * @throws IllegalStateException if process creation fails
+	 * @Author Kevin Nordkvist, Huy Khanh Dang
+	 */
 
 	public TtyConnector createTtyConnector() {
 		try {
@@ -321,8 +277,6 @@ public class ConsoleController implements Initializable {
 			var workingDirectory = Path.of(".").toAbsolutePath().normalize().toString();
 			//logger.info("Starting {} in {}", String.join(" ", command), workingDirectory);
 
-			System.out.println("Starting PTY process with command: " + Arrays.toString(command));
-
 			var process = new PtyProcessBuilder()
 					.setDirectory(workingDirectory)
 					.setInitialColumns(120)
@@ -333,14 +287,19 @@ public class ConsoleController implements Initializable {
 					.setUseWinConPty(true)
 					.start();
 
-			System.out.println("Process started? " + process.isAlive());
-			System.out.println("Process PID: " + process.pid());
-
 			return new JediTermFx.LoggingPtyProcessTtyConnector(process, StandardCharsets.UTF_8, Arrays.asList(command));
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 	}
+	/**
+	 * Creates a new terminal instance.
+	 * Sets up the terminal widget with appropriate styling and connects it to a TTY process.
+	 * Organizes terminals in the UI to enable proper switching between instances.
+	 * Handles error cases by creating an error console if terminal creation fails.
+	 * @Author Kevin Nordkvist, Huy Khanh Dang
+	 */
+
 	public void newTerminal() {
 		try {
 			JediTermFx terminalApp = new JediTermFx();
@@ -349,24 +308,40 @@ public class ConsoleController implements Initializable {
 			TtyConnector ttyConnector = createTtyConnector();
 			terminalApp.openSession(terminalWidget, ttyConnector);
 
-			terminalAnchorPane = new AnchorPane();
-			terminalAnchorPane.getChildren().add(terminalWidget.getPane());
-			terminalAnchorPane.setStyle("-fx-background-color:black");
+			if (terminalAnchorPane == null) {
+				terminalAnchorPane = new AnchorPane();
+				terminalAnchorPane.setStyle("-fx-background-color:black");
+				rootAnchor.getChildren().add(terminalAnchorPane);
+			}
+
+			AnchorPane individualTerminalPane = new AnchorPane();
+			individualTerminalPane.getChildren().add(terminalWidget.getPane());
+			individualTerminalPane.setStyle("-fx-background-color:black");
 
 			terminalWidget.getPane().setMinHeight(5);
 			fillAnchor(terminalWidget.getPane());
+			fillAnchor(individualTerminalPane);
+
+			terminalAnchorPane.getChildren().add(individualTerminalPane);
 			fillAnchor(terminalAnchorPane);
 
-			rootAnchor.getChildren().add(terminalAnchorPane);
+			for (JediTermFxWidget terminal : terminalList) {
+				Node parent = terminal.getPane().getParent();
+				if (parent != null) {
+					parent.setVisible(false);
+				}
+			}
+
+			individualTerminalPane.setVisible(true);
 
 			terminalList.add(terminalWidget);
 			terminalChoiceBox.getItems().add(terminalWidget);
 			terminalChoiceBox.getSelectionModel().select(terminalWidget);
 
+			activeTerminal = terminalWidget;
 			terminalWidget.getPane().requestFocus();
 
 			showTerminalTabs();
-
 		} catch (Exception e) {
 			ConsoleArea errorConsole = new ConsoleArea("Terminal Error", null, "-fx-background-color:#ff6666");
 			newConsole(errorConsole);
@@ -381,8 +356,8 @@ public class ConsoleController implements Initializable {
 	}
 
 	/**
-	 * sets the anchor of a node to fill parent 
-	 * 
+	 * sets the anchor of a node to fill parent
+	 *
 	 * @param node to fill to parent anchor
 	 */
 	public void fillAnchor(Node node) {
@@ -391,8 +366,8 @@ public class ConsoleController implements Initializable {
 		AnchorPane.setBottomAnchor(node, 0.0);
 		AnchorPane.setLeftAnchor(node, 0.0);
 	}
-	
-	
+
+
 	/**
 	 * Clears the active consoleArea
 	 */
@@ -401,19 +376,18 @@ public class ConsoleController implements Initializable {
 			activeConsole.clear();
 		}
 	}
-	
-	
+
+
 	public void closeComponent() {
 		mainController.closeConsoleComponent();
 	}
-	
-	
+
 	public void changeAllConsoleAreaColors(String color) {
 		for(ConsoleArea c : consoleList) {
 			c.setBackgroundColor(color);
 		}
 	}
-	
+
 	/**
 	 * Performs initialization steps.
 	 */
@@ -421,7 +395,7 @@ public class ConsoleController implements Initializable {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
 		consoleChoiceBox.getSelectionModel().selectedItemProperty().addListener( (v, oldValue, newValue) -> {
-						
+
 			if(newValue != null) {
 				for(ConsoleArea console : consoleList) {
 					if(newValue.equals(console)) {
@@ -430,75 +404,81 @@ public class ConsoleController implements Initializable {
 					}
 				}
 			}
-			
+
 		});
-				
-					
-				
-		terminalChoiceBox.getSelectionModel().selectedItemProperty().addListener( (v, oldValue, newValue) -> {
-			if(newValue != null) {
-				for(JediTermFxWidget t : terminalList) {
-					if(newValue.equals(t)) {
-						t.getPane().toFront();
+
+		terminalChoiceBox.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> {
+			if (newValue != null) {
+				for (JediTermFxWidget t : terminalList) {
+					Node parent = t.getPane().getParent();
+					if (parent != null) {
+						parent.setVisible(false);
+					}
+				}
+
+				for (JediTermFxWidget t : terminalList) {
+					if (newValue.equals(t)) {
+						Node parent = t.getPane().getParent();
+						if (parent != null) {
+							parent.setVisible(true);
+							parent.toFront();
+						}
 						activeTerminal = t;
-
-						/* t.onTerminalFxReady(()-> {
-							t.focusCursor();
-						}); */
-
+						t.getPane().requestFocus();
 					}
 				}
 			}
 		});
-		
+
 		showConsoleTabs();
-		
 		//Console
 		iconCloseConsoleInstance.setOnMouseClicked(e -> {
-				rootAnchor.getChildren().remove(activeConsole.getParent());
-				consoleList.remove(activeConsole);
-				consoleChoiceBox.getItems().remove(activeConsole);
-				consoleChoiceBox.getSelectionModel().selectLast();
+			rootAnchor.getChildren().remove(activeConsole.getParent());
+			consoleList.remove(activeConsole);
+			consoleChoiceBox.getItems().remove(activeConsole);
+			consoleChoiceBox.getSelectionModel().selectLast();
 
-				if(consoleList.size() == 0) {
-					createEmptyConsolePane();
-				}
+			if(consoleList.isEmpty()) {
+				createEmptyConsolePane();
+			}
 		});
-		
+
 		//Terminal
 		iconCloseTerminalInstance.setOnMouseClicked(e ->{
-			
+
 			if(terminalList.size() > 1) {
 				rootAnchor.getChildren().remove(activeTerminal.getPane());
 				terminalList.remove(activeTerminal);
 				terminalChoiceBox.getItems().remove(activeTerminal);
 				terminalChoiceBox.getSelectionModel().selectLast();
+				activeTerminal = terminalChoiceBox.getSelectionModel().getSelectedItem();
+				activeTerminal.close();
 			}
-			
-			
+
+
 		});
-		
-		
+
+
 		btnNewConsole.setOnMouseClicked(e -> {
 			if(mainController.isDarkmode()) {
 				newConsole(new ConsoleArea("Console(" + consoleList.size() + ")", null, "-fx-background-color:#444"));
 			}else {
 				newConsole(new ConsoleArea("Console(" + consoleList.size() + ")", null, "-fx-background-color:#989898"));
 			}
-			
+
 		});
-		
+
 		iconTerminateProcess.setOnMouseClicked(e -> {
 			for(var item : consoleList) {
 				if(item.equals(activeConsole)) {
 					if(item != null) {
 						item.getProcess().destroy();
-					}	
+					}
 				}
 			}
-							
+
 		});
-		
-		
+
+
 	}
 }

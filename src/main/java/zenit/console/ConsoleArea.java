@@ -42,8 +42,6 @@ public class ConsoleArea extends InlineCssTextArea {
 		getStylesheets().add(getClass().getResource("/zenit/console/consoleStyle.css").toString());
 		this.setStyle(backgroundColor);
 		this.setEditable(false);
-		
-		
 	}
 	
 	public String getFileName() {
