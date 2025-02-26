@@ -7,6 +7,7 @@ import com.techsenger.jeditermfx.core.util.TermSize;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedWriter;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -42,4 +43,12 @@ public class PtyProcessTtyConnector extends ProcessTtyConnector {
     public String getName() {
         return "Local";
     }
+
+    public BufferedWriter getWriter(){
+        return myProcess.outputWriter();
+    }
+
+
 }
+
+

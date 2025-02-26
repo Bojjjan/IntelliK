@@ -1,5 +1,7 @@
 package zenit.terminal;
 
+import javafx.scene.layout.AnchorPane;
+import zenit.console.ConsoleController;
 import zenit.terminal.pty.TtyConnectorWaitFor;
 import com.techsenger.jeditermfx.core.compatibility.Point;
 import com.techsenger.jeditermfx.core.Terminal;
@@ -32,7 +34,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public abstract class AbstractTerminalApplication extends Application {
+
+public abstract class AbstractTerminalApplication extends Application{
 
     public static final Logger logger = LoggerFactory.getLogger(AbstractTerminalApplication.class);
 
@@ -54,7 +57,9 @@ public abstract class AbstractTerminalApplication extends Application {
 
     private final MenuItem myCursor80x24 = new MenuItem("80x24");
 
-    private MenuBar getMenuBar() {
+    private ConsoleController consoleController;
+
+    MenuBar getMenuBar() {
         final MenuBar mb = new MenuBar();
         final Menu dm = new Menu("Debug");
         Menu logLevel = new Menu("Set log level ...");
@@ -102,7 +107,7 @@ public abstract class AbstractTerminalApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        myWidget = createTerminalWidget(new DefaultSettingsProvider());
+
         stage.setTitle("JediTermFX");
         stage.setOnCloseRequest(e -> {
             System.exit(0);
@@ -121,14 +126,22 @@ public abstract class AbstractTerminalApplication extends Application {
             myWidget.close();
             System.exit(exitCode); // unneeded, but speeds up the JVM termination
         });
+
         stage.show();
     }
 
-    protected AbstractTerminalApplication() {
 
+    public JediTermFxWidget getMyWidget(){
+        return myWidget;
+    }
+    protected AbstractTerminalApplication() {
+        myWidget = createTerminalWidget(new DefaultSettingsProvider());
+    }
+    void setConsoleController(ConsoleController _consoleController){
+        consoleController = _consoleController;
     }
 
-    private void initMenuItems() {
+    void initMenuItems() {
         myShowBuffersAction.setOnAction(e -> {
             showBuffers();
         });
@@ -163,7 +176,7 @@ public abstract class AbstractTerminalApplication extends Application {
         });
     }
 
-    private static void onTermination(@NotNull JediTermFxWidget widget, @NotNull IntConsumer terminationCallback) {
+    static void onTermination(@NotNull JediTermFxWidget widget, @NotNull IntConsumer terminationCallback) {
         new TtyConnectorWaitFor(widget.getTtyConnector(),
                 widget.getExecutorServiceManager().getUnboundedExecutorService(),
                 terminationCallback);
@@ -205,9 +218,5 @@ public abstract class AbstractTerminalApplication extends Application {
             }
         });
         myBufferStage.show();
-    }
-
-    public JediTermFxWidget getMyWidget() {
-        return myWidget;
     }
 }

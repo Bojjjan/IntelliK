@@ -1,16 +1,24 @@
 package zenit.console;
 
+import java.awt.event.KeyEvent;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.*;
 
+import com.pty4j.PtyProcessBuilder;
+import com.techsenger.jeditermfx.core.TtyConnector;
 import com.techsenger.jeditermfx.ui.JediTermFxWidget;
 import com.techsenger.jeditermfx.ui.TerminalSession;
 import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
 import javafx.application.Application;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+import kotlin.jvm.internal.Intrinsics;
+import kotlin.text.Charsets;
+import org.jetbrains.annotations.NotNull;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 
@@ -27,7 +35,9 @@ import zenit.ConsoleRedirect;
 import zenit.terminal.AbstractTerminalApplication;
 import zenit.terminal.JediTermFx;
 import zenit.terminal.oldcode.LocalTtyConnector;
+import zenit.terminal.pty.PtyProcessTtyConnector;
 import zenit.ui.MainController;
+
 
 /**
  * The controller class for ConsoleArea
@@ -232,9 +242,6 @@ public class ConsoleController implements Initializable {
 		showConsoleTabs();
 	}
 
-//	public JediTermFxWidget getTerminal(){
-//		return terminal;
-//	}
 
 	
 	/*
@@ -283,47 +290,88 @@ public class ConsoleController implements Initializable {
 
 	 */
 
+	private final Map<String, String> configureEnvironmentVariables() {
+		HashMap envs = new HashMap<String, String>(System.getenv());
+		if (com.techsenger.jeditermfx.core.util.Platform.isMacOS()) {
+			envs.put("LC_CTYPE", Charsets.UTF_8.name());
+		}
+		if (!com.techsenger.jeditermfx.core.util.Platform.isWindows()) {
+			envs.put("TERM", "xterm-256color");
+		}
+		return envs;
+	}
+
+	public TtyConnector createTtyConnector() {
+		try {
+			var envs = configureEnvironmentVariables();
+			String[] command;
+			if (com.techsenger.jeditermfx.core.util.Platform.isWindows()) {
+				command = new String[]{"powershell.exe"};
+			} else {
+				String shell = (String) envs.get("SHELL");
+				if (shell == null) {
+					shell = "/bin/bash";
+				}
+				if (com.techsenger.jeditermfx.core.util.Platform.isMacOS()) {
+					command = new String[]{shell, "--login"};
+				} else {
+					command = new String[]{shell};
+				}
+			}
+			var workingDirectory = Path.of(".").toAbsolutePath().normalize().toString();
+			//logger.info("Starting {} in {}", String.join(" ", command), workingDirectory);
+
+			System.out.println("Starting PTY process with command: " + Arrays.toString(command));
+
+			var process = new PtyProcessBuilder()
+					.setDirectory(workingDirectory)
+					.setInitialColumns(120)
+					.setInitialRows(20)
+					.setCommand(command)
+					.setEnvironment(envs)
+					.setConsole(false)
+					.setUseWinConPty(true)
+					.start();
+
+			System.out.println("Process started? " + process.isAlive());
+			System.out.println("Process PID: " + process.pid());
+
+			return new JediTermFx.LoggingPtyProcessTtyConnector(process, StandardCharsets.UTF_8, Arrays.asList(command));
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
 	public void newTerminal() {
 		try {
 			JediTermFx terminalApp = new JediTermFx();
-			//terminalApp.start();
-			JediTermFxWidget terminalWidget = terminalApp.createTerminalWidget(new DefaultSettingsProvider());
+			JediTermFxWidget terminalWidget = terminalApp.getMyWidget();
 
+			TtyConnector ttyConnector = createTtyConnector();
+			terminalApp.openSession(terminalWidget, ttyConnector);
 
-			Platform.runLater(() -> {
-				terminalAnchorPane.getChildren().add(terminalWidget.getPane());
-			});
-			terminalAnchorPane.requestLayout();
+			terminalAnchorPane = new AnchorPane();
+			terminalAnchorPane.getChildren().add(terminalWidget.getPane());
 			terminalAnchorPane.setStyle("-fx-background-color:black");
-			terminalAnchorPane.setVisible(true);
-			terminalAnchorPane.setMinSize(100, 100);
-			terminalWidget.getPane().setVisible(true);
-			//terminalWidget.start();
 
 			terminalWidget.getPane().setMinHeight(5);
 			fillAnchor(terminalWidget.getPane());
 			fillAnchor(terminalAnchorPane);
 
-			// Add the terminal to the UI
 			rootAnchor.getChildren().add(terminalAnchorPane);
 
-
-			// Update tracking lists and UI state
 			terminalList.add(terminalWidget);
 			terminalChoiceBox.getItems().add(terminalWidget);
 			terminalChoiceBox.getSelectionModel().select(terminalWidget);
 
-			// Focus the terminal
-			Platform.runLater(() -> terminalWidget.getPane().requestFocus());
+			terminalWidget.getPane().requestFocus();
 
-			// Show terminal tabs
 			showTerminalTabs();
+
 		} catch (Exception e) {
-			// Create a console to display the error
 			ConsoleArea errorConsole = new ConsoleArea("Terminal Error", null, "-fx-background-color:#ff6666");
 			newConsole(errorConsole);
 			errorConsole.appendText("Failed to initialize terminal: " + e.getMessage() + "\n");
-			e.printStackTrace(new java.io.PrintStream(new java.io.OutputStream() {
+			e.printStackTrace(new PrintStream(new OutputStream() {
 				@Override
 				public void write(int b) {
 					errorConsole.appendText(String.valueOf((char) b));
@@ -331,28 +379,6 @@ public class ConsoleController implements Initializable {
 			}));
 		}
 	}
-
-
-
-/*
-
-	private TerminalConfig createTerminalConfig() {
-		TerminalConfig windowsConfig = new TerminalConfig();
-		windowsConfig.setBackgroundColor(Color.BLACK);
-		windowsConfig.setForegroundColor(Color.WHITE);
-		windowsConfig.setCursorBlink(true);
-		windowsConfig.setCursorColor(Color.WHITE);
-		windowsConfig.setFontFamily("consolas");
-		windowsConfig.setFontSize(12);
-		windowsConfig.setScrollbarVisible(false);
-		
-		//TODO Non-windows config (if needed).
-		
-		
-		return (System.getProperty("os.name").startsWith("W") ? windowsConfig : new TerminalConfig());
-	}
- */
-	
 
 	/**
 	 * sets the anchor of a node to fill parent 
