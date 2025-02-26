@@ -1,11 +1,11 @@
 package test;
 
 import javafx.stage.Stage;
-import main.java.zenit.Zenit;
-import main.java.zenit.filesystem.JavaFileHandler;
-import main.java.zenit.searchinfile.Search;
-import main.java.zenit.ui.MainController;
-import main.java.zenit.zencodearea.ZenCodeArea;
+import main.zenit.Zenit;
+import main.zenit.filesystem.JavaFileHandler;
+import main.zenit.searchinfile.Search;
+import main.zenit.ui.MainController;
+import main.zenit.zencodearea.ZenCodeArea;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -46,7 +46,6 @@ public class SearchTest extends ApplicationTest {
         new Zenit().start(stage);
         mockZenCodeArea = Mockito.mock(ZenCodeArea.class);
         javaFileHandler = Mockito.mock(JavaFileHandler.class);
-        //Change your path here to the path of the file you want to search in or just change the username for your pc
         search = new Search(mockZenCodeArea, new File(TEST_FILE_PATH), true, null);
     }
 
@@ -107,7 +106,7 @@ public class SearchTest extends ApplicationTest {
      */
     @TestFx
     @Order(3)
-    void renameFolderTest(){
+    void changeOneOfTheSearchedWords(){
         int result = search.searchInFile("String");
         assertEquals(3, result);
         search.replaceOne("replace");

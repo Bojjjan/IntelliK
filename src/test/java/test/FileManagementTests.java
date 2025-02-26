@@ -2,7 +2,7 @@ package test;
 
 import javafx.scene.Node;
 import javafx.stage.Stage;
-import main.java.zenit.Zenit;
+import main.zenit.Zenit;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
