@@ -64,12 +64,29 @@ public class ZenCodeArea extends CodeArea {
 	public ZenCodeArea(int textSize, String font) {
 		contextMenu = new ContextMenu();
 		typedChars = new ArrayList<>();
+		this.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+			if (event.getCode() == KeyCode.BACK_SPACE) {
+				if (!typedChars.isEmpty()) {
+					typedChars.remove(typedChars.size() - 1);
+					showSuggestions();
+				} else {
+					contextMenu.hide();
+				}
+				event.consume(); // Prevents unwanted behavior
+			}
+		});
+
 		this.addEventHandler(KeyEvent.KEY_TYPED, event -> {
-			char typedChar = event.getCharacter().charAt(0);
-			typedChars.add(typedChar);
-			// Trigger suggestions for alphabetic characters or dot (.) or open parenthesis '('
-			if (Character.isAlphabetic(typedChar) || typedChar == '.' || typedChar == '(') {
-				showSuggestions();
+			if (!event.getCharacter().isEmpty()) {
+				char typedChar = event.getCharacter().charAt(0);
+
+				if (Character.isAlphabetic(typedChar) || typedChar == '.' || typedChar == '(') {
+					typedChars.add(typedChar);
+					showSuggestions();
+				} else if (typedChar == ' ' || typedChar == '\t') {
+					wordBeforeDot = null;
+					typedChars.clear();
+				}
 			}
 		});
 
@@ -326,17 +343,21 @@ public class ZenCodeArea extends CodeArea {
 	public void setTabAssociation(FileTab tab){this.tab =  tab;}
 
 	private void showSuggestions() {
+		if (typedChars.isEmpty()) {
+			displaySuggestions(Collections.emptyList()); // Clear suggestions if no characters are typed
+			return;
+		}
 		String currentWord = getCurrentWord();
 		System.out.println("Current Word: " + currentWord);
 
 		char lastTypedChar = typedChars.get(typedChars.size() - 1);
 
-		if (lastTypedChar == '.') {
-			typedChars.clear();
+		if (lastTypedChar == '.' || lastTypedChar == '(') {
 			wordBeforeDot = getCurrentWord();
+			typedChars.clear();
 			System.out.println("Word before dot: " + wordBeforeDot);
+			currentWord = wordBeforeDot;
 		}
-
 		List<String> suggestions = getSuggestionsForWord(currentWord);
 
 		displaySuggestions(suggestions);
@@ -345,34 +366,158 @@ public class ZenCodeArea extends CodeArea {
 	private String getCurrentWord() {
 		StringBuilder word = new StringBuilder();
 
-		// Combine all typed characters into a word
 		for (Character c : typedChars) {
 			word.append(c);
 		}
 
-		System.out.println(word);
+		System.out.println(word + " 2");
 		return word.toString();
 	}
 
 	private List<String> getSuggestionsForWord(String word) {
 		List<String> suggestions = new ArrayList<>();
-		if(wordBeforeDot != null){
-			if (word.endsWith(".")) {
-				suggestions.add("toString");
-				suggestions.add("length");
-			}
-		}
-		else{
+
+		if (wordBeforeDot == null) {
 			if (word.startsWith("S")) {
 				suggestions.add("System");
-				suggestions.add("Syntax");
+				suggestions.add("String");
+				suggestions.add("Scanner");
+				suggestions.add("static");
+			}
+			if (word.startsWith("i")) {
+				suggestions.add("int");
+				suggestions.add("if()");
+				suggestions.add("Integer");
+				suggestions.add("import");
+			}
+			if (word.startsWith("f")) {
+				suggestions.add("for()");
+				suggestions.add("float");
+				suggestions.add("final");
+				suggestions.add("false");
+				suggestions.add("File");
+				suggestions.add("FileReader");
+				suggestions.add("FileWriter");
+			}
+			if (word.startsWith("w")) {
+				suggestions.add("while()");
+				suggestions.add("Window");
+				suggestions.add("wait()");
+			}
+			if (word.startsWith("d")) {
+				suggestions.add("double");
+				suggestions.add("do");
+				suggestions.add("default");
+			}
+			if (word.startsWith("c")) {
+				suggestions.add("char");
+				suggestions.add("class");
+				suggestions.add("continue");
+				suggestions.add("catch()");
+				suggestions.add("case");
+			}
+			if (word.startsWith("b")) {
+				suggestions.add("boolean");
+				suggestions.add("break");
+				suggestions.add("byte");
+				suggestions.add("BufferedReader");
+				suggestions.add("BufferedWriter");
+			}
+			if (word.startsWith("p")) {
+				suggestions.add("psvm");
+				suggestions.add("public");
+				suggestions.add("protected");
+				suggestions.add("private");
+				suggestions.add("package");
+			}
+			if (word.startsWith("r")) {
+				suggestions.add("return");
+				suggestions.add("Runnable");
+				suggestions.add("Random");
+			}
+			if (word.startsWith("t")) {
+				suggestions.add("true");
+				suggestions.add("this");
+				suggestions.add("Thread");
+				suggestions.add("try");
+			}
+			if (word.startsWith("e")) {
+				suggestions.add("else");
+				suggestions.add("enum");
+				suggestions.add("Exception");
+				suggestions.add("extends");
+			}
+			if (word.startsWith("v")) {
+				suggestions.add("void");
+				suggestions.add("volatile");
+				suggestions.add("var");
+			}
+			if (word.startsWith("n")) {
+				suggestions.add("null");
+				suggestions.add("new");
+				suggestions.add("Native");
+			}
+		} else {
+			if (wordBeforeDot.equals("System.")) {
+				suggestions.add("out");
+				suggestions.add("err");
+				suggestions.add("gc()");
+				suggestions.add("exit()");
+				suggestions.add("currentTimeMillis()");
+			}
+			if (wordBeforeDot.equals("out.") || wordBeforeDot.equals("err.")) {
+				suggestions.add("println()");
+				suggestions.add("print()");
+				suggestions.add("printf()");
+				suggestions.add("flush()");
+			}
+			if (wordBeforeDot.equals("String.")) {
+				suggestions.add("length()");
+				suggestions.add("charAt()");
+				suggestions.add("substring()");
+				suggestions.add("indexOf()");
+				suggestions.add("equals()");
+				suggestions.add("equalsIgnoreCase()");
+				suggestions.add("toLowerCase()");
+				suggestions.add("toUpperCase()");
+				suggestions.add("trim()");
+				suggestions.add("replace()");
+				suggestions.add("contains()");
+			}
+			if (wordBeforeDot.equals("Integer.")) {
+				suggestions.add("parseInt()");
+				suggestions.add("valueOf()");
+				suggestions.add("toString()");
+				suggestions.add("bitCount()");
+			}
+			if (wordBeforeDot.equals("Math.")) {
+				suggestions.add("abs()");
+				suggestions.add("ceil()");
+				suggestions.add("floor()");
+				suggestions.add("max()");
+				suggestions.add("min()");
+				suggestions.add("pow()");
+				suggestions.add("sqrt()");
+				suggestions.add("random()");
+			}
+			if (wordBeforeDot.equals("Thread.")) {
+				suggestions.add("start()");
+				suggestions.add("run()");
+				suggestions.add("sleep()");
+				suggestions.add("join()");
+				suggestions.add("interrupt()");
+			}
+			if (wordBeforeDot.equals("File.")) {
+				suggestions.add("createNewFile()");
+				suggestions.add("delete()");
+				suggestions.add("exists()");
+				suggestions.add("getAbsolutePath()");
+				suggestions.add("getName()");
+				suggestions.add("isDirectory()");
+				suggestions.add("isFile()");
+				suggestions.add("length()");
 			}
 		}
-		// Example suggestion based on the word being typed
-
-
-		// Optionally, filter suggestions based on the typed character (e.g., dot or parentheses)
-
 
 		return suggestions;
 	}
@@ -384,13 +529,11 @@ public class ZenCodeArea extends CodeArea {
 		for (String suggestion : suggestions) {
 			MenuItem item = new MenuItem(suggestion);
 			item.setOnAction(event -> {
-				// Replace the word with the selected suggestion
 				replaceCurrentWordWithSuggestion(suggestion);
 			});
 			contextMenu.getItems().add(item);
 		}
 
-		// Show context menu at the current caret position
 		Optional<Bounds> optBounds = getCaretBounds();
 		if (optBounds.isPresent()) {
 			Bounds wordBounds = optBounds.get();
@@ -402,64 +545,18 @@ public class ZenCodeArea extends CodeArea {
 		int caretPosition = getCaretPosition();
 		int start = caretPosition;
 
-		// Move backwards to find the start of the word
 		while (start > 0 && Character.isLetterOrDigit(getText().charAt(start - 1))) {
 			start--;
 		}
-
-		// Replace the word with the suggestion
-		replaceText(start, caretPosition, suggestion);
-	}
-
-	private String getLastWord(String text) {
-		String[] words = text.split("\\s+|\\(|\\)|\\{|\\}|;");
-
-		if (words.length > 0) {
-			return words[words.length - 1];
-		} else {
-			return "";
+		if(Objects.equals(suggestion, "psvm")){
+			replaceText(start, caretPosition, "public static void main(String[] args) {\n" +
+					"\t\t\n" +
+					"\t}");
+		}
+		else{
+			replaceText(start, caretPosition, suggestion);
 		}
 	}
 
-	private List<String> getSuggestions(String prefix) {
-		Map<String, List<String>> suggestionsMap = new HashMap<>();
-		suggestionsMap.put("System", List.of("out", "err", "in"));
-		suggestionsMap.put("System.out", List.of("println()", "print()"));
-
-		suggestionsMap.put("if", List.of("else"));
-		suggestionsMap.put("for", List.of("(", ";", ")"));
-		suggestionsMap.put("while", List.of("("));
-		suggestionsMap.put("switch", List.of("case", "default"));
-
-		// List to hold suggestions
-		List<String> suggestions = new ArrayList<>();
-
-		for (String key : suggestionsMap.keySet()) {
-			if (key.startsWith(prefix)) {
-				suggestions.add(key);
-			}
-		}
-
-		// Return the matching suggestions or an empty list if no matches
-		return suggestions.isEmpty() ? Collections.emptyList() : suggestions;
-	}
-
-	private void showSuggestionPopup(List<String> suggestions) {
-		contextMenu.hide();
-		contextMenu = new ContextMenu();
-
-
-		for (String suggestion : suggestions) {
-			MenuItem item = new MenuItem(suggestion);
-			contextMenu.getItems().add(item);
-		}
-
-		Optional<Bounds> optBounds = getCaretBounds();
-
-		if (optBounds.isPresent()) {
-			Bounds wordBounds = optBounds.get();
-			contextMenu.show(this, wordBounds.getMinX(), wordBounds.getMinY() + 20);
-		}
-	}
 
 }
