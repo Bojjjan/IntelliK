@@ -1,8 +1,5 @@
-<<<<<<<< HEAD:src/main/zenit/terminal/runTerminal.java
-package main.zenit.terminal;
-========
-package zenit.terminal.oldcode;
->>>>>>>> fui900-new-terminal:src/main/zenit/terminal/oldcode/runTerminal.java
+package main.zenit.terminal.oldcode;
+
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +14,7 @@ public class runTerminal extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("/zenit/terminal/Terminal.fxml"));
-			TerminalController terminalController = new TerminalController();
+			zenit.terminal.oldcode.TerminalController terminalController = new zenit.terminal.oldcode.TerminalController();
 
 			loader.setController(terminalController);
 			//Parent root = loader.load()

@@ -1,4 +1,4 @@
-package zenit.terminal;
+package main.zenit.terminal;
 
 import com.techsenger.jeditermfx.ui.DefaultHyperlinkFilter;
 import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
@@ -8,7 +8,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import zenit.console.ConsoleController;
+import main.zenit.console.ConsoleController;
 import zenit.terminal.pty.LoggingTtyConnector;
 import zenit.terminal.pty.PtyProcessTtyConnector;
 import com.techsenger.jeditermfx.core.TtyConnector;

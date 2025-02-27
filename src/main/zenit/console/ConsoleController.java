@@ -1,4 +1,4 @@
-package zenit.console;
+package main.zenit.console;
 
 import java.awt.event.KeyEvent;
 import java.io.*;
@@ -33,12 +33,12 @@ import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import zenit.ConsoleRedirect;
-import zenit.terminal.AbstractTerminalApplication;
-import zenit.terminal.JediTermFx;
+import main.zenit.ConsoleRedirect;
+import main.zenit.terminal.AbstractTerminalApplication;
+import main.zenit.terminal.JediTermFx;
 import zenit.terminal.oldcode.LocalTtyConnector;
 import zenit.terminal.pty.PtyProcessTtyConnector;
-import zenit.ui.MainController;
+import main.zenit.ui.MainController;
 
 
 /**

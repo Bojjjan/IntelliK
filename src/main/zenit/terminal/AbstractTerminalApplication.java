@@ -1,7 +1,8 @@
-package zenit.terminal;
+package main.zenit.terminal;
 
 import javafx.scene.layout.AnchorPane;
-import zenit.console.ConsoleController;
+import main.zenit.console.ConsoleController;
+import zenit.terminal.CustomSettingsProvider;
 import zenit.terminal.pty.TtyConnectorWaitFor;
 import com.techsenger.jeditermfx.core.compatibility.Point;
 import com.techsenger.jeditermfx.core.Terminal;
