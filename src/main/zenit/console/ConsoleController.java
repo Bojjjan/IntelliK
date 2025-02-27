@@ -1,29 +1,33 @@
-package main.zenit.console;
+package zenit.console;
 
 import java.net.URL;
-import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import main.zenit.ConsoleRedirect;
-import main.zenit.ui.MainController;
+import com.techsenger.jeditermfx.ui.JediTermFxWidget;
+import com.techsenger.jeditermfx.ui.TerminalSession;
+import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
+import javafx.application.Application;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import com.kodedu.terminalfx.Terminal;
-import com.kodedu.terminalfx.config.TerminalConfig;
 
+
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import zenit.ConsoleRedirect;
+import zenit.terminal.AbstractTerminalApplication;
+import zenit.terminal.JediTermFx;
+import zenit.terminal.oldcode.LocalTtyConnector;
+import zenit.ui.MainController;
 
 /**
  * The controller class for ConsoleArea
@@ -42,7 +46,8 @@ public class ConsoleController implements Initializable {
 	 */
 //	private HashMap<ConsoleArea, Process> consoleList = new HashMap<ConsoleArea, Process>();
 	private ArrayList<ConsoleArea> consoleList = new ArrayList<ConsoleArea>();
-	private ArrayList<Terminal> terminalList = new ArrayList<Terminal>();
+
+	private ArrayList<JediTermFxWidget> terminalList = new ArrayList<JediTermFxWidget>();
 	
 	@FXML 
 	private TabPane consoleTabPane;
@@ -57,7 +62,7 @@ public class ConsoleController implements Initializable {
 	private ChoiceBox<ConsoleArea> consoleChoiceBox; 
 
 	@FXML
-	private ChoiceBox<Terminal> terminalChoiceBox;
+	private ChoiceBox<JediTermFxWidget> terminalChoiceBox;
 	
 	@FXML
 	private AnchorPane rootAnchor;
@@ -89,15 +94,17 @@ public class ConsoleController implements Initializable {
 	
 	private ConsoleArea activeConsole;
 	
-	private Terminal activeTerminal;
+	private JediTermFxWidget activeTerminal;
 	
 	private AnchorPane noConsolePane;
 		
 	private MainController mainController;
-	
+
+	//private JediTermFxWidget terminal;
+
+
 	public void setMainController(MainController mainController) {
 		this.mainController = mainController;
-		
 	}
 	
 	public List<String> getStylesheets() {
@@ -175,14 +182,13 @@ public class ConsoleController implements Initializable {
 		btnTerminal.setStyle("-fx-text-fill:white; -fx-border-color:#666; -fx-border-width: 0 0 2 0;");
 		
 		
-		if(terminalList.size() == 0) {
+		if(terminalList.isEmpty()) {
 			newTerminal();
 		}
 		else {
 			terminalAnchorPane.toFront();
 		}
-		
-		
+
 		consoleChoiceBox.setVisible(false);
 		consoleChoiceBox.setDisable(true);
 		terminalChoiceBox.setVisible(true);
@@ -222,9 +228,13 @@ public class ConsoleController implements Initializable {
 		consoleChoiceBox.getItems().add(consoleArea);
 		consoleChoiceBox.getSelectionModel().select(consoleArea);
 		
-		new ConsoleRedirect(consoleArea);
+		new ConsoleRedirect(consoleArea);	
 		showConsoleTabs();
 	}
+
+//	public JediTermFxWidget getTerminal(){
+//		return terminal;
+//	}
 
 	
 	/*
@@ -232,26 +242,100 @@ public class ConsoleController implements Initializable {
 	 *  AnchorPane and puts it as an option in the
 	 * choiceBox.
 	 */
-	public void newTerminal() {		
-		Terminal terminal = new Terminal(createTerminalConfig(), FileSystems.getDefault().getPath(".").toAbsolutePath());
-		terminal.setId("Terminal ("+terminalList.size()+")");
+	/*
+	public void newTerminal() {
+
+		PipedWriter terminalWriter = new PipedWriter();
+		//PipedReader terminalReader = new PipedReader(terminalWriter);
+
+
+
+
+		JediTermFxWidget terminal = new JediTermFxWidget(80, 24, new DefaultSettingsProvider());
+
+		try{
+			TtyConnector ttyConnector = new ExampleTtyConnector(terminalWriter);
+			//TtyConnector ttyConnector = new LocalTtyConnector();
+			terminal.setTtyConnector(ttyConnector);
+			terminal.start();
+			TerminalSession terminalSession = terminal.createTerminalSession(ttyConnector);
+			terminalSession.start();
+		} catch(Exception e){
+			throw new RuntimeException(e);
+		}
+
+		terminal.getPane().setId("Terminal ("+terminalList.size()+")");
 		terminalAnchorPane = new AnchorPane();
 		terminalAnchorPane.setStyle("-fx-background-color:black");
-		
-		terminal.setMinHeight(5);
-		fillAnchor(terminal);
+
+		terminal.getPane().setMinHeight(5);
+		fillAnchor(terminal.getPane());
 		fillAnchor(terminalAnchorPane);
 		
-		terminalAnchorPane.getChildren().add(terminal);
+		terminalAnchorPane.getChildren().add(terminal.getPane());
 		rootAnchor.getChildren().add(terminalAnchorPane);
 		terminalList.add(terminal);
 		terminalChoiceBox.getItems().add(terminal);
 		terminalChoiceBox.getSelectionModel().select(terminal);
-		
+		terminal.start();
 		showTerminalTabs();
-		
+    }
+
+	 */
+
+	public void newTerminal() {
+		try {
+			JediTermFx terminalApp = new JediTermFx();
+			//terminalApp.start();
+			JediTermFxWidget terminalWidget = terminalApp.createTerminalWidget(new DefaultSettingsProvider());
+
+
+			Platform.runLater(() -> {
+				terminalAnchorPane.getChildren().add(terminalWidget.getPane());
+			});
+			terminalAnchorPane.requestLayout();
+			terminalAnchorPane.setStyle("-fx-background-color:black");
+			terminalAnchorPane.setVisible(true);
+			terminalAnchorPane.setMinSize(100, 100);
+			terminalWidget.getPane().setVisible(true);
+			//terminalWidget.start();
+
+			terminalWidget.getPane().setMinHeight(5);
+			fillAnchor(terminalWidget.getPane());
+			fillAnchor(terminalAnchorPane);
+
+			// Add the terminal to the UI
+			rootAnchor.getChildren().add(terminalAnchorPane);
+
+
+			// Update tracking lists and UI state
+			terminalList.add(terminalWidget);
+			terminalChoiceBox.getItems().add(terminalWidget);
+			terminalChoiceBox.getSelectionModel().select(terminalWidget);
+
+			// Focus the terminal
+			Platform.runLater(() -> terminalWidget.getPane().requestFocus());
+
+			// Show terminal tabs
+			showTerminalTabs();
+		} catch (Exception e) {
+			// Create a console to display the error
+			ConsoleArea errorConsole = new ConsoleArea("Terminal Error", null, "-fx-background-color:#ff6666");
+			newConsole(errorConsole);
+			errorConsole.appendText("Failed to initialize terminal: " + e.getMessage() + "\n");
+			e.printStackTrace(new java.io.PrintStream(new java.io.OutputStream() {
+				@Override
+				public void write(int b) {
+					errorConsole.appendText(String.valueOf((char) b));
+				}
+			}));
+		}
 	}
-	
+
+
+
+/*
+
 	private TerminalConfig createTerminalConfig() {
 		TerminalConfig windowsConfig = new TerminalConfig();
 		windowsConfig.setBackgroundColor(Color.BLACK);
@@ -267,6 +351,7 @@ public class ConsoleController implements Initializable {
 		
 		return (System.getProperty("os.name").startsWith("W") ? windowsConfig : new TerminalConfig());
 	}
+ */
 	
 
 	/**
@@ -326,13 +411,15 @@ public class ConsoleController implements Initializable {
 				
 		terminalChoiceBox.getSelectionModel().selectedItemProperty().addListener( (v, oldValue, newValue) -> {
 			if(newValue != null) {
-				for(Terminal t : terminalList) {
+				for(JediTermFxWidget t : terminalList) {
 					if(newValue.equals(t)) {
-						t.getParent().toFront();
+						t.getPane().toFront();
 						activeTerminal = t;
-						t.onTerminalFxReady(()-> {
+
+						/* t.onTerminalFxReady(()-> {
 							t.focusCursor();
-						});
+						}); */
+
 					}
 				}
 			}
@@ -356,7 +443,7 @@ public class ConsoleController implements Initializable {
 		iconCloseTerminalInstance.setOnMouseClicked(e ->{
 			
 			if(terminalList.size() > 1) {
-				rootAnchor.getChildren().remove(activeTerminal.getParent());
+				rootAnchor.getChildren().remove(activeTerminal.getPane());
 				terminalList.remove(activeTerminal);
 				terminalChoiceBox.getItems().remove(activeTerminal);
 				terminalChoiceBox.getSelectionModel().selectLast();
