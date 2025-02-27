@@ -1,6 +1,14 @@
 package zenit.terminal;
 
 import com.techsenger.jeditermfx.ui.DefaultHyperlinkFilter;
+import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
+import javafx.application.Application;
+import javafx.scene.control.MenuBar;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import zenit.console.ConsoleController;
 import zenit.terminal.pty.LoggingTtyConnector;
 import zenit.terminal.pty.PtyProcessTtyConnector;
 import com.techsenger.jeditermfx.core.TtyConnector;
@@ -173,5 +181,8 @@ public final class JediTermFx extends AbstractTerminalApplication {
         }
     }
 
+    public void setConsoleController(ConsoleController _consoleController){
+        super.setConsoleController(_consoleController);
+    }
 
 }
