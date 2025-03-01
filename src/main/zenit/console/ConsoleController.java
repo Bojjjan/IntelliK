@@ -338,6 +338,9 @@ public class ConsoleController implements Initializable {
 			terminalChoiceBox.getItems().add(terminalWidget);
 			terminalChoiceBox.getSelectionModel().select(terminalWidget);
 
+			terminalWidget.getPane().setId("Terminal " + terminalList.size());
+
+
 			activeTerminal = terminalWidget;
 			terminalWidget.getPane().requestFocus();
 

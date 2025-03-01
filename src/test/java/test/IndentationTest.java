@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test class using JUNIT5 , ApplicationTest TestFx framework
  * This class test the implementation of indentation of the code
- * Scope: No requirements are yet written for this
+ * Scope: FUI602, FUI602.1 and FUI602.2
  * @author Mojtaba hauari
  */
 
@@ -38,7 +38,8 @@ class IndentationTest extends ApplicationTest {
     }
 
     /**
-     * This method test if a new line is created when ENTER is pressed
+     * Test case TUI602 -> This test if the indentation is created correctly
+     *
      */
     @Test
     void emptyIndentationTest() {
@@ -49,7 +50,7 @@ class IndentationTest extends ApplicationTest {
     }
 
     /**
-     *This tests if it creates the closing bracket of a comment.
+     *Test case TUI602.2 -> This tests if it creates the closing bracket of a comment.
      */
     @Test
     void testAfterSlashStar() {
@@ -63,7 +64,7 @@ class IndentationTest extends ApplicationTest {
     }
 
     /**
-     * This tests if it creates the closing brackets for the javadoc comments.
+     * Test case TUI602.2 -> This tests if it creates the closing brackets for the javadoc comments.
      */
     @Test
     void testAfterSlashStarStar() {
