@@ -20,6 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.util.NodeQueryUtils.isVisible;
 
+/**
+ * Test class using JUNIT5 , ApplicationTest TestFx framework
+ * This class test the implementation of the terminal
+ * Scope: FUI900, FUI900.1, FUI900.2
+ * @author Mojtaba hauari
+ */
+
 
 class TerminalTest extends ApplicationTest{
 
@@ -28,11 +35,21 @@ class TerminalTest extends ApplicationTest{
         new Zenit().start(stage);
     }
 
+
+    /**
+     * Test case TUI900 -> Showing the terminal that is created
+     */
+
     @TestFx
     void showTerminalTabs() {
         clickOn("TERMINAL");
         verifyThat("TERMINAL", isVisible());
     }
+
+    /**
+     * Test case TUI900.1 -> testing starting several terminal instances
+     */
+
     @TestFx
     @Order(2)
     void testMultipleTerminalInstances() {
@@ -52,6 +69,10 @@ class TerminalTest extends ApplicationTest{
         }
     }
 
+    /**
+     * Test case TUI900.2 -> Testing the resizing of the terminal window
+     */
+
     @TestFx
     @Order(3)
     void testResizeTerminalWindow() throws InterruptedException {
@@ -59,12 +80,6 @@ class TerminalTest extends ApplicationTest{
         verifyThat("TERMINAL", isVisible());
         moveTo("#rootNode").moveBy(0, -60).drag().moveBy(0,-200);
         assertTrue(lookup("#rootNode").query().getBoundsInParent().getHeight() > 100);
-    }
-
-    @TestFx
-    @Order(4)
-    void testTerminalDefaultPath() {
-
     }
 
 }
