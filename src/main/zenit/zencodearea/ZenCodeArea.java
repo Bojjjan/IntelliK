@@ -189,6 +189,7 @@ public class ZenCodeArea extends CodeArea {
 		int lastIndex = 0;
 		for (Token token : tokens) {
 			String styleClass = getStyleForToken(token.getType(), token.getText(), analyzer);
+			System.out.println("StyleClass: " + token.getText());
 
 			int startIndex = token.getStartIndex();
 			int stopIndex = token.getStopIndex() + 1;
@@ -263,10 +264,25 @@ public class ZenCodeArea extends CodeArea {
 	 */
 	private static String getStyleForToken(int tokenType, String tokenText, SemanticAnalyzer analyzer) {
 		if (analyzer.getClassNames().contains(tokenText)) {
+			Set<String> classNames = analyzer.getClassNames();
+			Object[] a = classNames.toArray();
+            for (Object o : a) {
+                System.out.println("ClassName : " + o);
+            }
 			return "class-name";
 		} else if (analyzer.getMethodNames().contains(tokenText)) {
+			Set<String> methodNames = analyzer.getMethodNames();
+			Object[] a = methodNames.toArray();
+			for (Object o : a) {
+				System.out.println("MethodName : " + o);
+			}
 			return "method-name";
 		} else if (analyzer.getVariables().contains(tokenText)) {
+			Set<String> vaiableNames = analyzer.getVariables();
+			Object[] a = vaiableNames.toArray();
+			for (Object o : a) {
+				System.out.println("variableName : " + o);
+			}
 			return "variable";
 		}
 

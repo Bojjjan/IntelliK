@@ -37,7 +37,7 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
         String currentClassName = ctx.identifier().getText();
         hasClass = false;
 
-        if (!hasClass && consistOfMainMethod(ctx)){
+        if (consistOfMainMethod(ctx)){
             hasClass = true;
             JclassType = JavaClassType.RUNNABLE;
         }
@@ -66,7 +66,6 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
         String methodName = ctx.identifier().getText();
         methodNames.add(methodName);
     }
-
 
     /**
      * Called when a variable declaration is encountered during the parse process.
@@ -122,6 +121,41 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
         String exceptionVar = ctx.identifier().getText();
         variables.add(exceptionVar);
     }
+
+    public void enterTypeIdentifier(JavaParser.TypeIdentifierContext ctx) {
+        String className = ctx.getText();
+        classNames.add(className);
+    }
+
+    @Override
+    public void enterMethodCall(JavaParser.MethodCallContext ctx) {
+        String methodName = ctx.identifier().getText();
+        methodNames.add(methodName);
+    }
+    @Override
+    public void enterPrimaryExpression(JavaParser.PrimaryExpressionContext ctx) {
+
+        if (ctx.getText() != null && ctx.getText().equals("System")) {
+            String className = ctx.getText();
+            classNames.add(className);
+        }
+    }
+    @Override
+    public void enterFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
+        String fieldName = ctx.variableDeclarators().getText();
+        if (fieldName.contains("out")) {
+            System.out.println("Declared field 'out' at line " + ctx.getStart().getLine());
+        }
+    }
+    @Override
+    public void enterMemberReferenceExpression(JavaParser.MemberReferenceExpressionContext ctx) {
+        if (ctx.identifier() != null && ctx.identifier().getText() != null) {
+            String fieldName = ctx.identifier().getText();
+           variables.add(fieldName);
+        }
+    }
+
+
 
     /**
      * Retrieves the set of class names found during the parsing process.
