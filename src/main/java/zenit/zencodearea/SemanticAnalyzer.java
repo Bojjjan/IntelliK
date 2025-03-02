@@ -64,6 +64,9 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
     @Override
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
         String methodName = ctx.identifier().getText();
+        if(Objects.equals(methodName, "int")){
+            System.out.println("enterMethodCall = int");
+        }
         methodNames.add(methodName);
     }
 
@@ -122,9 +125,16 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
         variables.add(exceptionVar);
     }
 
-    public void enterTypeIdentifier(JavaParser.TypeIdentifierContext ctx) {
-        String className = ctx.getText();
+    public void enterLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx) {
+        String className = ctx.getChild(0).getChild(0).getChild(0).getText();
+        System.out.println("enterTypeIdentifier: " + className);
         classNames.add(className);
+    }
+
+    public void enterObjectCreationExpression(JavaParser.ObjectCreationExpressionContext ctx) {
+        String objectCreation = ctx.getChild(1).getText();
+        System.out.println("enterObjectCreationExpression: " + objectCreation);
+        methodNames.add(objectCreation);
     }
 
     @Override
@@ -151,7 +161,7 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
     public void enterMemberReferenceExpression(JavaParser.MemberReferenceExpressionContext ctx) {
         if (ctx.identifier() != null && ctx.identifier().getText() != null) {
             String fieldName = ctx.identifier().getText();
-           variables.add(fieldName);
+            variables.add(fieldName);
         }
     }
 
@@ -171,7 +181,9 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
      * @author Philip Boyde
      * @return A {@link Set} of method names.
      */
-    public Set<String> getMethodNames() { return methodNames; }
+    public Set<String> getMethodNames() {
+        return methodNames;
+    }
 
     /**
      * Retrieves the set of variable names found during the parsing process.

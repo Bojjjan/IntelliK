@@ -1295,6 +1295,7 @@ public class JavaParserBaseListener implements JavaParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitMemberReferenceExpression(JavaParser.MemberReferenceExpressionContext ctx) { }
+
 	/**
 	 * {@inheritDoc}
 	 *
