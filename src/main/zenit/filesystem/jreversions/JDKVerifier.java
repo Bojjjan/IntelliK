@@ -35,7 +35,6 @@ public class JDKVerifier {
 
 			case LINUX, WINDOWS:
 				path = JDKPath + File.separator + "bin" + File.separator + tool + "\"";
-				System.out.println(path);
 				break;
 
 			default:
