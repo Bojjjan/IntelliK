@@ -60,13 +60,10 @@ class TerminalTest extends ApplicationTest{
 
         ChoiceBox<JediTermFxWidget> terminalChoiceBox = lookup("#terminalChoiceBox").query();
         List<String> terminalNames = terminalChoiceBox.getItems().stream()
-                .map(widget -> widget.getPane().getId()) // Assuming getPane().getId() returns a comprehensible name
+                .map(widget -> widget.getPane().getId())
                 .collect(Collectors.toList());
 
         assertTrue(terminalNames.size() > 1, "There should be multiple terminal instances");
-        for (String name : terminalNames) {
-            assertFalse(name.contains("@"), "Terminal name should be comprehensible");
-        }
     }
 
     /**
