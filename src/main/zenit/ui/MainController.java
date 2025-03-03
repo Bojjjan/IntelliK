@@ -1347,7 +1347,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 	
 	public void openConsoleComponent() {
 		
-		consolePane.setVisible(false);
+		consolePane.setVisible(true);
 		consolePane.setDisable(false);
 		splitPane.setDividerPosition(0, 0.85);
 		consolePane.setMinHeight(34.0);

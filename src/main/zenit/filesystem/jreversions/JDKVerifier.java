@@ -26,7 +26,7 @@ public class JDKVerifier {
 	public static String getExecutablePath(String JDKPath, String tool) {
 		GetOperatingSystem.OperatingSystem OS = Zenit.OS;
 		String path = null;
-
+		JDKPath = JDKPath.replace("C:", "\"C:");
 		switch (OS){
 			case MAC:
 				path = JDKPath + File.separator + "Contents" + File.separator +
@@ -34,7 +34,8 @@ public class JDKVerifier {
 				break;
 
 			case LINUX, WINDOWS:
-				path = JDKPath + File.separator + "bin" + File.separator + tool;
+				path = JDKPath + File.separator + "bin" + File.separator + tool + "\"";
+				System.out.println(path);
 				break;
 
 			default:
