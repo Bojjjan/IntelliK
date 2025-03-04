@@ -9,12 +9,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import main.zenit.ui.MainController;
+
 
 public class SearchInFileController extends AnchorPane {
 
@@ -41,6 +44,12 @@ public class SearchInFileController extends AnchorPane {
 	
 	@FXML
 	private Label lblOccurrences;
+
+	@FXML
+	private ImageView imgBtnDown;
+
+	@FXML
+	private ImageView imgBtnUp;
 
 	private Search search;
 	
@@ -107,6 +116,9 @@ public class SearchInFileController extends AnchorPane {
 			search.clearZen();
 			makeNewSearch(fldInputField.getText());
 		});
+
+		fldInputField.setPromptText("Search...");
+		fldReplaceWord.setPromptText("Replace with...");
 		
 		btnReplaceAll.setPickOnBounds(true);
 		btnReplaceAll.setOnAction(event -> 
@@ -115,14 +127,16 @@ public class SearchInFileController extends AnchorPane {
 		btnReplaceOne.setPickOnBounds(true);
 		btnReplaceOne.setOnAction(event -> 
 			search.replaceOne(fldReplaceWord.getText()));
-		
+
+		imgBtnUp.setImage(new Image(getClass().getResourceAsStream("/zenit/searchinfile/arrow_up.png")));
 		btnUp.setPickOnBounds(true);
 		btnUp.setOnAction(event ->{
 			int i = search.jumpUp();
 			i++;
 			lblOccurrences.setText(i + "/" + occurrences);
 		});
-		
+
+		imgBtnDown.setImage(new Image(getClass().getResourceAsStream("/zenit/searchinfile/arrow_down.png")));
 		btnDown.setPickOnBounds(true);
 		btnDown.setOnAction(event -> {
 			int i = search.jumpDown();
@@ -132,6 +146,7 @@ public class SearchInFileController extends AnchorPane {
 		});
 		
 		btnEsc.setPickOnBounds(true);
+		btnEsc.setOnMouseClicked(event -> window.close());
 		btnEsc.setOnAction(event -> window.close());
 		btnEsc.setOnAction(event -> search.cleanZen());
 		
