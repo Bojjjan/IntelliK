@@ -2,6 +2,7 @@ package main.zenit.ui.projectinfo;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -176,7 +177,7 @@ public class ProjectMetadataController extends AnchorPane {
 		
 		title.setText(projectFile.getName() + " settings");
 		
-		logo.setImage(new Image(getClass().getResource("/zenit/setup/zenit.png").toExternalForm()));
+		logo.setImage(new Image(Objects.requireNonNull(getClass().getResource("/zenit/setup/logo.png")).toExternalForm()));
 		logo.setFitWidth(55);
 		
 		String directory = metadata.getDirectory();
@@ -193,12 +194,10 @@ public class ProjectMetadataController extends AnchorPane {
 		File JREVersion = new File(metadata.getJREVersion());
 		
 		List<String> JDKs = main.zenit.filesystem.jreversions.JREVersions.readString();
-		if (JREVersion != null) {
-			JREVersions.getItems().addAll(JDKs);
-			JREVersions.getSelectionModel().select(JREVersion.getName());
-		}
-		
-		taProgramArguments.setText("<select a runnable class>");
+        JREVersions.getItems().addAll(JDKs);
+        JREVersions.getSelectionModel().select(JREVersion.getName());
+
+        taProgramArguments.setText("<select a runnable class>");
 		taProgramArguments.setEditable(false);
 		taVMArguments.setText("<select a runnable class>");
 		taVMArguments.setEditable(false);
