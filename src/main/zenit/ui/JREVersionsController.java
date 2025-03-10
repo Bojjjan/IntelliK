@@ -34,7 +34,7 @@ public class JREVersionsController extends AnchorPane {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("/zenit/ui/JREVersions.fxml"));
 			loader.setController(this);
-			AnchorPane root = (AnchorPane) loader.load();
+			AnchorPane root = loader.load();
 			Scene scene = new Scene(root);
 
 			//set up stage
@@ -59,7 +59,7 @@ public class JREVersionsController extends AnchorPane {
 	
 	private void updateList() {
 		JVMs = JREVersions.read();
-		ArrayList<String> JVMsString = new ArrayList<String>();
+		ArrayList<String> JVMsString = new ArrayList<>();
 		
 		for (File JVM : JVMs) {
 			JVMsString.add(JVM.getName());
