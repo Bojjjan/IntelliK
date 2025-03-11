@@ -94,8 +94,9 @@ public class JREVersionsController extends AnchorPane {
 			if (success) {
 				updateList();
 			} else {
-				DialogBoxes.errorDialog("JDK doesn't contain java or javac", "", "The selected JDK doesn't"
-						+ "contain the needed java or javac executables");
+				DialogBoxes.errorDialog("JDK doesn't contain java or javac", "", "Invalid JDK folder."
+						+ " Example Path -> C:\\ProgramFiles\\Java\\jdk-20."
+						+ " Ensure that your selected JDK is installed and contains a bin folder with a java and javac executable");
 			}
 		}
 		
