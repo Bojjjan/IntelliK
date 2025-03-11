@@ -1362,6 +1362,10 @@ public class MainController extends VBox implements ThemeCustomizable {
 		
 		
 	}
+
+	public String getWorkspace (){
+		return fileController.getWorkspace().getPath();
+	}
 	
 	
 	
