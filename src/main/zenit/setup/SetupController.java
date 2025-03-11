@@ -216,8 +216,9 @@ public class SetupController extends AnchorPane {
 				if (JREVersions.append(newJDK)) {
 					updateList();
 				} else {
-					DialogBoxes.errorDialog("Not a valid JDK folder", "", "The chosen folder is not"
-							+ " a valid JDK folder, must contain a java and javac executable");
+					DialogBoxes.errorDialog("JDK doesn't contain java or javac", "", "Invalid JDK folder."
+							+ " Example Path -> C:\\ProgramFiles\\Java\\jdk-20."
+							+ " Ensure that your selected JDK is installed and contains a bin folder with a java and javac executable");
 				}
 			}
 		}
