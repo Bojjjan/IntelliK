@@ -228,14 +228,14 @@ public class FileController {
 	 * Tries to create a new project using {@link main.java.zenit.filesystem.ProjectHandler
 	 * #createNewProject(File) createNewProject} method in the set workspace.
 	 * Prints an error message if project or any of its files couldn't be created.
-	 * @param projectname Name of the new project
+	 * @param projectName Name of the new project
 	 * @return Returns File-object of the created project if created, otherwise null
 	 */
-	public File createProject(String projectname) {
-		if (projectname != null) {
+	public File createProject(String projectName, boolean mainClass) {
+		if (projectName != null) {
 			try {
-				File file = new File(workspace + "/" + projectname);
-				ProjectHandler.createNewProject(file);
+				File file = new File(workspace + "/" + projectName);
+				ProjectHandler.createNewProject(file, mainClass);
 				return file;
 			} catch (IOException ex) {
 				System.err.println("FileController.createProject: IOException: " + 

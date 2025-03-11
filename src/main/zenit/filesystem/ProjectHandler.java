@@ -23,13 +23,13 @@ public class ProjectHandler extends FolderHandler {
 	 * @throws IOException Throws {@link java.io.IOException IOException} if project or
 	 * any folder inside project can't be created.
 	 */
-	protected static void createNewProject(File file) throws IOException {
+	protected static void createNewProject(File file, boolean mainClass) throws IOException {
 		
 		boolean success = file.mkdir();
 		
 		if (success) {
 			ProjectFile projectFile = new ProjectFile(file);
-			projectFile.addSrc();
+			projectFile.addSrc(mainClass);
 			projectFile.addBin();
 			
 			File metadata = MetadataFileHandler.createMetadataFile(file);
