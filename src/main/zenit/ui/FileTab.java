@@ -231,7 +231,7 @@ public class FileTab extends Tab {
 	private void updateUI() {
 		if (hasChanged) {
 			setText(initialTitle + " *");
-			setStyle("-fx-background-color: #81b622;");
+			setStyle("-fx-background-color: #ba6c66;");
 		} else {
 			setText(initialTitle);
 			setStyle("-fx-background-color: #444;");
