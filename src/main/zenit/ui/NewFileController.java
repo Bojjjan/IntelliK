@@ -106,24 +106,28 @@ public class NewFileController extends AnchorPane {
 		String filename = tfName.getText();
 
 		if (!filename.equals("")) {
-			filename += fileEnding.getSelectionModel().getSelectedItem();
+			if(!filename.contains(" ")){
+				filename += fileEnding.getSelectionModel().getSelectedItem();
 
-			System.out.println(filename);
-			
-			String filePath = this.filepath.getSelectionModel().getSelectedItem() + File.separator
-					+ filename;
-			newFile = new File(filePath);
-			try {
-				if (!newFile.createNewFile()) {
-					DialogBoxes.errorDialog("File name already exist", "", "A file with the name "
-							+ filename + " already exist. Please input a different name.");
+				System.out.println(filename);
+
+				String filePath = this.filepath.getSelectionModel().getSelectedItem() + File.separator
+						+ filename;
+				newFile = new File(filePath);
+				try {
+					if (!newFile.createNewFile()) {
+						DialogBoxes.errorDialog("File name already exist", "", "A file with the name "
+								+ filename + " already exist. Please input a different name.");
+						newFile = null;
+					}
+				} catch (IOException e) {
+					DialogBoxes.errorDialog("Couldn't create new file", "", "Couldn't create new file");
 					newFile = null;
 				}
-			} catch (IOException e) {
-				DialogBoxes.errorDialog("Couldn't create new file", "", "Couldn't create new file");
+			}else{
+				DialogBoxes.errorDialog("Invalid file name", "", "File name can't contain spaces");
 				newFile = null;
 			}
-
 			stage.close();
 		} else {
 			DialogBoxes.errorDialog("No name selected", "", "No name has been given to the new file"
