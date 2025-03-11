@@ -274,11 +274,11 @@ public class ConsoleController implements Initializable {
 					command = new String[]{shell};
 				}
 			}
-			var workingDirectory = Path.of(".").toAbsolutePath().normalize().toString();
-			//logger.info("Starting {} in {}", String.join(" ", command), workingDirectory);
+			String workspaceDirectory = Path.of(mainController.getWorkspace()).toAbsolutePath().normalize().toString();
+			//logger.info("Starting {} in {}", String.join(" ", command), workspaceDirectory);
 
 			var process = new PtyProcessBuilder()
-					.setDirectory(workingDirectory)
+					.setDirectory(workspaceDirectory)
 					.setInitialColumns(120)
 					.setInitialRows(20)
 					.setCommand(command)

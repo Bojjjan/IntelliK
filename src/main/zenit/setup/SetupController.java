@@ -38,9 +38,9 @@ public class SetupController extends AnchorPane {
 	
 	private Stage stage;
 	
-	private File workspaceDat = new File("res/workspace/workspace.dat");
-	private File JDKDat = new File("res/JDK/JDK.dat");
-	private File defaultJDKDat = new File ("res/JDK/DefaultJDK.dat");
+	private File workspaceDat;
+	private File JDKDat;
+	private File defaultJDKDat;
 	
 	private File workspaceFile;
 	
