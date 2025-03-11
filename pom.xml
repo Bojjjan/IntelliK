@@ -1,8 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project [
+		<!ELEMENT project (modelVersion|groupId|artifactId|version|dependencies|repositories|build)*>
+		<!ATTLIST project
+				xmlns CDATA #REQUIRED
+				xmlns:xsi CDATA #REQUIRED
+				xsi:schemaLocation CDATA #REQUIRED>
+		<!ELEMENT modelVersion (#PCDATA)>
+		<!ELEMENT groupId (#PCDATA)>
+		<!ELEMENT artifactId (#PCDATA)>
+		<!ELEMENT version (#PCDATA)>
+		<!ELEMENT dependencies (dependency)*>
+		<!ELEMENT dependency (groupId|artifactId|version|scope)*>
+		<!ELEMENT scope (#PCDATA)>
+		<!ELEMENT repositories (repository)*>
+		<!ELEMENT repository (id|name|url)*>
+		<!ELEMENT id (#PCDATA)>
+		<!ELEMENT name (#PCDATA)>
+		<!ELEMENT url (#PCDATA)>
+		<!ELEMENT build (plugins)*>
+		<!ELEMENT plugins (plugin)*>
+		<!ELEMENT plugin (groupId|artifactId|version|executions|configuration)*>
+		<!ELEMENT executions (execution)*>
+		<!ELEMENT execution (goals|id|phase|configuration)*>
+		<!ELEMENT goals (goal)*>
+		<!ELEMENT goal (#PCDATA)>
+		<!ELEMENT configuration (release|source|target|mainClass|sources)*>
+		<!ELEMENT release (#PCDATA)>
+		<!ELEMENT source (#PCDATA)>
+		<!ELEMENT target (#PCDATA)>
+		<!ELEMENT mainClass (#PCDATA)>
+		<!ELEMENT phase (#PCDATA)>
+		<!ELEMENT sources (source)*>
+		]>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<properties>
+		<java.version>21</java.version>
+	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>zenit</groupId>
@@ -27,11 +64,70 @@
 			<version>21.0.6</version>
 		</dependency>
 
+			<!-- TestFX Core -->
+			<dependency>
+				<groupId>org.testfx</groupId>
+				<artifactId>testfx-core</artifactId>
+				<version>4.0.18</version>
+			</dependency>
+
+			<!-- TestFX for JUnit5 -->
+			<dependency>
+				<groupId>org.testfx</groupId>
+				<artifactId>testfx-junit5</artifactId>
+				<version>4.0.18</version>
+			</dependency>
+
+			<!-- JUnit 5 -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>5.9.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>5.9.2</version>
+			</dependency>
+
+			<!-- TestFX Core -->
+			<dependency>
+				<groupId>org.testfx</groupId>
+				<artifactId>testfx-core</artifactId>
+				<version>4.0.18</version>
+			</dependency>
+
+			<!-- TestFX for JUnit5 -->
+			<dependency>
+				<groupId>org.testfx</groupId>
+				<artifactId>testfx-junit5</artifactId>
+				<version>4.0.18</version>
+			</dependency>
+
+			<!-- JUnit 5 -->
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>5.9.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>5.15.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-engine</artifactId>
+				<version>5.9.2</version>
+			</dependency>
+
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.fxmisc.richtext</groupId>
@@ -63,12 +159,6 @@
 			<artifactId>ikonli-javafx</artifactId>
 			<version>11.3.3</version>
 		</dependency>
-		<dependency>
-			<groupId>com.kodedu.terminalfx</groupId>
-			<artifactId>terminalfx</artifactId>
-			<version>1.2.0</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
 		<dependency>
 			<groupId>org.antlr</groupId>
@@ -94,6 +184,34 @@
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna-platform</artifactId>
 			<version>5.10.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.techsenger.jeditermfx</groupId>
+			<artifactId>jeditermfx-core</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.techsenger.jeditermfx</groupId>
+			<artifactId>jeditermfx-ui</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>2.0.16</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.23.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.24.3</version>
 		</dependency>
 
 	</dependencies>
@@ -126,10 +244,6 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>
-					<packageName>main.java.generated</packageName>
-					<outputDirectory>${project.build.directory}/generated-sources/antlr4</outputDirectory>
-				</configuration>
 			</plugin>
 
 			<plugin>
@@ -156,6 +270,26 @@
 				<configuration>
 					<mainClass>org.openjfx.MainApp</mainClass>
 				</configuration>
+			</plugin>
+
+			<!-- To find antlr4 generated and java folder -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+				<execution>
+					<id>add-source</id>
+					<phase>generate-sources</phase>
+					<goals><goal>add-source</goal>
+					</goals><configuration>
+					<sources>
+						<source>${project.basedir}/src/main/antlr4</source>
+						<source>${project.basedir}/src/main/java</source>
+					</sources>
+				</configuration>
+				</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
