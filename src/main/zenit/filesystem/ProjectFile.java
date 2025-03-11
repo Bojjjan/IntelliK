@@ -1,6 +1,7 @@
 package main.zenit.filesystem;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -64,11 +65,23 @@ public class ProjectFile extends File {
 	 * If src-file doesn't exist, creates a new one.
 	 * @return The src-file
 	 */
-	public File addSrc() {
+	public File addSrc(boolean mainClass) {
 		if (src == null) {
 			String srcPath = getPath() + File.separator + "src";
 			src = new File(srcPath);
 			src.mkdir();
+			if(mainClass) {
+				File main = new File(src, "Main.java");
+				try (FileWriter writer = new FileWriter(main)) {
+					writer.write("public class Main {\n");
+					writer.write("    public static void main(String[] args) {\n");
+					writer.write("        System.out.println(\"Hello, world!\");\n");
+					writer.write("    }\n");
+					writer.write("}\n");
+				} catch (IOException e) {
+					System.err.println("Error creating Main.java: " + e.getMessage());
+				}
+			}
 		}
 		
 		return src;

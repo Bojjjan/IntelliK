@@ -14,15 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Label;
-import javafx.scene.control.IndexRange;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -30,6 +22,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javafx.stage.Window;
 import main.zenit.filesystem.ProjectFile;
 import main.zenit.filesystem.RunnableClass;
 import main.zenit.filesystem.WorkspaceHandler;
@@ -725,12 +718,13 @@ public class MainController extends VBox implements ThemeCustomizable {
 	 * 
 	 * @param event
 	 */
-	@FXML
 	public void newProject(Event event) {
-		String projectName = DialogBoxes.inputDialog(null, "New project", "Create new project",
-				"Enter a new projectname", "Project name");
+		Window owner = treeView.getScene().getWindow();
+		CheckBox includeMainClass = new CheckBox("Include default Main class");
+		String projectName = DialogBoxes.inputDialogWithCheckbox(owner, "New project", "Create new project",
+				"Enter a new project name", "Project name", includeMainClass);
 		if (projectName != null) {
-			File newProject = fileController.createProject(projectName);
+			File newProject = fileController.createProject(projectName, includeMainClass.isSelected());
 			if (newProject != null) {
 				FileTree.createParentNode((FileTreeItem<String>) treeView.getRoot(), newProject);
 			}

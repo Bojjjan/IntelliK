@@ -3,12 +3,11 @@ package main.zenit.ui;
 import java.util.Optional;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 /**
  * Opening different kinds of dialog boxes with dynamic text depending of input.
@@ -63,6 +62,47 @@ public class DialogBoxes {
 		   return result.get();
 		}
 		return null;
+	}
+
+	/**
+	 * This method is similar to above with the distinction of having a checkbox.
+	 * It inherits the Window (JavaFx Stage) from the MainController.
+	 * @param owner the window passed from the MainController
+	 * @param header header for user instructions
+	 * @param title for the window
+	 * @param contentText user instructions
+	 * @param promptText for the checkbox
+	 * @param checkBox for selection
+	 * @return the input text from the dialog input field
+	 *
+	 * @author Emrik
+	 */
+
+	public static String inputDialogWithCheckbox(Window owner, String header, String title, String contentText, String promptText, CheckBox checkBox) {
+		Dialog<String> dialog = new Dialog<>();
+		dialog.initOwner(owner);
+		dialog.setTitle(title);
+		dialog.setHeaderText(header);
+
+		ButtonType okButton = new ButtonType("OK", ButtonType.OK.getButtonData());
+		dialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
+
+		TextField inputField = new TextField();
+		inputField.setPromptText(promptText);
+
+		VBox vbox = new VBox(10);
+		vbox.getChildren().addAll(new Label(contentText), inputField, checkBox);
+		dialog.getDialogPane().setContent(vbox);
+
+		dialog.setResultConverter(dialogButton -> {
+			if (dialogButton == okButton) {
+				return inputField.getText();
+			}
+			return null;
+		});
+
+		Optional<String> result = dialog.showAndWait();
+		return result.orElse(null);
 	}
 	
 	/**
