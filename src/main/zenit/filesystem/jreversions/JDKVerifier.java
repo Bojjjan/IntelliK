@@ -6,14 +6,38 @@ import main.zenit.GetOperatingSystem;
 import main.zenit.Zenit;
 
 public class JDKVerifier {
-	
+
+	/**
+	 * This method checks if the passed JDK path is valid by searching
+	 * the bin folder for java.exe and javac.exe.
+	 * Supports Windows and Unix-based systems.
+	 *
+	 * @param JDK passed JDK path -> C:\Program Files\Java\JDKOfChoice.
+	 * @return true if BOTH java.exe and javac.exe were found, false if not.
+	 */
+
 	protected static boolean validJDK(File JDK) {
-		
-		File java = new File(getExecutablePath(JDK.getPath(), "java"));
-		File javac = new File(getExecutablePath(JDK.getPath(), "javac"));
-		
-		return (java != null && javac != null && java.exists() && javac.exists());
+		File binFolder = new File(JDK, "bin");
+
+		if (!binFolder.exists() || !binFolder.isDirectory()) {
+			return false;
+		}
+
+		File javaFile = new File(binFolder, isWindows() ? "java.exe" : "java");
+		File javacFile = new File(binFolder, isWindows() ? "javac.exe" : "javac");
+
+		return javaFile.exists() && javacFile.exists();
 	}
+
+	/**
+	 * Helper method to check if the OS is windows. Used to determine which filepath to look for in validJDK.
+	 *
+	 * @return true if the user is running a Windows system, false if not.
+	 */
+	private static boolean isWindows() {
+		return System.getProperty("os.name").toLowerCase().contains("win");
+	}
+
 
 
 	/**

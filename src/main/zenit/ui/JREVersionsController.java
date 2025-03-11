@@ -34,7 +34,7 @@ public class JREVersionsController extends AnchorPane {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("/zenit/ui/JREVersions.fxml"));
 			loader.setController(this);
-			AnchorPane root = (AnchorPane) loader.load();
+			AnchorPane root = loader.load();
 			Scene scene = new Scene(root);
 
 			//set up stage
@@ -59,7 +59,7 @@ public class JREVersionsController extends AnchorPane {
 	
 	private void updateList() {
 		JVMs = JREVersions.read();
-		ArrayList<String> JVMsString = new ArrayList<String>();
+		ArrayList<String> JVMsString = new ArrayList<>();
 		
 		for (File JVM : JVMs) {
 			JVMsString.add(JVM.getName());
@@ -94,8 +94,9 @@ public class JREVersionsController extends AnchorPane {
 			if (success) {
 				updateList();
 			} else {
-				DialogBoxes.errorDialog("JDK doesn't contain java or javac", "", "The selected JDK doesn't"
-						+ "contain the needed java or javac executables");
+				DialogBoxes.errorDialog("JDK doesn't contain java or javac", "", "Invalid JDK folder."
+						+ " Example Path -> C:\\ProgramFiles\\Java\\jdk-20."
+						+ " Ensure that your selected JDK is installed and contains a bin folder with a java and javac executable");
 			}
 		}
 		
