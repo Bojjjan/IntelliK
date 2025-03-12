@@ -165,8 +165,6 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
         }
     }
 
-
-
     /**
      * Retrieves the set of class names found during the parsing process.
      *
