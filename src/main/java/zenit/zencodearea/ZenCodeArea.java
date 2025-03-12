@@ -143,7 +143,6 @@ public class ZenCodeArea extends CodeArea {
 				}
 		);
 
-
 		Nodes.addInputMap(this, imTab);
 		Nodes.addInputMap(this, imBraces);
 	}
@@ -249,12 +248,10 @@ public class ZenCodeArea extends CodeArea {
 	 * @return A string representing the CSS style class for syntax highlighting.
 	 */
 	private static String getStyleForToken(int tokenType, String tokenText, SemanticAnalyzer analyzer) {
-		if (analyzer.getMethodNames().contains(tokenText) && (tokenText.endsWith(")") || tokenText.endsWith("]"))) {
-			System.out.println("tokenText method: " + tokenText);
-			return "method-name";
-		}else if (analyzer.getClassNames().contains(tokenText)) {
-			System.out.println("tokenText class: " + tokenText);
+		if (analyzer.getClassNames().contains(tokenText) && (tokenText.endsWith(")") || tokenText.endsWith("]"))) {
 			return "class-name";
+		}else if (analyzer.getMethodNames().contains(tokenText)) {
+			return "method-name";
 		}  else if (analyzer.getVariables().contains(tokenText)) {
 			return "variable";
 		};
