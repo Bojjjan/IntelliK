@@ -247,51 +247,7 @@ public class ConsoleController implements Initializable {
 		return envs;
 	}
 
-	/**
-	 * Creates a TtyConnector for terminal communication.
-	 * Sets up the appropriate shell based on the platform (PowerShell for Windows, bash for others).
-	 * Configures and starts a PTY process for terminal interaction.
-	 *
-	 * @return A configured TtyConnector for terminal communication
-	 * @throws IllegalStateException if process creation fails
-	 * @Author Kevin Nordkvist, Huy Khanh Dang
-	 */
 
-	public TtyConnector createTtyConnector() {
-		try {
-			var envs = configureEnvironmentVariables();
-			String[] command;
-			if (com.techsenger.jeditermfx.core.util.Platform.isWindows()) {
-				command = new String[]{"powershell.exe"};
-			} else {
-				String shell = (String) envs.get("SHELL");
-				if (shell == null) {
-					shell = "/bin/bash";
-				}
-				if (com.techsenger.jeditermfx.core.util.Platform.isMacOS()) {
-					command = new String[]{shell, "--login"};
-				} else {
-					command = new String[]{shell};
-				}
-			}
-			var workingDirectory = Path.of(".").toAbsolutePath().normalize().toString();
-			//logger.info("Starting {} in {}", String.join(" ", command), workingDirectory);
-
-			var process = new PtyProcessBuilder()
-					.setDirectory(workingDirectory)
-					.setInitialColumns(120)
-					.setInitialRows(20)
-					.setCommand(command)
-					.setEnvironment(envs)
-					.setConsole(false)
-					.setUseWinConPty(true)
-					.start();
-
-			return new JediTermFx.LoggingPtyProcessTtyConnector(process, StandardCharsets.UTF_8, Arrays.asList(command));
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-	}
 	/**
 	 * Creates a new terminal instance.
 	 * Sets up the terminal widget with appropriate styling and connects it to a TTY process.
@@ -305,7 +261,7 @@ public class ConsoleController implements Initializable {
 			JediTermFx terminalApp = new JediTermFx();
 			JediTermFxWidget terminalWidget = terminalApp.getMyWidget();
 
-			TtyConnector ttyConnector = createTtyConnector();
+			TtyConnector ttyConnector = terminalApp.createTtyConnector();
 			terminalApp.openSession(terminalWidget, ttyConnector);
 
 			if (terminalAnchorPane == null) {
