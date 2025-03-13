@@ -130,4 +130,20 @@ class FileManagementTests extends ApplicationTest {
         sleep(500);
         assertEquals(0, lookup(hasText("RenamedTestTxt.txt")).queryAll().size());
     }
+    /**
+     * Test case TFH103 -> Skapa ny fil med mellanslag
+     */
+    @TestFx
+    @Order(8)
+    void newFileWithSpaceTest(){
+        clickOn("File")
+                .moveTo("New...")
+                .moveTo("New tab")
+                .clickOn("New file")
+        ;
+        write("Test File");
+        clickOn("Create");
+        verifyThat(lookup(hasText("File name can't contain spaces")), isVisible());
+    }
+
 }

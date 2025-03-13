@@ -658,12 +658,6 @@ public class MainController extends VBox implements ThemeCustomizable {
 	 * @param file The file to be deleted.
 	 */
 	public void deleteFile(File file) {
-//		deletedTexts.put(file, FileController.readFile(file));
-//		
-//		fileHistory.add(0, file);
-//		historyIndex++;
-//		System.out.println(historyIndex);
-
 		deletedFile.set(file, FileController.readFile(file));
 
 		fileController.deleteFile(file);
@@ -1352,9 +1346,6 @@ public class MainController extends VBox implements ThemeCustomizable {
 			divider.setStyle("-fx-padding: 1");
 		}
 		splitPane.resize(splitPane.getWidth() + 2 , splitPane.getHeight() + 2);
-		
-		
-		
 	}
 
 	public String getWorkspace (){
