@@ -48,7 +48,8 @@ public class Zenit extends Application {
 
 		SetupController sc;
 		if (!workspace.exists() || !JDK.exists() || !defaultJDK.exists()) {
-			sc = new SetupController();
+			Stage newStage = new Stage();
+			sc = new SetupController(newStage);
 			sc.start();
 		}
 
@@ -79,5 +80,4 @@ public class Zenit extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
-
 }

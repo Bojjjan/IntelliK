@@ -55,94 +55,43 @@ import main.zenit.zencodearea.ZenCodeArea;
  */
 public class MainController extends VBox implements ThemeCustomizable {
 	private final Stage stage;
-	
 	private FileController fileController;
 
 	private ProjectMetadataController pmc;
-	
-	private int zenCodeAreasTextSize;
-	
-	private String zenCodeAreasFontFamily;
 	private String activeStylesheet;
-	
-	private LinkedList<ZenCodeArea> activeZenCodeAreas;
-	
 	private File customThemeCSS;
-	
+
+	private String zenCodeAreasFontFamily;
+	private int zenCodeAreasTextSize;
+	private LinkedList<ZenCodeArea> activeZenCodeAreas;
+
 	private boolean isDarkMode = true;
-	
 	private Process process;
-	
 	private Tuple<File, String> deletedFile = new Tuple<>();
 
-	@FXML
-	private AnchorPane consolePane;
-		
-	@FXML 
-	private SplitPane splitPane;
-
-	@FXML
-	private MenuItem newTab;
-	
-	@FXML 
-	private MenuItem newFile;
-	
-	@FXML 
-	private MenuItem newFolder;
-
-	@FXML
-	private MenuItem newProject;
-
-	@FXML
-	private MenuItem openFile;
-
-	@FXML
-	private MenuItem saveFile;
-
-	@FXML
-	private MenuItem importProject;
-
-	@FXML
-	private MenuItem changeWorkspace;
-
-	@FXML
-	private MenuItem JREVersions;
-	
-	@FXML
-	private CheckMenuItem cmiDarkMode;
-	
-	@FXML
-	private MenuItem undo;
-	
-	@FXML
-	private MenuItem redo;
-	
-	@FXML
-	private MenuItem delete;
-
-	@FXML
-	private TabPane tabPane;
-
-	@FXML
-	private TreeView<String> treeView;
-
-	@FXML
-	private Button btnRun;
-
-	@FXML
-	private Button btnStop;
-
-	@FXML
-	private ConsoleController consoleController;
-
-	@FXML
-	private Label statusBarLeftLabel;
-
-	@FXML
-	private Label statusBarRightLabel;
-	
-	@FXML
-	private FXMLLoader loader;
+	@FXML private AnchorPane consolePane;
+	@FXML private SplitPane splitPane;
+	@FXML private MenuItem newTab;
+	@FXML private MenuItem newFile;
+	@FXML private MenuItem newFolder;
+	@FXML private MenuItem newProject;
+	@FXML private MenuItem openFile;
+	@FXML private MenuItem saveFile;
+	@FXML private MenuItem importProject;
+	@FXML private MenuItem changeWorkspace;
+	@FXML private MenuItem JREVersions;
+	@FXML private CheckMenuItem cmiDarkMode;
+	@FXML private MenuItem undo;
+	@FXML private MenuItem redo;
+	@FXML private MenuItem delete;
+	@FXML private TabPane tabPane;
+	@FXML private TreeView<String> treeView;
+	@FXML private Button btnRun;
+	@FXML private Button btnStop;
+	@FXML private ConsoleController consoleController;
+	@FXML private Label statusBarLeftLabel;
+	@FXML private Label statusBarRightLabel;
+	@FXML private FXMLLoader loader;
 	
 
 	/**

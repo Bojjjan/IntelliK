@@ -179,7 +179,7 @@ public class JREVersions {
 		return switch (OS){
 			case MAC ->   new File("/library/java/javavirtualmachines");
 			case LINUX -> new File("/usr/lib/jvm");
-			case WINDOWS -> new File("C:\\Program Files\\Java\\");
+			case WINDOWS -> new File("C:\\Program Files\\Java\\"); // "C:\\" could be an issue
 			default -> null;
 		};
 	}

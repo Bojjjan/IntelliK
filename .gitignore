@@ -1,5 +1,6 @@
 .idea/
 maven/
+misc.xml
 
 #Class files
 bin/*

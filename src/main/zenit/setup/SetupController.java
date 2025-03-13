@@ -36,7 +36,7 @@ import main.zenit.ui.DialogBoxes;
  */
 public class SetupController extends AnchorPane {
 	
-	private Stage stage;
+	private final Stage stage;
 	
 	private File workspaceDat;
 	private File JDKDat;
@@ -58,8 +58,9 @@ public class SetupController extends AnchorPane {
 	 * Creates a new controller for the setup page.
 	 * Start graphics by calling {@link #start()}
 	 */
-	public SetupController() {
+	public SetupController(Stage stage) {
 		//Init final variable
+		this.stage = stage;
 		tgGroup = new ToggleGroup();
 		
 		//Init dat files
@@ -80,17 +81,21 @@ public class SetupController extends AnchorPane {
 			AnchorPane root = (AnchorPane) loader.load();
 			Scene scene = new Scene(root);
 
-			//set up stage
-			stage = new Stage();
 			stage.setResizable(false);
 			stage.setScene(scene);
-			stage.initStyle(StageStyle.UNDECORATED);
+
 			
 			//Init graphical components
 			initialize();
-			
-			//display stage
-			stage.showAndWait();
+
+
+			if (System.getProperty("testfx.environment") != null) {
+				stage.show();
+
+			} else {
+				stage.initStyle(StageStyle.UNDECORATED);
+				stage.showAndWait();
+			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -165,7 +170,7 @@ public class SetupController extends AnchorPane {
 		if (defaultJDKFile != null) {
 			String defaultJDKName = defaultJDKFile.getName();
 			
-			if (defaultJDKName != null && JDKs.contains(defaultJDKName)) {
+			if (JDKs.contains(defaultJDKName)) {
 				JDKs.remove(defaultJDKName);
 				defaultJDKName += " [default]";
 				JDKs.add(defaultJDKName);
