@@ -40,7 +40,6 @@ public class NewFileController extends AnchorPane {
 	public NewFileController(File workspace, boolean darkmode) {
 		this.workspace = workspace;
 		this.darkmode = darkmode;
-
 	}
 
 	/**

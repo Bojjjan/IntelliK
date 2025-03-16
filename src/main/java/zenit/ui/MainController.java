@@ -2,6 +2,7 @@ package zenit.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -306,8 +307,12 @@ public class MainController extends VBox implements ThemeCustomizable {
 		return stage;
 	}
 
-	public ZenCodeArea createNewZenCodeArea() {
-		ZenCodeArea zenCodeArea = new ZenCodeArea(zenCodeAreasTextSize, zenCodeAreasFontFamily);
+	public ZenCodeArea createNewZenCodeArea(String path) {
+		String sourcePath = null;
+		if(path != null){
+			sourcePath = path.replaceAll("^(.*src).*", "$1");
+		}
+		ZenCodeArea zenCodeArea = new ZenCodeArea(zenCodeAreasTextSize, zenCodeAreasFontFamily, sourcePath);
 		activeZenCodeAreas.add(zenCodeArea);
 		return zenCodeArea;
 	}
@@ -523,7 +528,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 	 */
 	@FXML
 	public void newTab(Event event) {
-		addTab();
+		addTab(null);
 	}
 	
 	@FXML
@@ -589,7 +594,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 
 			if (supportedFileFormat(file)) {
 			
-			FileTab selectedTab = addTab();
+			FileTab selectedTab = addTab(file.getAbsolutePath());
 			selectedTab.setFile(file, true);
 
 			selectedTab.setText(file.getName());
@@ -902,8 +907,8 @@ public class MainController extends VBox implements ThemeCustomizable {
 	 * @param onClick The Runnable to run when the tab should be closed.
 	 * @return The new Tab.
 	 */
-	public FileTab addTab() {
-		FileTab tab = new FileTab(createNewZenCodeArea(), this);
+	public FileTab addTab(String path) {
+		FileTab tab = new FileTab(createNewZenCodeArea(path), this);
 		tab.setOnCloseRequest(event -> closeTab(event));
 		tabPane.getTabs().add(tab);
 

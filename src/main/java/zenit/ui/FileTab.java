@@ -179,7 +179,6 @@ public class FileTab extends Tab {
 
 	public void navigateToCorrectTabIndex() {
 		if (zenCodeArea.getParagraphs().isEmpty()) {
-			zenCodeArea.appendText("\n");
 			return;
 		}
 
@@ -187,37 +186,11 @@ public class FileTab extends Tab {
 		String previousText = zenCodeArea.getParagraph(previousLine).getText();
 
 		String spaces = " ".repeat(StringUtilities.countLeadingSpaces(previousText));
-		if (previousText.trim().endsWith("{")) {
-			spaces += "    ";
-		}
 
-		zenCodeArea.insertText(zenCodeArea.getCaretPosition(), "\n" + spaces);
+		zenCodeArea.insertText(zenCodeArea.getCaretPosition(), spaces);
 	}
 
 
-	/**
-	 * Adds a curly brace on the appropriate line if one is missing.
-	 * @param row The row (line number) to add the curly brace to.
-	 * @param column The column to add the curly brace to.
-	 * @param spaces The amount of spaces to add before the curly brace.
-	 * @author Pontus Laos
-	 */
-	private void addMissingCurlyBrace(int row, int column, String spaces) {
-		int[] counts = {
-			StringUtilities.count(zenCodeArea.getText(), '{'),
-			StringUtilities.count(zenCodeArea.getText(), '}'),
-		};
-		
-		if (counts[0] == counts[1] + 1) {
-			zenCodeArea.insertText(zenCodeArea.getCaretPosition(), "\n");
-			zenCodeArea.insertText(
-				row, column, 
-				spaces.substring(0, spaces.length() - 4) + "}"
-			);
-			zenCodeArea.moveTo(row - 1, spaces.length());
-		}
-	}
-	
 	/**
 	 * Updates the title of the tab.
 	 */
