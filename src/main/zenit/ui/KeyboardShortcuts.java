@@ -25,7 +25,7 @@ public final class KeyboardShortcuts {
 	 * @param action   The Runnable to be run when the KeyCodeCombination is
 	 *                 triggered.
 	 */
-	public static final void add(Scene scene, KeyCode code, Modifier modifier, Runnable action) {
+	public static void add(Scene scene, KeyCode code, Modifier modifier, Runnable action) {
 		scene.getAccelerators().put(new KeyCodeCombination(code, modifier), action);
 	}
 
@@ -36,7 +36,7 @@ public final class KeyboardShortcuts {
 	 * @param scene      The scene to be used.
 	 * @param controller The controller to call methods from.
 	 */
-	public static final void setupMain(Scene scene, MainController controller) {
+	public static void setupMain(Scene scene, MainController controller) {
 //		add(scene, KeyCode.S, KeyCombination.SHORTCUT_DOWN, () -> controller.saveFile(null));
 //		add(scene, KeyCode.O, KeyCombination.SHORTCUT_DOWN, () -> controller.openFile((Event) null));
 //		add(scene, KeyCode.N, KeyCombination.SHORTCUT_DOWN, controller::addTab);
@@ -46,27 +46,27 @@ public final class KeyboardShortcuts {
 		add(scene, KeyCode.SPACE, KeyCombination.CONTROL_DOWN, controller::shortcutsTrigger);
 //		add(scene, KeyCode.DIGIT7, KeyCombination.SHORTCUT_DOWN, controller::commentAndUncomment); 
 		
-		scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-			public void handle(KeyEvent ke) {
-				if (controller.getSelectedTab() != null) {
-					if (controller.getSelectedTab().getZenCodeArea().isFocused()) {
-						if (ke.getCode() == KeyCode.ENTER) {
-							controller.commentsShortcutsTrigger();
-							controller.navigateToCorrectTabIndex();
-							ke.consume(); // <-- stops passing the event to next node
-						}
-					}
-				}
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, ke -> {
+            if (controller.getSelectedTab() != null) {
+                if (controller.getSelectedTab().getZenCodeArea().isFocused()) {
+                    if (ke.getCode() == KeyCode.ENTER) {
+                        controller.commentsShortcutsTrigger();
+                        controller.navigateToCorrectTabIndex();
+                        ke.consume(); // <-- stops passing the event to next node
+                    }
+                }
+            }
 
-			}
-		});
-		
-		scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-			if (controller.getSelectedFileTreeItem() != null) {
-				if (event.getCode() == KeyCode.DELETE) {
-					controller.deleteFileFromTreeView();
-				}
-			}
-		});
+        });
+
+		// TODO: -> Kolla på denna kod nedan. Trycker du delete i runtime så tas din fil bort oavsett vad?
+		// TODO: -> Så alltså, om jag trycker delete för att ta bort en bokstav så tas min fil bort? Nej tack.
+//		scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+//			if (controller.getSelectedFileTreeItem() != null) {
+//				if (event.getCode() == KeyCode.DELETE) {
+//					controller.deleteFileFromTreeView();
+//				}
+//			}
+//		});
 	}
 }

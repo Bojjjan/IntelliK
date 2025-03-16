@@ -4,6 +4,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.concurrent.Task;
 
+import org.fxmisc.richtext.model.StyleSpan;
 import main.zenit.ui.FileTab;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.Token;
@@ -12,6 +13,9 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -22,42 +26,23 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
+import main.zenit.zencodearea.ProjectController;
 
 import generated.JavaParser;
 import generated.JavaLexer;
 
-/**
- * ZenCodeArea is a custom code editor component that extends CodeArea.
- * It provides syntax highlighting and semantic analysis for Java code.
- *
- * The class uses ANTLR for lexical and syntactic analysis and provides
- * asynchronous syntax highlighting to improve performance.
- *
- * The class also supports updating the appearance of the code area
- * and handling indentation with the TAB key.
- * @author Philip Boyde
- */
 public class ZenCodeArea extends CodeArea {
 	private final ExecutorService executor;
+	private ProjectController projectController;
 	private JavaClassType oldJClass;
-	private FileTab tab;
+	private static final Set<String> JAVA_LANG_CLASSES = Set.of(
+			"String", "Object", "System", "StringBuilder", "Thread", "Exception", "Runtime",
+			"Integer", "Double", "Float", "Character", "Boolean", "Math", "Void", "Short", "Long", "Byte"
+	);
 
-	/**
-	 * Constructs a {@code ZenCodeArea} with the specified text size and font.
-	 * <p>
-	 * This constructor initializes the code area with line numbers and sets up
-	 * asynchronous syntax highlighting. The highlighting task is scheduled to
-	 * run after a short delay whenever the text changes, ensuring that updates
-	 * do not block the UI thread. The method also initializes a single-threaded
-	 * executor for background tasks and applies the given font and text size.
-	 * </p>
-	 *
-	 * @author Philip Boyde
-	 * @param textSize The size of the text in the code area.
-	 * @param font The font to be used for displaying text.
-	 */
-	public ZenCodeArea(int textSize, String font) {
+	public ZenCodeArea(int textSize, String font, String sourcePath) {
 		setParagraphGraphicFactory(LineNumberFactory.get(this));
+		projectController = new ProjectController(sourcePath);
 
 		// Async syntax highlighting
 		multiPlainChanges().successionEnds(Duration.ofMillis(200))
@@ -75,34 +60,9 @@ public class ZenCodeArea extends CodeArea {
 		updateAppearance(font, textSize);
 	}
 
-
-
-
-	/**
-	 * Updates the syntax highlighting of the code area.
-	 * returns the updated {@link StyleSpans} object containing syntax highlighting information for testing.
-	 */
-
-
-	public StyleSpans<Collection<String>> update() {
-		return computeHighlighting(getText());
+	public void update() {
+		applyHighlighting(computeHighlighting(getText()));
 	}
-
-
-
-	/**
-	 * Computes syntax highlighting asynchronously.
-	 * <p>
-	 * This method retrieves the current text from the editor and creates a {@link Task}
-	 * that runs the syntax highlighting computation in a background thread. The task
-	 * is executed using the single-threaded executor to ensure that syntax highlighting
-	 * does not block the UI thread.
-	 * </p>
-	 *
-	 * @author Philip Boyde
-	 * @return A {@link Task} that will compute and return the {@link StyleSpans}
-	 *  containing syntax highlighting information.
-	 */
 
 	private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
 		String text = getText();
@@ -117,159 +77,166 @@ public class ZenCodeArea extends CodeArea {
 
 	}
 
-
-
-	/**
-	 * Applies syntax highlighting and sets up key bindings for indentation and auto-closing braces.
-	 * <p>
-	 * This method applies syntax highlighting to the text area using the provided {@link StyleSpans}.
-	 * Additionally, it sets up custom key bindings for better code editing experience:
-	 * </p>
-	 * <ul>
-	 *     <li><b>Tab key ({@code TAB}):</b> Inserts four spaces instead of moving focus.</li>
-	 *     <li><b>Auto-closing braces (When {@code { }} is typed, it automatically inserts a matching closing brace with a space in between and moves the caret inside. )</li>
-	 * </ul>
-	 *
-	 * @author Philip Boyde
-	 * @param highlighting The {@link StyleSpans} containing syntax highlighting information.
-	 * @return The {@link StyleSpans} object with syntax highlighting applied for testing
-	 */
-
-	private StyleSpans<Collection<String>> applyHighlighting(StyleSpans<Collection<String>> highlighting) {
+	private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
 		setStyleSpans(0, highlighting);
 
-		// TAB Key for indentation
 		InputMap<KeyEvent> imTab = InputMap.consume(
 				EventPattern.keyPressed(KeyCode.TAB),
 				e -> this.replaceSelection("    ")
 		);
 
-		// Auto-closing braces: When { is typed, insert "{ }" and move the caret inside
 		InputMap<KeyEvent> imBraces = InputMap.consume(
 				EventPattern.keyTyped().onlyIf(e -> e.getCharacter().equals("{")),
 				e -> {
-					this.replaceSelection("{ }");
-					this.moveTo(this.getCaretPosition() - 2); // Move caret inside the braces
+					int caretPos = this.getCaretPosition();
+					String currentLine = this.getParagraph(this.getCurrentParagraph()).getText();
+					int caretColumn = this.getCaretColumn();
+					String beforeCaret = currentLine.substring(0, caretColumn);
+
+					boolean inlineMode = beforeCaret.trim().endsWith("=");
+
+					if (!inlineMode && !beforeCaret.trim().isEmpty()) {
+						Matcher m = Pattern.compile("^(\\s*)").matcher(currentLine);
+						String indent = "";
+						if (m.find()) {
+							indent = m.group(1);
+						}
+						String indentBlock = indent + "    ";
+						String toInsert = "{" + "\n" + indentBlock + "\n" + indent + "}";
+						this.replaceSelection(toInsert);
+						this.moveTo(caretPos + 2 + indentBlock.length());
+					} else {
+						this.replaceSelection("{}");
+						this.moveTo(this.getCaretPosition() - 1);
+					}
+				}
+		);
+
+		InputMap<KeyEvent> imQuotes = InputMap.consume(
+				EventPattern.keyTyped().onlyIf(e -> e.getCharacter().equals("\"")),
+				e -> {
+					this.replaceSelection("\"\"");
+					this.moveTo(this.getCaretPosition() - 1);
+				}
+		);
+
+		InputMap<KeyEvent> imParentheses = InputMap.consume(
+				EventPattern.keyTyped().onlyIf(e -> e.getCharacter().equals("(")),
+				e -> {
+					this.replaceSelection("()");
+					this.moveTo(this.getCaretPosition() - 1);
+				}
+		);
+
+		InputMap<KeyEvent> imHardBrackets = InputMap.consume(
+				EventPattern.keyTyped().onlyIf(e -> e.getCharacter().equals("[")),
+				e -> {
+					this.replaceSelection("[]");
+					this.moveTo(this.getCaretPosition() - 1);
 				}
 		);
 
 		Nodes.addInputMap(this, imTab);
 		Nodes.addInputMap(this, imBraces);
-		return highlighting;
+		Nodes.addInputMap(this, imQuotes);
+		Nodes.addInputMap(this, imParentheses);
+		Nodes.addInputMap(this, imHardBrackets);
 	}
 
-
-
-	/**
-	 * Computes syntax highlighting for a given Java source code snippet.
-	 * <p>
-	 * This method tokenizes the input text, analyzes its semantic structure using an ANTLR-based
-	 * parser, and assigns appropriate syntax highlighting styles to each token. The highlighting
-	 * information is returned as a {@link StyleSpans} object, where each span is associated
-	 * with a collection of style classes.
-	 * </p>
-	 *
-	 * @author Philip Boyde
-	 * @param text The Java source code to be highlighted.
-	 * @return A {@link StyleSpans} object containing style information for syntax highlighting.
-	 */
-	public StyleSpans<Collection<String>> computeHighlighting(String text) {
+	private StyleSpans<Collection<String>> computeHighlighting(String text) {
 		StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-		List<Token> tokens = tokenize(text);
 
-		// Analyze code for semantic information
-		SemanticAnalyzer analyzer = new SemanticAnalyzer();
-		CharStream input = CharStreams.fromString(text);
-		JavaLexer lexer = new JavaLexer(input);
-		CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-		JavaParser parser = new JavaParser(tokenStream);
-		ParseTreeWalker.DEFAULT.walk(analyzer, parser.compilationUnit());
+		try {
+			SyntaxError.SyntaxErrorListener errorListener = new SyntaxError.SyntaxErrorListener();
+			CharStream input = CharStreams.fromString(text);
+			JavaLexer lexer = new JavaLexer(input);
+			lexer.removeErrorListeners();
+			CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 
-		int lastIndex = 0;
-		for (Token token : tokens) {
-			String styleClass = getStyleForToken(token.getType(), token.getText(), analyzer);
+			JavaParser parser = new JavaParser(tokenStream);
+			parser.removeErrorListeners();
+			parser.addErrorListener(errorListener);
+			parser.setErrorHandler(new CustomErrorStrategy());
 
-			int startIndex = token.getStartIndex();
-			int stopIndex = token.getStopIndex() + 1;
-			spansBuilder.add(Collections.emptyList(), startIndex - lastIndex);
-			spansBuilder.add(Collections.singleton(styleClass), stopIndex - startIndex);
-			lastIndex = stopIndex;
+			ParseTree tree = parser.compilationUnit();
+
+			SemanticAnalyzer analyzer = new SemanticAnalyzer();
+			ParseTreeWalker.DEFAULT.walk(analyzer, tree);
+
+			List<Token> tokens = tokenStream.getTokens();
+
+			Set<Integer> errorLines = new HashSet<>();
+			if (errorListener.hasSyntaxErrors()) {
+				for (SyntaxError error : errorListener.getSyntaxErrors()) {
+					int lineNum = computeLineNumber(text, error.startIndex());
+					errorLines.add(lineNum);
+				}
+			}
+
+			int lastIndex = 0;
+			List<StyleSpan<Collection<String>>> spans = new ArrayList<>();
+			for (int i = 0; i < tokens.size(); i++) {
+				Token token = tokens.get(i);
+				int startIndex = token.getStartIndex();
+				int stopIndex = token.getStopIndex() + 1;
+
+				if (startIndex > lastIndex) {
+					spans.add(new StyleSpan<>(Collections.emptyList(), startIndex - lastIndex));
+				}
+				String baseStyle = getStyleForToken(token.getType(), token.getText(), analyzer);
+				Set<String> styleSet = new HashSet<>();
+				if(token.getType() == JavaLexer.IDENTIFIER && i < tokens.size() -1){
+					Token next = tokens.get(i + 1);
+					if(next.getType() == JavaLexer.LPAREN){
+						baseStyle = "method-call";
+					}
+				}
+				if (!baseStyle.isEmpty()) {
+					styleSet.add(baseStyle);
+				}
+
+				int tokenLine = computeLineNumber(text, startIndex);
+				if (errorLines.contains(tokenLine) && !token.getText().trim().isEmpty()) {
+					styleSet.add("error");
+				}
+
+				spans.add(new StyleSpan<>(styleSet, stopIndex - startIndex));
+				lastIndex = stopIndex;
+			}
+			if (text.length() > lastIndex) {
+				spans.add(new StyleSpan<>(Collections.emptyList(), text.length() - lastIndex));
+			}
+
+			spansBuilder.addAll(spans);
+			return spansBuilder.create();
+		} catch (Exception e) {
+			e.printStackTrace();
+			spansBuilder.add(Collections.emptyList(), text.length());
+			return spansBuilder.create();
+		}
+	}
+
+	private static String getStyleForToken(int tokenType, String tokenText, SemanticAnalyzer analyzer) {
+		if (tokenType == JavaLexer.IDENTIFIER && analyzer.getClassNames().contains(tokenText)) {
+			Symbol symbol = ProjectController.getInstance().getSymbol(tokenText);
+			if(symbol != null && symbol.getSymbolType() == Symbol.Type.CLASS){
+				if(!AccessUtil.isAccessible(symbol, analyzer.getContext())){
+					return "no-access";
+				}else{
+					return "class-name";
+				}
+			}
+			return "class-name";
+		}
+		if (JAVA_LANG_CLASSES.contains(tokenText)) {
+			return "class-name";
+		} else if (analyzer.getMethodNames().contains(tokenText)) {
+			return "method-name";
+		} else if (analyzer.getVariables().contains(tokenText)) {
+			return "variable";
 		}
 
-		spansBuilder.add(Collections.emptyList(), text.length() - lastIndex);
-
-		return spansBuilder.create();
-	}
-
-	/**
-	 * Tokenizes a given Java source code string.
-	 * <p>
-	 * This method uses ANTLR to tokenize the provided Java source code. It creates a lexer
-	 * and parser, processes the input, and returns a list of tokens. Additionally, it
-	 * performs semantic analysis by walking the abstract syntax tree (AST).
-	 * </p>
-	 *
-	 * @author Philip Boyde
-	 * @param code The Java source code to tokenize.
-	 * @return A {@link List} of {@link Token} objects representing the lexical tokens in the source code.
-	 */
-	private static List<Token> tokenize(String code) {
-		CharStream input = CharStreams.fromString(code);
-		JavaLexer lexer = new JavaLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		JavaParser parser = new JavaParser(tokens);
-
-		parser.removeErrorListeners(); // Disable default error handling
-
-		ParseTree tree = parser.compilationUnit(); // Start parsing
-		SemanticAnalyzer analyzer = new SemanticAnalyzer();
-		ParseTreeWalker.DEFAULT.walk(analyzer, tree); // Walk the AST
-
-		return tokens.getTokens(); // Return the tokenized list
-	}
-
-	/**
-	 * Determines the syntax highlighting style for a given token.
-	 * <p>
-	 * This method assigns a CSS style class based on the token's type and text.
-	 * It first checks if the token represents a class name, method name, or variable
-	 * using the provided {@link SemanticAnalyzer}. If not, it categorizes the token
-	 * based on its type using a {@code switch} statement.
-	 * </p>
-	 *
-	 * <p><b>Token Categories:</b></p>
-	 * <ul>
-	 *     <li><b>Class Names:</b> Tokens that match known class names are styled as {@code "class-name"}.</li>
-	 *     <li><b>Method Names:</b> Tokens that match known method names are styled as {@code "method-name"}.</li>
-	 *     <li><b>Variables:</b> Tokens that match known variable names are styled as {@code "variable"}.</li>
-	 *     <li><b>Access Modifiers:</b> {@code public, private, protected, static, final}, etc., are styled as {@code "access-modifier"}.</li>
-	 *     <li><b>Keywords:</b> Control flow and Java-specific keywords (e.g., {@code if, else, while}) are styled as {@code "keyword"}.</li>
-	 *     <li><b>Data Types:</b> Primitive types (e.g., {@code int, boolean, double}) are styled as {@code "datatype"}.</li>
-	 *     <li><b>Strings:</b> String and character literals are styled as {@code "strings"}.</li>
-	 *     <li><b>Literals:</b> Numeric and boolean literals are styled as {@code "literal"}.</li>
-	 *     <li><b>Operators:</b> Arithmetic, logical, and bitwise operators are styled as {@code "operator"}.</li>
-	 *     <li><b>Brackets:</b> Parentheses, curly braces, and square brackets are styled as {@code "bracket"}.</li>
-	 *     <li><b>Comments:</b> Line and block comments are styled as {@code "comment"}.</li>
-	 *     <li><b>Identifiers:</b> Other identifiers that do not match specific categories are styled as {@code "identifier"}.</li>
-	 *     <li><b>Default:</b> Any unrecognized token is assigned the {@code "default"} style.</li>
-	 * </ul>
-	 *
-	 * @author Philip Boyde
-	 * @param tokenType   The type of the token, as defined by {@link JavaLexer}.
-	 * @param tokenText   The text representation of the token.
-	 * @param analyzer    The {@link SemanticAnalyzer} used to identify class names, method names, and variables.
-	 * @return A string representing the CSS style class for syntax highlighting.
-	 */
-	private static String getStyleForToken(int tokenType, String tokenText, SemanticAnalyzer analyzer) {
-		if (analyzer.getClassNames().contains(tokenText) && (tokenText.endsWith(")") || tokenText.endsWith("]"))) {
-			return "class-name";
-		}else if (analyzer.getMethodNames().contains(tokenText)) {
-			return "method-name";
-		}  else if (analyzer.getVariables().contains(tokenText)) {
-			return "variable";
-		};
-
-		return switch (tokenType) {
+        return switch (tokenType) {
 			case JavaLexer.PUBLIC, JavaLexer.PRIVATE, JavaLexer.PROTECTED, JavaLexer.STATIC,
 				 JavaLexer.CLASS, JavaLexer.EXTENDS, JavaLexer.FINAL, JavaLexer.SUPER, JavaLexer.THIS,
 				 JavaLexer.VOLATILE, JavaLexer.PACKAGE, JavaLexer.BOOL_LITERAL, JavaLexer.NULL_LITERAL,
@@ -308,19 +275,27 @@ public class ZenCodeArea extends CodeArea {
 
 			case JavaLexer.LINE_COMMENT, JavaLexer.COMMENT -> "comment";
 
-			case JavaLexer.IDENTIFIER -> "identifier";
-			default -> "default";
-		};
+			case JavaLexer.IDENTIFIER -> "I";
+            default -> "T";
+        };
 	}
 
-	/**
-	 * Updates the appearance of the code area with the specified font family and size.
-	 *
-	 * @param fontFamily the font family
-	 * @param size the font size
-	 */
 	public void updateAppearance(String fontFamily, int size) {setStyle("-fx-font-family: " + fontFamily + "; -fx-font-size: " + size + ";");}
 
 
-	public void setTabAssociation(FileTab tab){this.tab =  tab;}
+	public void setTabAssociation(FileTab tab){
+	}
+
+	private static int computeLineNumber(String text, int offset) {
+		int line = 1;
+		for (int i = 0; i < offset && i < text.length(); i++) {
+			if (text.charAt(i) == '\n') {
+				line++;
+			}
+		}
+		return line;
+	}
+
+
+	private record LineBoundary(int start, int end) { }
 }

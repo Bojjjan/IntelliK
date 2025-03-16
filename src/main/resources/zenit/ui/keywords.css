@@ -49,8 +49,19 @@
         Syntax highlight styles
 */
 
+.error {
+  -fx-underline: true;
+  -fx-effect: dropshadow( one-pass-box , red , 1, 0.0, 0, 1 );
+}
+
 /* Blue for access modifiers, class-related keywords, etc. */
 .styled-text-area .access-modifier {-fx-fill: #47A2ED;}
+
+/* Grey for no-access class-related keywords */
+.styled-text-area .no-access {
+  -fx-fill: grey;
+  -fx-font-style: italic;
+}
 
 /* Keywords like if, while, for, switch, etc. */
 .styled-text-area .keyword { -fx-fill: #c686dc;}
@@ -66,6 +77,9 @@
 
 /* Method Name */
 .styled-text-area .method-name {-fx-fill: #E6E6AA;}
+
+/* Method Call */
+.styled-text-area .method-call {-fx-fill: #E6E6AA;}
 
 /* Comments */
 .styled-text-area .comment {-fx-fill: #699856;}

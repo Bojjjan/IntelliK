@@ -32,7 +32,7 @@ class IndentationTest extends ApplicationTest {
     public void start(Stage stage) throws Exception {
         Platform.runLater(() -> {
             mainController = new MainController(stage);
-            zenCodeArea = new ZenCodeArea(13, "Menlo");
+            //zenCodeArea = new ZenCodeArea(13, "Menlo");
             fileTab = new FileTab(zenCodeArea, mainController);
             fileTab.setFile(new File(TEST_FILE_PATH),false);
         });

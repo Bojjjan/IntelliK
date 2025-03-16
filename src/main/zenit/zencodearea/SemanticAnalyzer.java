@@ -2,161 +2,202 @@ package main.zenit.zencodearea;
 
 import generated.JavaParser;
 import generated.JavaParserBaseListener;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.TerminalNode;
+import main.zenit.zencodearea.Symbol;
+import main.zenit.zencodearea.Context;
 
 import java.util.*;
 
-/**
- * This class analyzes Java source code to collect semantic information during the parsing process.
- * It extends {@link JavaParserBaseListener} and overrides various methods to capture the names of
- * classes, methods, and variables, as well as to track the type of Java class (e.g., Runnable, Interface, Enum).
- * <p>
- * The class provides methods to access these semantic details after the parsing process is complete.
- * </p>
- * @author Philip Boyde
- */
 public class SemanticAnalyzer extends JavaParserBaseListener {
     private final Set<String> classNames = new HashSet<>();
     private final Set<String> methodNames = new HashSet<>();
     private final Set<String> variables = new HashSet<>();
+    private final List<Symbol> symbolTable = new ArrayList<>();
+    private Context context = new Context("", "");
 
     private boolean hasClass = false;  // Tracks if a class has a main method
-    private JavaClassType JclassType;
+    private JavaClassType JClassType;
 
-    /**
-     * Called when a class declaration is encountered during the parse process.
-     * <p>
-     * This method extracts the class name and checks if it contains a main method.
-     * If a class has a main method, it is marked as a runnable class ({@link JavaClassType#RUNNABLE}).
-     * </p>
-     *
-     * @author Philip Boyde
-     * @param ctx The context object containing the details of the class declaration.
-     */
+    private boolean consistOfMainMethod(JavaParser.ClassDeclarationContext ctx) {
+        if (ctx.classBody() == null) {
+            return false;
+        }
+        for (JavaParser.ClassBodyDeclarationContext member : ctx.classBody().classBodyDeclaration()) {
+            if (member.memberDeclaration() != null && member.memberDeclaration().methodDeclaration() != null) {
+                JavaParser.MethodDeclarationContext methodCtx = member.memberDeclaration().methodDeclaration();
+
+                if (!"main".equals(methodCtx.identifier().getText())) {
+                    continue;
+                }
+
+                if (methodCtx.typeTypeOrVoid() == null || !"void".equals(methodCtx.typeTypeOrVoid().getText())) {
+                    continue;
+                }
+
+                if (methodCtx.formalParameters() == null) {
+                    continue;
+                }
+
+                JavaParser.FormalParameterListContext paramListCtx = methodCtx.formalParameters().formalParameterList();
+                if (paramListCtx == null) {
+                    continue;
+                }
+
+                String paramText = paramListCtx.getText();
+                if (!paramText.contains("String") || !paramText.contains("[")) {
+                    continue;
+                }
+
+                boolean isPublic = false;
+                boolean isStatic = false;
+                if (member.modifier() != null) {
+                    for (JavaParser.ModifierContext modCtx : member.modifier()) {
+                        String modText = modCtx.getText();
+                        if ("public".equals(modText)) {
+                            isPublic = true;
+                        }
+                        if ("static".equals(modText)) {
+                            isStatic = true;
+                        }
+                    }
+                }
+
+                if (isPublic && isStatic) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private String extractModifiers(ParserRuleContext ctx) {
+        for (int i = 0; i < ctx.getChildCount(); i++) {
+            if (ctx.getChild(i) instanceof TerminalNode) {
+                String text = ctx.getChild(i).getText();
+                if (text.equals("public") || text.equals("protected") || text.equals("private")) {
+                    return text;
+                }
+            }
+        }
+        return "default";
+    }
+
     @Override
     public void enterClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
         String currentClassName = ctx.identifier().getText();
+        context.setCurrentClass(currentClassName);
+        String modifier = extractModifiers(ctx);
+        String superClass = null;
         hasClass = false;
+
+        for (int i = 0; i < ctx.getChildCount(); i++) {
+            if (ctx.getChild(i) != null && ctx.getChild(i) instanceof TerminalNode node) {
+                if (node.getText().equals("extends")) {
+                    if (i + 1 < ctx.getChildCount()) {
+                        superClass = ctx.getChild(i + 1).getText();
+                    }
+                    break;
+                }
+            }
+        }
 
         if (consistOfMainMethod(ctx)){
             hasClass = true;
-            JclassType = JavaClassType.RUNNABLE;
+            JClassType = JavaClassType.RUNNABLE;
         }
+
+        symbolTable.add(new Symbol(currentClassName, Symbol.Type.CLASS,
+                modifier, context.getCurrentPackage(), context.getCurrentClass(), superClass));
         classNames.add(currentClassName);
     }
 
-    /**
-     * Determines if the class contains a main method.
-     *
-     * @author Philip Boyde
-     * @param ctx The context object containing the class declaration.
-     * @return {@code true} if the class contains the main method, {@code false} otherwise.
-     */
-    private boolean consistOfMainMethod(JavaParser.ClassDeclarationContext ctx) {
-        return ctx.getText().contains("publicstaticvoidmain(String[]args)"); //No space required
+    @Override
+    public void enterPackageDeclaration(JavaParser.PackageDeclarationContext ctx) {
+        String fullText = ctx.getText();
+        if(fullText.startsWith("package")){
+            fullText = fullText.substring(7).trim();
+            if(fullText.endsWith(";")){
+                fullText = fullText.substring(0, fullText.length() - 1).trim();
+            }
+        }
+        context.setCurrentPackage(fullText);
     }
 
-    /**
-     * Called when a method declaration is encountered during the parse process.
-     *
-     * @author Philip Boyde
-     * @param ctx The context object containing the details of the method declaration.
-     */
+
     @Override
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
         String methodName = ctx.identifier().getText();
-        if(Objects.equals(methodName, "int")){
-            System.out.println("enterMethodCall = int");
-        }
+        String modifier = extractModifiers(ctx);
+        symbolTable.add(new Symbol(methodName, Symbol.Type.METHOD, modifier, context.getCurrentPackage(), context.getCurrentClass(), null));
         methodNames.add(methodName);
     }
 
-    /**
-     * Called when a variable declaration is encountered during the parse process.
-     *
-     * @author Philip Boyde
-     * @param ctx The context object containing the details of the variable declaration.
-     */
     @Override
     public void enterVariableDeclarator(JavaParser.VariableDeclaratorContext ctx) {
         String varName = ctx.variableDeclaratorId().getText();
         variables.add(varName);
     }
 
-    /**
-     * Called when an interface declaration is encountered during the parse process.
-     * If no class has been marked yet, it marks the current type as an interface.
-     *
-     * @author Philip Boyde
-     * @param ctx The context object containing the details of the interface declaration.
-     */
     @Override
     public void enterInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx) {
         String interfaceName = ctx.identifier().getText();
-
-        if (!hasClass) {hasClass = true; JclassType = JavaClassType.INTERFACE;}
+        if (!hasClass) {
+            hasClass = true;
+            JClassType = JavaClassType.INTERFACE;
+        }
         classNames.add(interfaceName);
     }
 
-    /**
-     * Called when an enum declaration is encountered during the parse process.
-     * If no class has been marked yet, it marks the current type as an enum.
-     *
-     * @author Philip Boyde
-     * @param ctx The context object containing the details of the enum declaration.
-     */
     @Override
     public void enterEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
         String enumName = ctx.identifier().getText();
-
-        if (!hasClass) {hasClass = true; JclassType = JavaClassType.ENUM;}
+        if (!hasClass) {
+            hasClass = true;
+            JClassType = JavaClassType.ENUM;
+        }
         classNames.add(enumName);
-
     }
 
-    /**
-     * Called when a catch clause is encountered during the parse process.
-     *
-     * @author Philip Boyde
-     * @param ctx The context object containing the details of the catch clause.
-     */
     @Override
     public void enterCatchClause(JavaParser.CatchClauseContext ctx) {
         String exceptionVar = ctx.identifier().getText();
         variables.add(exceptionVar);
     }
 
+    @Override
     public void enterLocalVariableDeclaration(JavaParser.LocalVariableDeclarationContext ctx) {
-        String className = ctx.getChild(0).getChild(0).getChild(0).getText();
-        System.out.println("enterTypeIdentifier: " + className);
-        classNames.add(className);
-    }
-
-    public void enterObjectCreationExpression(JavaParser.ObjectCreationExpressionContext ctx) {
-        String objectCreation = ctx.getChild(1).getText();
-        System.out.println("enterObjectCreationExpression: " + objectCreation);
-        methodNames.add(objectCreation);
-    }
-
-    @Override
-    public void enterMethodCall(JavaParser.MethodCallContext ctx) {
-        String methodName = ctx.identifier().getText();
-        methodNames.add(methodName);
-    }
-    @Override
-    public void enterPrimaryExpression(JavaParser.PrimaryExpressionContext ctx) {
-
-        if (ctx.getText() != null && ctx.getText().equals("System")) {
-            String className = ctx.getText();
-            classNames.add(className);
+        if (ctx.typeType() != null) {
+            String typeName = ctx.typeType().getText();
+            if (!isPrimitive(typeName)) {
+                classNames.add(typeName);
+            }
         }
     }
+
+    private boolean isPrimitive(String typeName) {
+        return typeName.equals("int") || typeName.equals("boolean") ||
+                typeName.equals("float") || typeName.equals("double") ||
+                typeName.equals("long") || typeName.equals("short") ||
+                typeName.equals("byte") || typeName.equals("char");
+    }
+
     @Override
     public void enterFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
-        String fieldName = ctx.variableDeclarators().getText();
-        if (fieldName.contains("out")) {
-            System.out.println("Declared field 'out' at line " + ctx.getStart().getLine());
+        if(ctx.typeType() != null){
+            String typeName = ctx.typeType().getText();
+            classNames.add(typeName);
+        }
+        String modifier = extractModifiers(ctx);
+        if (ctx.variableDeclarators() != null) {
+            for (JavaParser.VariableDeclaratorContext varCtx : ctx.variableDeclarators().variableDeclarator()) {
+                String varName = varCtx.variableDeclaratorId().getText();
+                symbolTable.add(new Symbol(varName, Symbol.Type.FIELD, modifier, context.getCurrentPackage(), context.getCurrentClass(), null));
+                variables.add(varName);
+            }
         }
     }
+
     @Override
     public void enterMemberReferenceExpression(JavaParser.MemberReferenceExpressionContext ctx) {
         if (ctx.identifier() != null && ctx.identifier().getText() != null) {
@@ -165,38 +206,17 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
         }
     }
 
-    /**
-     * Retrieves the set of class names found during the parsing process.
-     *
-     * @author Philip Boyde
-     * @return A {@link Set} of class names.
-     */
     public Set<String> getClassNames() { return classNames; }
 
-    /**
-     * Retrieves the set of method names found during the parsing process.
-     *
-     * @author Philip Boyde
-     * @return A {@link Set} of method names.
-     */
     public Set<String> getMethodNames() {
         return methodNames;
     }
 
-    /**
-     * Retrieves the set of variable names found during the parsing process.
-     *
-     * @author Philip Boyde
-     * @return A {@link Set} of variable names.
-     */
     public Set<String> getVariables() { return variables; }
 
+    public JavaClassType getClassType() {return JClassType;}
 
-    /**
-     * Retrieves the type of the Java class being parsed (e.g., Runnable, Interface, Enum).
-     *
-     * @author Philip Boyde
-     * @return The {@link JavaClassType} of the parsed class.
-     */
-    public JavaClassType getClassType() {return JclassType;}
+    public List<Symbol> getSymbolTable() {return symbolTable;}
+
+    public Context getContext() {return context;}
 }

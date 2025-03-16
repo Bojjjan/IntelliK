@@ -306,6 +306,10 @@ public class ProjectMetadataController extends AnchorPane {
 			updateText(sourcepathList, sourcepath);
 		}
 	}
+
+	public String getSourcePath(){
+		return metadata.getSourcepath();
+	}
 	
 	/**
 	 * Changes the JREVersion
@@ -544,6 +548,4 @@ public class ProjectMetadataController extends AnchorPane {
 		list.getItems().clear();
 		list.getItems().add(string);
 	}
-	
-
 }
