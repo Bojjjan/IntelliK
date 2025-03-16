@@ -68,6 +68,7 @@ public class FileTreeItem<T> extends TreeItem<T> {
 			if (url == null) return;
 
 			ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResource(url)).toExternalForm()));
+			this.icon = icon;
 			icon.setFitHeight(16);
 			icon.setFitWidth(16);
 			icon.setSmooth(true);
@@ -134,6 +135,10 @@ public class FileTreeItem<T> extends TreeItem<T> {
 	
 	public int getType() {
 		return type;
+	}
+
+	public ImageView getIcon() {
+		return icon;
 	}
 	
 	public String getStringType() {

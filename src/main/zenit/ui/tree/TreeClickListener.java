@@ -34,6 +34,10 @@ public class TreeClickListener implements EventHandler<MouseEvent> {
 	 */
 	@Override
 	public void handle(MouseEvent mouseEvent) {
+
+		mouseEvent.isDragDetect();
+
+
 		FileTreeItem<String> selectedItem = (FileTreeItem<String>) 
 				treeView.getSelectionModel().getSelectedItem();
 

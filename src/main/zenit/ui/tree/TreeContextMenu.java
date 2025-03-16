@@ -2,6 +2,7 @@ package main.zenit.ui.tree;
 
 import java.io.File;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -49,6 +50,7 @@ public class TreeContextMenu extends ContextMenu implements EventHandler<ActionE
 		this.controller = controller;
 		this.treeView = treeView;
 		initContextMenu();
+		treeView.setCellFactory(tv -> new DraggableTreeCell());
 	}
 	
 	/**
@@ -107,6 +109,7 @@ public class TreeContextMenu extends ContextMenu implements EventHandler<ActionE
 		createPackage.setOnAction(this);
 		importJar.setOnAction(this);
 		properties.setOnAction(this);
+
 	}
 	
 	/**
