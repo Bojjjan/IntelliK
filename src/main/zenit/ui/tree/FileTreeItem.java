@@ -125,6 +125,15 @@ public class FileTreeItem<T> extends TreeItem<T> {
 	public void setFile(File file) {
 		this.file = file;
 	}
+
+	/**
+	 * Set the type of the item
+	 * @param type The Integer representing the type of the item
+	 * @author Mojtaba Hauari
+	 */
+	public void setType(int type) {
+		this.type = type;
+	}
 	
 	/**
 	 * Get the corresponding file

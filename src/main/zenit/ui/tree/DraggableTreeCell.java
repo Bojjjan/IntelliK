@@ -43,14 +43,9 @@ public class DraggableTreeCell extends TreeCell<String> {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasString()) {
-
                 FileTreeItem<String> selectedItem = (FileTreeItem<String>)
                         treeView.getSelectionModel().getSelectedItem();
                 File sourceFile = selectedItem.getFile();
-
-                if(selectedItem.getType() == 102) {
-                    sourceFile.mkdirs();
-                }
                 TreeItem<String> thisItem = getTreeItem();
 
                 if (thisItem instanceof FileTreeItem<?> fileTreeItem) {
@@ -77,7 +72,15 @@ public class DraggableTreeCell extends TreeCell<String> {
                                     parent.getChildren().remove(selectedItem);
                                 }
 
-                                FileTreeItem<String> droppedItem = new FileTreeItem<>(targetFile, targetFile.getName(), FileTreeItem.FILE);
+                                int newType = sourceFile.isDirectory() ? FileTreeItem.FOLDER : FileTreeItem.FILE;
+                                FileTreeItem<String> droppedItem = new FileTreeItem<>(targetFile, targetFile.getName(), newType);
+                                if(selectedItem.getType() == 105){
+                                    droppedItem.setType(105);
+                                }else if(selectedItem.getType() == 101){
+                                    droppedItem.setType(101);
+                                }else{
+                                    droppedItem.setType(102);
+                                }
                                 targetItem.getChildren().add(droppedItem);
 
                                 success = true;
@@ -85,15 +88,12 @@ public class DraggableTreeCell extends TreeCell<String> {
                                 e.printStackTrace();
                             }
                         }
-
                     }
                 }
             }
             event.setDropCompleted(success);
             event.consume();
         });
-
-
         setOnDragDone(DragEvent::consume);
     }
 
