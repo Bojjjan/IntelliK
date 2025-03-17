@@ -6,11 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 
 import main.zenit.filesystem.ProjectFile;
 import main.zenit.filesystem.helpers.CodeSnippets;
@@ -50,7 +46,7 @@ public class TreeContextMenu extends ContextMenu implements EventHandler<ActionE
 		this.controller = controller;
 		this.treeView = treeView;
 		initContextMenu();
-		treeView.setCellFactory(tv -> new DraggableTreeCell());
+		treeView.setCellFactory(tv -> new DraggableTreeCell(treeView));
 	}
 	
 	/**
