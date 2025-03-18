@@ -8,19 +8,24 @@ import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import main.zenit.Zenit;
+import main.zenit.ui.NewFileController;
 import main.zenit.ui.TestUI;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.mockito.Mock;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.framework.junit5.TestFx;
 import org.testfx.service.query.PointQuery;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ProjectMetadataControllerTest extends ApplicationTest {
+
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -41,19 +46,20 @@ class ProjectMetadataControllerTest extends ApplicationTest {
                 .clickOn("Include default Main class")
                 .clickOn("OK")
 
-                .doubleClickOn("Test Project")
-                .doubleClickOn("src")
-                .moveTo(600,485)
-                .rightClickOn()
+                .clickOn("File")
+                .moveTo("New...")
+                .moveTo("New tab")
+                .moveTo("Ctrl+N")
+                .clickOn()
+                .write("Main2")
+                .clickOn("Create");
 
-                .moveTo(600, 481)
-                        .clickOn("New class")
-                        .write("Main2")
-                        .clickOn("OK");
-
-        //TODO: Fixa så att main2 skapas.
     }
 
+    /**
+     * FPI511
+
+     */
     @TestFx
     void warnForUnsavedProgramArguement() {
             rightClickOn("Test Project")
@@ -64,7 +70,17 @@ class ProjectMetadataControllerTest extends ApplicationTest {
                     .clickOn()
                     .write("Test123")
                     .clickOn("Main2.java");
+    }
 
-                  //TODO:  verifyThat()
+    /**
+     * FPI512
+     */
+    @TestFx
+    void runRunnableClass(){
+        rightClickOn("Test Project")
+                .clickOn("Properties")
+                .clickOn("Advanced Settings")
+                .clickOn("Main.java")
+                .clickOn("Run");
     }
 }
