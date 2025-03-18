@@ -2,43 +2,52 @@ package main.zenit.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 
 public class NewFileController extends AnchorPane {
 	
 	private Stage stage;
-	private boolean darkmode;
-	
-	@FXML private ImageView logo;
+	private final boolean darkmode;
+
 	@FXML private AnchorPane header;
 	@FXML private ListView<String> filepath;
-	@FXML private ComboBox<String> fileEnding;
+	@FXML private ListView<Item> fileExtensions;
+	@FXML private MenuButton fileType;
 	@FXML private TextField tfName;
-	
+
+
+	private boolean lastJava = true;
     private double xOffset = 0;
     private double yOffset = 0;
     
-    private File workspace;
+    private final File workspace;
     private File newFile;
+	private final Stage mainStage;
 	
 	
-	public NewFileController(File workspace, boolean darkmode) {
+	public NewFileController(File workspace, Stage mainStage ,boolean darkmode) {
 		this.workspace = workspace;
 		this.darkmode = darkmode;
+		this.mainStage = mainStage;
 
 	}
 
@@ -54,15 +63,35 @@ public class NewFileController extends AnchorPane {
 			AnchorPane root = (AnchorPane) loader.load();
 			Scene scene = new Scene(root);
 
-			//set up stage
 			stage = new Stage();
 			stage.setResizable(false);
 			stage.initStyle(StageStyle.UNDECORATED);
 			stage.setScene(scene);
-			
-			initialize();
+
 			ifDarkModeChanged(darkmode);
+			stage.initModality(Modality.WINDOW_MODAL);
+
+			stage.initOwner(mainStage);
+
+			stage.setOnShown(event -> {
+				Stage owner = (Stage) stage.getOwner();
+				if (owner != null) {
+					double centerX = owner.getX() + (owner.getWidth() - stage.getWidth()) / 2;
+					double centerY = owner.getY() + (owner.getHeight() - stage.getHeight()) / 2;
+					stage.setX(centerX);
+					stage.setY(centerY);
+				}
+			});
+
+
+			scene.setFill(Color.TRANSPARENT);
+			stage.initStyle(StageStyle.TRANSPARENT);
+			root.setStyle("-fx-background-color: transparent;");
+			root.requestFocus();
+
+			initialize(scene);
 			stage.showAndWait();
+
 				
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -70,18 +99,77 @@ public class NewFileController extends AnchorPane {
 
 	}
 
-	private void initialize() {
-		
-		logo.setImage(new Image(getClass().getResource("/zenit/setup/logo.png").toExternalForm()));
-		logo.setFitWidth(45);
-		
+	private void initialize(Scene scene) {
+
+		Item classItem = new Item("Class", "/zenit/ui/tree/class.png");
+		Item interfaceItem = new Item("Interface", "/zenit/ui/tree/class.png");
+		Item enumItem = new Item("Enum", "/zenit/ui/tree/class.png");
+
+
+		ImageView javaIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/zenit/ui/tree/java.png"))));
+		javaIcon.setFitWidth(16);
+		javaIcon.setFitHeight(16);
+		MenuItem javaItem = new MenuItem(".java", javaIcon);
+
+		ImageView txtIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/zenit/ui/tree/file.png"))));
+		txtIcon.setFitWidth(16);
+		txtIcon.setFitHeight(16);
+		MenuItem txtItem = new MenuItem(".txt", txtIcon);
+
+		javaItem.setOnAction(event -> {
+			if(lastJava) return;
+			lastJava = true;
+
+			fileType.setText(javaItem.getText());
+			setListCells(classItem,interfaceItem,enumItem);
+		});
+
+		setListCells(classItem,interfaceItem,enumItem);
+
+
+		txtItem.setOnAction(event -> {
+			lastJava = false;
+			fileType.setText(txtItem.getText());
+			fileExtensions.getItems().clear();
+		});
+
+
+
+		fileType.getItems().addAll(javaItem, txtItem);
+		fileType.setText(javaItem.getText());
+
 		filepath.getItems().clear();
 		filepath.getItems().add(workspace.getPath());
 		filepath.getSelectionModel().selectFirst();
-		
-		fileEnding.getItems().add(".txt");
-		fileEnding.getItems().add(".java");
-		fileEnding.getSelectionModel().select(".java");
+
+
+
+		scene.setOnKeyPressed(event -> {
+			int currentIndex = fileExtensions.getSelectionModel().getSelectedIndex();
+
+			if (event.getCode() == KeyCode.UP) {
+				if (currentIndex > 0) {
+					fileExtensions.getSelectionModel().selectPrevious();
+				} else {
+					fileExtensions.getSelectionModel().selectFirst();
+				}
+				fileExtensions.scrollTo(fileExtensions.getSelectionModel().getSelectedIndex());
+				System.out.println("Up arrow key pressed");
+
+			} else if (event.getCode() == KeyCode.DOWN) {
+				if (currentIndex < (fileExtensions.getItems().size() - 1)) {
+					fileExtensions.getSelectionModel().selectNext();
+				} else {
+					fileExtensions.getSelectionModel().selectLast();
+				}
+
+
+				fileExtensions.scrollTo(fileExtensions.getSelectionModel().getSelectedIndex());
+				System.out.println("Down arrow key pressed");
+			}
+
+			System.out.println("index: " + currentIndex);
+		});
 		
 	    header.setOnMousePressed(new EventHandler<MouseEvent>() {
 	    	   @Override
@@ -91,7 +179,6 @@ public class NewFileController extends AnchorPane {
 	    	   }
 	    	});
 
-	    	//move around here
 	    header.setOnMouseDragged(new EventHandler<MouseEvent>() {
 	    	   @Override
 	    	   public void handle(MouseEvent event) {
@@ -99,6 +186,42 @@ public class NewFileController extends AnchorPane {
 	    	       stage.setY(event.getScreenY() - yOffset);
 	    	   }
 	    	});
+	}
+
+
+	private void setListCells(Item classItem, Item interfaceItem, Item enumItem){
+
+		fileExtensions.getItems().addAll(classItem, interfaceItem, enumItem);
+
+		if (!fileExtensions.getItems().isEmpty()) {
+			fileExtensions.getSelectionModel().select(0);
+		}
+
+		fileExtensions.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
+			@Override
+			public ListCell<Item> call(ListView<Item> param) {
+				return new ListCell<Item>() {
+					private final ImageView imageView = new ImageView();
+					private final Label label = new Label();
+					private final HBox hBox = new HBox(10, imageView, label);
+
+					@Override
+					protected void updateItem(Item item, boolean empty) {
+						super.updateItem(item, empty);
+						if (empty || item == null) {
+							setGraphic(null);
+						} else {
+							Image image = new Image(getClass().getResourceAsStream(item.getImagePath()));
+							imageView.setImage(image);
+							imageView.setFitWidth(16);
+							imageView.setFitHeight(16);
+							label.setText(item.getName());
+							setGraphic(hBox);
+						}
+					}
+				};
+			}
+		});
 	}
 
 	@FXML
@@ -177,6 +300,24 @@ public class NewFileController extends AnchorPane {
 	
 	public File getNewFile() {
 		return newFile;
+	}
+
+	private static class Item {
+		private final String name;
+		private final String imagePath;
+
+		public Item(String name, String imagePath) {
+			this.name = name;
+			this.imagePath = imagePath;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getImagePath() {
+			return imagePath;
+		}
 	}
 
 }
