@@ -8,7 +8,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import main.zenit.ui.MainController;
+
 
 import java.io.File;
 import java.nio.file.Files;
@@ -63,7 +63,6 @@ public class DraggableTreeCell extends TreeCell<String> {
                             try {
                                 Files.move(sourceFile.getAbsoluteFile().toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-
                                 FileTreeItem<String> root = (FileTreeItem<String>) treeView.getRoot();
                                 FileTree.removeFromFile(root, sourceFile);
 
@@ -82,6 +81,12 @@ public class DraggableTreeCell extends TreeCell<String> {
                                     droppedItem.setType(102);
                                 }
                                 targetItem.getChildren().add(droppedItem);
+
+                                FileTreeItem<String> newRoot = new FileTreeItem<>(root.getFile(), root.getValue(), root.getType());
+                                FileTree.createNodes(newRoot, root.getFile());
+                                treeView.setRoot(newRoot);
+
+                                treeView.refresh();
 
                                 success = true;
                             } catch (Exception e) {
