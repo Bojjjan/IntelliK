@@ -84,6 +84,9 @@ public class MainController extends VBox implements ThemeCustomizable {
 
 	@FXML
 	private AnchorPane consolePane;
+
+	@FXML
+	private MenuItem newJavaClass;
 		
 	@FXML 
 	private SplitPane splitPane;
@@ -525,10 +528,15 @@ public class MainController extends VBox implements ThemeCustomizable {
 	public void newTab(Event event) {
 		addTab();
 	}
-	
+
+	@FXML
+	public void newJavaClass(){
+		System.out.println("Hello");
+	}
+
 	@FXML
 	public void newFile() {
-		NewFileController nfc = new NewFileController(fileController.getWorkspace(), isDarkMode);
+		NewFileController nfc = new NewFileController(fileController.getWorkspace(), stage ,isDarkMode);
 		nfc.start();
 		File newFile = nfc.getNewFile();
 
