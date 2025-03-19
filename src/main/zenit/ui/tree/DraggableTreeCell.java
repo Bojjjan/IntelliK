@@ -48,7 +48,51 @@ public class DraggableTreeCell extends TreeCell<String> {
                 File sourceFile = selectedItem.getFile();
                 TreeItem<String> thisItem = getTreeItem();
 
-                if (thisItem instanceof FileTreeItem<?> fileTreeItem) {
+                FileTreeItem<String> root = (FileTreeItem<String>) treeView.getRoot();
+                File rootDir = root.getFile(); // Root directory of the file tree
+
+                if (thisItem == null || thisItem == root) {
+                    File targetFile = new File(rootDir, sourceFile.getName());
+
+                    if (!sourceFile.equals(targetFile)) {
+                        try {
+                            Files.move(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                            FileTree.removeFromFile(root, sourceFile);
+                            TreeItem<String> parent = selectedItem.getParent();
+                            if (parent != null) {
+                                parent.getChildren().remove(selectedItem);
+                            }
+
+                            int newType = sourceFile.isDirectory() ? FileTreeItem.FOLDER : FileTreeItem.FILE;
+                            FileTreeItem<String> droppedItem = new FileTreeItem<>(targetFile, targetFile.getName(), newType);
+                            droppedItem.setType(selectedItem.getType());
+
+                            if(selectedItem.getType() == 105){
+                                droppedItem.setType(105);
+                            }else if(selectedItem.getType() == 101){
+                                droppedItem.setType(101);
+                            }else{
+                                droppedItem.setType(102);
+                            }
+
+
+                            root.getChildren().add(droppedItem);
+                            FileTreeItem<String> newRoot = new FileTreeItem<>(root.getFile(), root.getValue(), root.getType());
+                            FileTree.createNodes(newRoot, root.getFile());
+                            treeView.setRoot(newRoot);
+                            treeView.refresh();
+
+                            success = true;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+
+
+                if (thisItem instanceof FileTreeItem<?> fileTreeItem){
                     FileTreeItem<String> targetItem = (FileTreeItem<String>) thisItem;
                     if (targetItem.getType() == 105 ||
                             targetItem.getType() == 101 ||
@@ -63,8 +107,8 @@ public class DraggableTreeCell extends TreeCell<String> {
                             try {
                                 Files.move(sourceFile.getAbsoluteFile().toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                                FileTreeItem<String> root = (FileTreeItem<String>) treeView.getRoot();
-                                FileTree.removeFromFile(root, sourceFile);
+                                FileTreeItem<String> root1 = (FileTreeItem<String>) treeView.getRoot();
+                                FileTree.removeFromFile(root1, sourceFile);
 
                                 TreeItem<String> parent = selectedItem.getParent();
                                 if (parent != null) {
@@ -82,8 +126,8 @@ public class DraggableTreeCell extends TreeCell<String> {
                                 }
                                 targetItem.getChildren().add(droppedItem);
 
-                                FileTreeItem<String> newRoot = new FileTreeItem<>(root.getFile(), root.getValue(), root.getType());
-                                FileTree.createNodes(newRoot, root.getFile());
+                                FileTreeItem<String> newRoot = new FileTreeItem<>(root1.getFile(), root1.getValue(), root1.getType());
+                                FileTree.createNodes(newRoot, root1.getFile());
                                 treeView.setRoot(newRoot);
 
                                 treeView.refresh();
