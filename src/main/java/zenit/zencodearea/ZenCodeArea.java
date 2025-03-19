@@ -158,7 +158,7 @@ public class ZenCodeArea extends CodeArea {
 
 			ParseTree tree = parser.compilationUnit();
 
-			SemanticAnalyzer analyzer = new SemanticAnalyzer();
+			SemanticAnalyzer analyzer = new SemanticAnalyzer(tokenStream);
 			ParseTreeWalker.DEFAULT.walk(analyzer, tree);
 
 			List<Token> tokens = tokenStream.getTokens();
@@ -173,33 +173,63 @@ public class ZenCodeArea extends CodeArea {
 
 			int lastIndex = 0;
 			List<StyleSpan<Collection<String>>> spans = new ArrayList<>();
-			for (int i = 0; i < tokens.size(); i++) {
+			int i = 0;
+			while (i < tokens.size()) {
 				Token token = tokens.get(i);
+				String styleString = null;
 				int startIndex = token.getStartIndex();
 				int stopIndex = token.getStopIndex() + 1;
 
 				if (startIndex > lastIndex) {
 					spans.add(new StyleSpan<>(Collections.emptyList(), startIndex - lastIndex));
 				}
-				String baseStyle = getStyleForToken(token.getType(), token.getText(), analyzer);
-				Set<String> styleSet = new HashSet<>();
-				if(token.getType() == JavaLexer.IDENTIFIER && i < tokens.size() -1){
+
+				if (token.getType() == JavaLexer.IDENTIFIER && i < tokens.size() - 1) {
 					Token next = tokens.get(i + 1);
-					if(next.getType() == JavaLexer.LPAREN){
-						baseStyle = "method-call";
+					if (next.getType() == JavaLexer.LPAREN) {
+						Symbol symbol = ProjectController.getInstance().getSymbol(token.getText());
+						if (symbol != null && symbol.getSymbolType() == Symbol.Type.METHOD) {
+							String mod = symbol.getSymbolModifier();
+							if (("private".equals(mod) || "protected".equals(mod))
+									&& !AccessUtil.isAccessible(symbol, analyzer.getContext())) {
+								int lpIndex = i + 1;
+								int rpIndex = findMatchingRPARENIndex(tokens, lpIndex);
+								if (rpIndex != -1) {
+									int groupStart = token.getStartIndex();
+									int groupEnd = tokens.get(rpIndex).getStopIndex() + 1;
+									Set<String> styleSet = new HashSet<>();
+									styleSet.add("no-access");
+									spans.add(new StyleSpan<>(styleSet, groupEnd - groupStart));
+									lastIndex = groupEnd;
+									i = rpIndex + 1;
+									continue;
+								}
+							} else {
+								styleString = "method-call";
+							}
+						} else {
+							styleString = "unknown-method";
+						}
 					}
 				}
+
+				String baseStyle = getStyleForToken(token.getType(), token.getText(), analyzer);
+				Set<String> styleSet = new HashSet<>();
 				if (!baseStyle.isEmpty()) {
 					styleSet.add(baseStyle);
+				}
+
+				if(!(styleString == null)) {
+					styleSet.add(styleString);
 				}
 
 				int tokenLine = computeLineNumber(text, startIndex);
 				if (errorLines.contains(tokenLine) && !token.getText().trim().isEmpty()) {
 					styleSet.add("error");
 				}
-
 				spans.add(new StyleSpan<>(styleSet, stopIndex - startIndex));
 				lastIndex = stopIndex;
+				i++;
 			}
 			if (text.length() > lastIndex) {
 				spans.add(new StyleSpan<>(Collections.emptyList(), text.length() - lastIndex));
@@ -214,24 +244,51 @@ public class ZenCodeArea extends CodeArea {
 		}
 	}
 
-	private static String getStyleForToken(int tokenType, String tokenText, SemanticAnalyzer analyzer) {
-		if (tokenType == JavaLexer.IDENTIFIER && analyzer.getClassNames().contains(tokenText)) {
-			Symbol symbol = ProjectController.getInstance().getSymbol(tokenText);
-			if(symbol != null && symbol.getSymbolType() == Symbol.Type.CLASS){
-				if(!AccessUtil.isAccessible(symbol, analyzer.getContext())){
-					return "no-access";
-				}else{
-					return "class-name";
+	private int findMatchingRPARENIndex(List<Token> tokens, int lpIndex) {
+		int depth = 0;
+		for (int i = lpIndex; i < tokens.size(); i++) {
+			Token t = tokens.get(i);
+			if (t.getType() == JavaLexer.LPAREN) {
+				depth++;
+			} else if (t.getType() == JavaLexer.RPAREN) {
+				depth--;
+				if (depth == 0) {
+					return i;
 				}
 			}
-			return "class-name";
 		}
+		return -1;
+	}
+
+	private static String getStyleForToken(int tokenType, String tokenText, SemanticAnalyzer analyzer) {
+		if (tokenType == JavaLexer.IDENTIFIER) {
+			if (analyzer.getClassNames().contains(tokenText)) {
+				Symbol symbol = ProjectController.getInstance().getSymbol(tokenText);
+				if (symbol != null && symbol.getSymbolType() == Symbol.Type.CLASS) {
+					if (!AccessUtil.isAccessible(symbol, analyzer.getContext())) {
+						return "no-access";
+					} else {
+						return "class-name";
+					}
+				}
+				return "class-name";
+			}
+
+			if (analyzer.getVariables().contains(tokenText)) {
+				Symbol symbol = ProjectController.getInstance().getSymbol(tokenText);
+				if (symbol != null && symbol.getSymbolType() == Symbol.Type.FIELD) {
+					if (!AccessUtil.isAccessible(symbol, analyzer.getContext())) {
+						return "no-access";
+					} else {
+						return "variable";
+					}
+				}
+				return "variable";
+			}
+		}
+
 		if (JAVA_LANG_CLASSES.contains(tokenText)) {
 			return "class-name";
-		} else if (analyzer.getMethodNames().contains(tokenText)) {
-			return "method-name";
-		} else if (analyzer.getVariables().contains(tokenText)) {
-			return "variable";
 		}
 
         return switch (tokenType) {
