@@ -11,14 +11,16 @@ public class Symbol {
     private final String packageName;
     private final String declaringClass;
     private final String superClass;
+    private final boolean accessible;
 
-    public Symbol(String name, Type type, String modifier, String packageName, String declaringClass, String superClass) {
+    public Symbol(String name, Type type, String modifier, String superClass, Context context) {
         this.name = name;
         this.type = type;
         this.modifier = modifier;
-        this.packageName = packageName;
-        this.declaringClass = declaringClass;
+        this.packageName = context.getCurrentPackage();
+        this.declaringClass = context.getCurrentClass();
         this.superClass = superClass;
+        accessible = AccessUtil.isAccessible(this, context);
     }
 
     public String getSymbolName() { return name;}
@@ -27,6 +29,7 @@ public class Symbol {
     public String getSymbolPackageName() { return packageName;}
     public String getSymbolDeclaringClass() { return declaringClass;}
     public String getSymbolSuperClass() { return superClass;}
+    public boolean isAccessible() { return accessible;}
 
     @Override
     public String toString() {

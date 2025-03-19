@@ -1,8 +1,12 @@
 package main.zenit.zencodearea;
 
+import generated.JavaLexer;
 import generated.JavaParser;
 import generated.JavaParserBaseListener;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import main.zenit.zencodearea.Symbol;
 import main.zenit.zencodearea.Context;
@@ -13,8 +17,12 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
     private final Set<String> classNames = new HashSet<>();
     private final Set<String> methodNames = new HashSet<>();
     private final Set<String> variables = new HashSet<>();
-    private final List<Symbol> symbolTable = new ArrayList<>();
-    private Context context = new Context("", "");
+    private final Context context = new Context("", "");
+    private final CommonTokenStream tokenStream;
+
+    public SemanticAnalyzer(CommonTokenStream tokenStream) {
+        this.tokenStream = tokenStream;
+    }
 
     private boolean hasClass = false;  // Tracks if a class has a main method
     private JavaClassType JClassType;
@@ -73,12 +81,36 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
 
     private String extractModifiers(ParserRuleContext ctx) {
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            if (ctx.getChild(i) instanceof TerminalNode) {
-                String text = ctx.getChild(i).getText();
-                if (text.equals("public") || text.equals("protected") || text.equals("private")) {
-                    return text;
+            ParseTree child = ctx.getChild(i);
+            if (child instanceof TerminalNode tn) {
+                int tokenType = tn.getSymbol().getType();
+                if (tokenType == JavaLexer.PUBLIC ||
+                        tokenType == JavaLexer.PROTECTED ||
+                        tokenType == JavaLexer.PRIVATE) {
+                    return tn.getText();
+                }
+            } else if (child instanceof ParserRuleContext) {
+                String mod = extractModifiers((ParserRuleContext) child);
+                if (!mod.equals("default")) {
+                    return mod;
                 }
             }
+        }
+        return "default";
+    }
+
+    private String extractModifiersFromContext(ParserRuleContext ctx, CommonTokenStream tokenStream) {
+        int startIndex = ctx.getStart().getTokenIndex();
+        int stopIndex = ctx.getStop().getTokenIndex();
+        List<Token> tokens = tokenStream.getTokens(startIndex, stopIndex);
+        for (Token token : tokens) {
+            String text = token.getText();
+            if ("public".equals(text) || "protected".equals(text) || "private".equals(text)) {
+                return text;
+            }
+        }
+        if (ctx.getParent() != null) {
+            return extractModifiersFromContext(ctx.getParent(), tokenStream);
         }
         return "default";
     }
@@ -107,8 +139,8 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
             JClassType = JavaClassType.RUNNABLE;
         }
 
-        symbolTable.add(new Symbol(currentClassName, Symbol.Type.CLASS,
-                modifier, context.getCurrentPackage(), context.getCurrentClass(), superClass));
+        ProjectController.getInstance().addSymbol(new Symbol(currentClassName, Symbol.Type.CLASS,
+                modifier, superClass, context));
         classNames.add(currentClassName);
     }
 
@@ -128,8 +160,9 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
     @Override
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
         String methodName = ctx.identifier().getText();
-        String modifier = extractModifiers(ctx);
-        symbolTable.add(new Symbol(methodName, Symbol.Type.METHOD, modifier, context.getCurrentPackage(), context.getCurrentClass(), null));
+        String modifier = extractModifiersFromContext(ctx, tokenStream);
+        ProjectController.getInstance().addSymbol(new Symbol(methodName, Symbol.Type.METHOD, modifier,
+                null, context));
         methodNames.add(methodName);
     }
 
@@ -188,11 +221,12 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
             String typeName = ctx.typeType().getText();
             classNames.add(typeName);
         }
-        String modifier = extractModifiers(ctx);
+        String modifier = extractModifiersFromContext(ctx, tokenStream);
         if (ctx.variableDeclarators() != null) {
             for (JavaParser.VariableDeclaratorContext varCtx : ctx.variableDeclarators().variableDeclarator()) {
                 String varName = varCtx.variableDeclaratorId().getText();
-                symbolTable.add(new Symbol(varName, Symbol.Type.FIELD, modifier, context.getCurrentPackage(), context.getCurrentClass(), null));
+                ProjectController.getInstance().addSymbol(new Symbol(varName, Symbol.Type.FIELD, modifier,
+                         null, context));
                 variables.add(varName);
             }
         }
@@ -215,8 +249,6 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
     public Set<String> getVariables() { return variables; }
 
     public JavaClassType getClassType() {return JClassType;}
-
-    public List<Symbol> getSymbolTable() {return symbolTable;}
 
     public Context getContext() {return context;}
 }

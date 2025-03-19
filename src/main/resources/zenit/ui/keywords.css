@@ -59,8 +59,8 @@
 
 /* Grey for no-access class-related keywords */
 .styled-text-area .no-access {
-  -fx-fill: grey;
-  -fx-font-style: italic;
+  -fx-fill: grey !important;
+  -fx-font-style: italic !important;
 }
 
 /* Keywords like if, while, for, switch, etc. */
@@ -80,6 +80,9 @@
 
 /* Method Call */
 .styled-text-area .method-call {-fx-fill: #E6E6AA;}
+
+/* Method Call */
+.styled-text-area .unknown-method {-fx-fill: #E6E6AA; -fx-font-style: italic;}
 
 /* Comments */
 .styled-text-area .comment {-fx-fill: #699856;}

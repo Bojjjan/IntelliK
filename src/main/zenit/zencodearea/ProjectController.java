@@ -12,7 +12,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import main.zenit.zencodearea.Symbol;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -50,20 +49,16 @@ public class ProjectController {
     }
 
     private void parseAndAddSymbols(Path file) {
-        try{
-            String content = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+        try {
+            String content = Files.readString(file);
             CharStream input = CharStreams.fromString(content);
             JavaLexer lexer = new JavaLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             JavaParser parser = new JavaParser(tokens);
-            SemanticAnalyzer analyzer = new SemanticAnalyzer();
+            SemanticAnalyzer analyzer = new SemanticAnalyzer(tokens);
             ParseTree tree = parser.compilationUnit();
             ParseTreeWalker.DEFAULT.walk(analyzer, tree);
-
-            for(Symbol symbol : analyzer.getSymbolTable()){
-                symbolTable.put(symbol.getSymbolName(), symbol);
-            }
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -72,13 +67,16 @@ public class ProjectController {
         return symbolTable.get(className);
     }
 
-    public List<Symbol> getSubClasses(String className){
+    public List<Symbol> getSubClasses(String className) {
         List<Symbol> result = new ArrayList<>();
         for(Symbol symbol : symbolTable.values()){
-            if(className.equals(symbol.getSymbolName())) result.add(symbol);
+            if (className.equals(symbol.getSymbolSuperClass())) {
+                result.add(symbol);
+            }
         }
         return result;
     }
+
 
     public String getSuperClass(String className){
         Symbol s = getSymbol(className);
@@ -92,5 +90,9 @@ public class ProjectController {
     public static ProjectController getInstance(){
         if(instance == null) instance = new ProjectController();
         return instance;
+    }
+
+    public void addSymbol(Symbol symbol) {
+        symbolTable.put(symbol.getSymbolName(), symbol);
     }
 }
