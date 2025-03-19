@@ -96,7 +96,11 @@ public class DraggableTreeCell extends TreeCell<String> {
                     FileTreeItem<String> targetItem = (FileTreeItem<String>) thisItem;
                     if (targetItem.getType() == 105 ||
                             targetItem.getType() == 101 ||
-                            targetItem.getType() == 102) {
+                            targetItem.getType() == 102 ||
+                            targetItem.getType() == 104 ||
+                            targetItem.getType() == 108 ||
+                            targetItem.getType() == 109 ||
+                            targetItem.getType() == 110){
 
                         File targetDir = targetItem.getFile();
                         File targetFile = new File(targetDir, sourceFile.getName());
