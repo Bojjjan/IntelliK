@@ -172,9 +172,6 @@ public class FileTab extends Tab {
 			zenCodeArea.moveTo(caretPosition + 3);
 
 		}
-		else {
-			zenCodeArea.replaceText(caretPosition, caretPosition, "\n");
-		}
 		return zenCodeArea.getText();
 	}
 

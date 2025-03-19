@@ -46,7 +46,9 @@ class IndentationTest extends ApplicationTest {
     void emptyIndentationTest() {
         interact(() -> {
             String result = fileTab.commentsShortcutsTrigger();
-            assertEquals("\n", result);
+            assertEquals("" +
+                    "", result);
+
         });
     }
 
