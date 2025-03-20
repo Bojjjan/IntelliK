@@ -1,13 +1,13 @@
 package main.zenit.zencodearea;
 
+import javafx.beans.value.ChangeListener;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.concurrent.Task;
 
-import org.fxmisc.richtext.model.StyleSpan;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import main.zenit.ui.FileTab;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.Token;
 
 import java.time.Duration;
 import java.util.*;
@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 
 
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -33,8 +32,6 @@ import generated.JavaLexer;
 
 public class ZenCodeArea extends CodeArea {
 	private final ExecutorService executor;
-	private ProjectController projectController;
-	private JavaClassType oldJClass;
 	private static final Set<String> JAVA_LANG_CLASSES = Set.of(
 			"String", "Object", "System", "StringBuilder", "Thread", "Exception", "Runtime",
 			"Integer", "Double", "Float", "Character", "Boolean", "Math", "Void", "Short", "Long", "Byte"
@@ -42,7 +39,10 @@ public class ZenCodeArea extends CodeArea {
 
 	public ZenCodeArea(int textSize, String font, String sourcePath) {
 		setParagraphGraphicFactory(LineNumberFactory.get(this));
-		projectController = new ProjectController(sourcePath);
+		ProjectController.getInstance().buildProjectHierarchy(sourcePath);
+
+		this.caretPositionProperty().addListener((ChangeListener<Number>)
+				(observable, oldValue, newValue) -> updateProjectContext());
 
 		// Async syntax highlighting
 		multiPlainChanges().successionEnds(Duration.ofMillis(200))
@@ -58,6 +58,31 @@ public class ZenCodeArea extends CodeArea {
 
 		executor = Executors.newSingleThreadExecutor();
 		updateAppearance(font, textSize);
+	}
+
+	private void updateProjectContext(){
+		String text = getText();
+		int caretPos = getCaretPosition();
+
+		Pattern pkgPattern = Pattern.compile("package\\s+([\\w.]+);");
+		Matcher pkgMatcher = pkgPattern.matcher(text);
+		String packageName = "";
+		if (pkgMatcher.find()) {
+			packageName = pkgMatcher.group(1);
+		}
+
+		Pattern classPattern = Pattern.compile("class\\s+(\\w+)");
+		Matcher classMatcher = classPattern.matcher(text);
+		String currentClass = "";
+		while (classMatcher.find()) {
+			if (classMatcher.start() < caretPos) {
+				currentClass = classMatcher.group(1);
+			} else {
+				break;
+			}
+		}
+		ProjectController.getInstance().setCurrentPackage(packageName);
+		ProjectController.getInstance().setCurrentClass(currentClass);
 	}
 
 	public void update() {
@@ -115,24 +140,47 @@ public class ZenCodeArea extends CodeArea {
 		InputMap<KeyEvent> imQuotes = InputMap.consume(
 				EventPattern.keyTyped().onlyIf(e -> e.getCharacter().equals("\"")),
 				e -> {
-					this.replaceSelection("\"\"");
-					this.moveTo(this.getCaretPosition() - 1);
+					int caretPos = this.getCaretPosition();
+					if (caretPos < getLength() && getText().charAt(caretPos) == '"') {
+						this.moveTo(caretPos + 1);
+					} else {
+						this.replaceSelection("\"\"");
+						this.moveTo(caretPos + 1);
+					}
 				}
 		);
 
 		InputMap<KeyEvent> imParentheses = InputMap.consume(
 				EventPattern.keyTyped().onlyIf(e -> e.getCharacter().equals("(")),
 				e -> {
+					int caretPos = this.getCaretPosition();
 					this.replaceSelection("()");
-					this.moveTo(this.getCaretPosition() - 1);
+					this.moveTo(caretPos + 1);
+				}
+		);
+
+		InputMap<KeyEvent> imCloseParentheses = InputMap.consume(
+				EventPattern.keyTyped().onlyIf(e -> e.getCharacter().equals(")")),
+				e -> {
+					int caretPos = this.getCaretPosition();
+					if (caretPos < getLength() && getText().charAt(caretPos) == ')') {
+						this.moveTo(caretPos + 1);
+					} else {
+						this.replaceSelection(")");
+					}
 				}
 		);
 
 		InputMap<KeyEvent> imHardBrackets = InputMap.consume(
 				EventPattern.keyTyped().onlyIf(e -> e.getCharacter().equals("[")),
 				e -> {
-					this.replaceSelection("[]");
-					this.moveTo(this.getCaretPosition() - 1);
+					int caretPos = this.getCaretPosition();
+					if (caretPos < getLength() && getText().charAt(caretPos) == ']') {
+						this.moveTo(caretPos + 1);
+					} else {
+						this.replaceSelection("[]");
+						this.moveTo(caretPos + 1);
+					}
 				}
 		);
 
@@ -140,12 +188,12 @@ public class ZenCodeArea extends CodeArea {
 		Nodes.addInputMap(this, imBraces);
 		Nodes.addInputMap(this, imQuotes);
 		Nodes.addInputMap(this, imParentheses);
+		Nodes.addInputMap(this, imCloseParentheses);
 		Nodes.addInputMap(this, imHardBrackets);
 	}
 
 	private StyleSpans<Collection<String>> computeHighlighting(String text) {
 		StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-
 		try {
 			SyntaxError.SyntaxErrorListener errorListener = new SyntaxError.SyntaxErrorListener();
 			CharStream input = CharStreams.fromString(text);
@@ -157,87 +205,80 @@ public class ZenCodeArea extends CodeArea {
 			parser.removeErrorListeners();
 			parser.addErrorListener(errorListener);
 			parser.setErrorHandler(new CustomErrorStrategy());
-
 			ParseTree tree = parser.compilationUnit();
 
 			SemanticAnalyzer analyzer = new SemanticAnalyzer(tokenStream);
 			ParseTreeWalker.DEFAULT.walk(analyzer, tree);
 
-			List<Token> tokens = tokenStream.getTokens();
-
 			Set<Integer> errorLines = new HashSet<>();
-			if (errorListener.hasSyntaxErrors()) {
-				for (SyntaxError error : errorListener.getSyntaxErrors()) {
-					int lineNum = computeLineNumber(text, error.startIndex());
-					errorLines.add(lineNum);
+			for (SyntaxError error : errorListener.getSyntaxErrors()) {
+				if (error.startIndex() >= 0) {
+					int errorLine = computeLineNumber(text, error.startIndex());
+					errorLines.add(errorLine);
 				}
 			}
 
+			List<Token> tokens = tokenStream.getTokens();
 			int lastIndex = 0;
-			List<StyleSpan<Collection<String>>> spans = new ArrayList<>();
-			int i = 0;
-			while (i < tokens.size()) {
+			for (int i = 0; i < tokens.size(); i++) {
 				Token token = tokens.get(i);
-				String styleString = null;
-				int startIndex = token.getStartIndex();
-				int stopIndex = token.getStopIndex() + 1;
-
-				if (startIndex > lastIndex) {
-					spans.add(new StyleSpan<>(Collections.emptyList(), startIndex - lastIndex));
+				int tokenStart = token.getStartIndex();
+				int tokenEnd = token.getStopIndex() + 1;
+				if (tokenStart > lastIndex) {
+					spansBuilder.add(Collections.emptyList(), tokenStart - lastIndex);
 				}
 
-				if (token.getType() == JavaLexer.IDENTIFIER && i < tokens.size() - 1) {
-					Token next = tokens.get(i + 1);
-					if (next.getType() == JavaLexer.LPAREN) {
-						Symbol symbol = ProjectController.getInstance().getSymbol(token.getText());
-						if (symbol != null && symbol.getSymbolType() == Symbol.Type.METHOD) {
-							String mod = symbol.getSymbolModifier();
-							if (("private".equals(mod) || "protected".equals(mod))
-									&& !AccessUtil.isAccessible(symbol, analyzer.getContext())) {
-								int lpIndex = i + 1;
-								int rpIndex = findMatchingRPARENIndex(tokens, lpIndex);
-								if (rpIndex != -1) {
-									int groupStart = token.getStartIndex();
-									int groupEnd = tokens.get(rpIndex).getStopIndex() + 1;
-									Set<String> styleSet = new HashSet<>();
-									styleSet.add("no-access");
-									spans.add(new StyleSpan<>(styleSet, groupEnd - groupStart));
-									lastIndex = groupEnd;
-									i = rpIndex + 1;
-									continue;
-								}
-							} else {
-								styleString = "method-call";
+				String style;
+				if (token.getType() == JavaLexer.IDENTIFIER) {
+					if (i + 1 < tokens.size() && tokens.get(i + 1).getType() == JavaLexer.LPAREN) {
+						style = "method-call";
+					}
+					else if (i > 0 && ".".equals(tokens.get(i - 1).getText())) {
+						boolean packageFound = false;
+						int currentLine = token.getLine();
+						for (int j = i - 1; j >= 0; j--) {
+							Token prevToken = tokens.get(j);
+							if (prevToken.getLine() != currentLine) {
+								break;
 							}
+							if ("package".equals(prevToken.getText())) {
+								packageFound = true;
+								break;
+							}
+						}
+						style = packageFound ? getStyleForToken(token.getType(), token.getText())
+								: "unknown-identifier";
+					} else {
+						ClassContext currentClass = ProjectController.getInstance().getCurrentClass();
+						if (currentClass != null && token.getText().equals(currentClass.getClassName())) {
+							style = currentClass.getStyle();
 						} else {
-							styleString = "unknown-method";
+							Symbol sym = ProjectController.getInstance().getSymbol(token.getText());
+							if (sym != null && sym.getStyle() != null && !sym.getStyle().isEmpty()) {
+								style = sym.getStyle();
+							} else {
+								style = getStyleForToken(token.getType(), token.getText());
+							}
 						}
 					}
+				} else {
+					style = getStyleForToken(token.getType(), token.getText());
 				}
 
-				String baseStyle = getStyleForToken(token.getType(), token.getText(), analyzer);
+				if (errorLines.contains(token.getLine())) {
+					style = "error";
+				}
+
 				Set<String> styleSet = new HashSet<>();
-				if (!baseStyle.isEmpty()) {
-					styleSet.add(baseStyle);
+				if (style != null && !style.isEmpty()) {
+					styleSet.add(style);
 				}
-
-				if(!(styleString == null)) {
-					styleSet.add(styleString);
-				}
-
-				int tokenLine = computeLineNumber(text, startIndex);
-				if (errorLines.contains(tokenLine) && !token.getText().trim().isEmpty()) {
-					styleSet.add("error");
-				}
-				spans.add(new StyleSpan<>(styleSet, stopIndex - startIndex));
-				lastIndex = stopIndex;
-				i++;
+				spansBuilder.add(styleSet, tokenEnd - tokenStart);
+				lastIndex = tokenEnd;
 			}
 			if (text.length() > lastIndex) {
-				spans.add(new StyleSpan<>(Collections.emptyList(), text.length() - lastIndex));
+				spansBuilder.add(Collections.emptyList(), text.length() - lastIndex);
 			}
-
-			spansBuilder.addAll(spans);
 			return spansBuilder.create();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -246,54 +287,14 @@ public class ZenCodeArea extends CodeArea {
 		}
 	}
 
-	private int findMatchingRPARENIndex(List<Token> tokens, int lpIndex) {
-		int depth = 0;
-		for (int i = lpIndex; i < tokens.size(); i++) {
-			Token t = tokens.get(i);
-			if (t.getType() == JavaLexer.LPAREN) {
-				depth++;
-			} else if (t.getType() == JavaLexer.RPAREN) {
-				depth--;
-				if (depth == 0) {
-					return i;
-				}
-			}
-		}
-		return -1;
-	}
 
-	private static String getStyleForToken(int tokenType, String tokenText, SemanticAnalyzer analyzer) {
-		if (tokenType == JavaLexer.IDENTIFIER) {
-			if (analyzer.getClassNames().contains(tokenText)) {
-				Symbol symbol = ProjectController.getInstance().getSymbol(tokenText);
-				if (symbol != null && symbol.getSymbolType() == Symbol.Type.CLASS) {
-					if (!AccessUtil.isAccessible(symbol, analyzer.getContext())) {
-						return "no-access";
-					} else {
-						return "class-name";
-					}
-				}
-				return "class-name";
-			}
-
-			if (analyzer.getVariables().contains(tokenText)) {
-				Symbol symbol = ProjectController.getInstance().getSymbol(tokenText);
-				if (symbol != null && symbol.getSymbolType() == Symbol.Type.FIELD) {
-					if (!AccessUtil.isAccessible(symbol, analyzer.getContext())) {
-						return "no-access";
-					} else {
-						return "variable";
-					}
-				}
-				return "variable";
-			}
-		}
+	private static String getStyleForToken(int tokenType, String tokenText) {
 
 		if (JAVA_LANG_CLASSES.contains(tokenText)) {
 			return "class-name";
 		}
 
-        return switch (tokenType) {
+		return switch (tokenType) {
 			case JavaLexer.PUBLIC, JavaLexer.PRIVATE, JavaLexer.PROTECTED, JavaLexer.STATIC,
 				 JavaLexer.CLASS, JavaLexer.EXTENDS, JavaLexer.FINAL, JavaLexer.SUPER, JavaLexer.THIS,
 				 JavaLexer.VOLATILE, JavaLexer.PACKAGE, JavaLexer.BOOL_LITERAL, JavaLexer.NULL_LITERAL,
@@ -332,9 +333,9 @@ public class ZenCodeArea extends CodeArea {
 
 			case JavaLexer.LINE_COMMENT, JavaLexer.COMMENT -> "comment";
 
-			case JavaLexer.IDENTIFIER -> "I";
-            default -> "T";
-        };
+			case JavaLexer.IDENTIFIER -> "identifier";
+			default -> "default";
+		};
 	}
 
 	public void updateAppearance(String fontFamily, int size) {setStyle("-fx-font-family: " + fontFamily + "; -fx-font-size: " + size + ";");}
@@ -352,7 +353,4 @@ public class ZenCodeArea extends CodeArea {
 		}
 		return line;
 	}
-
-
-	private record LineBoundary(int start, int end) { }
 }

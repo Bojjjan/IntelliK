@@ -51,7 +51,8 @@
 
 .error {
   -fx-underline: true;
-  -fx-effect: dropshadow( one-pass-box , red , 1, 0.0, 0, 1 );
+  -fx-fill: #FF7F7F !important;
+  /*-fx-effect: dropshadow( one-pass-box , red , 1, 0.0, 0, 1 );*/
 }
 
 /* Blue for access modifiers, class-related keywords, etc. */
@@ -93,8 +94,17 @@
 /* Class Name */
 .styled-text-area .class-name {-fx-fill: #47CCB1;}
 
+/* Unknown identifiers */
+.styled-text-area .unknown-identifier {-fx-fill: #94DBFD; -fx-font-style: italic;}
+
 /*bracket characters e.g. [, {, ( */
 .styled-text-area .bracket { -fx-fill: #D3D3D3; -fx-font-weight: bold;}
+
+/* Enums */
+.styled-text-area .enum-name {-fx-fill: #800080;}
+
+/* Interfaces */
+.styled-text-area .interface-name {-fx-fill: #ADD8E6;}
 
 
 /* Default, if none of the above are found*/
