@@ -136,6 +136,9 @@ public class MainController extends VBox implements ThemeCustomizable {
 	private ConsoleController consoleController;
 
 	@FXML
+	private Button buttonPopUpConsole;
+
+	@FXML
 	private Label statusBarLeftLabel;
 
 	@FXML

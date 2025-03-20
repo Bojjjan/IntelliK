@@ -16,6 +16,8 @@ import com.techsenger.jeditermfx.ui.TerminalSession;
 import com.techsenger.jeditermfx.ui.settings.DefaultSettingsProvider;
 import javafx.application.Application;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import kotlin.jvm.internal.Intrinsics;
@@ -104,6 +106,9 @@ public class ConsoleController implements Initializable {
 	@FXML
 	private FontIcon iconCloseTerminalInstance;
 
+	@FXML
+	private ImageView terminalIcon;
+
 	private AnchorPane terminalAnchorPane;
 
 	private AnchorPane consoleAnchorPane;
@@ -147,6 +152,7 @@ public class ConsoleController implements Initializable {
 		iconCloseConsoleInstance.setDisable(false);
 		iconCloseTerminalInstance.setVisible(false);
 		iconCloseTerminalInstance.setDisable(true);
+		terminalIcon.setImage(new Image("zenit/console/command-line-icon.png"));
 
 
 		if (consoleAnchorPane != null) {
