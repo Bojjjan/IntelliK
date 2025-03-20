@@ -30,12 +30,39 @@ import main.zenit.zencodearea.ProjectController;
 import generated.JavaParser;
 import generated.JavaLexer;
 
+/**
+ * ZenCodeArea is a custom code editor component that extends CodeArea.
+ * It provides syntax highlighting and semantic analysis for Java code.
+ *
+ * The class uses ANTLR for lexical and syntactic analysis and provides
+ * asynchronous syntax highlighting to improve performance.
+ *
+ * The class also supports updating the appearance of the code area
+ * and handling indentation with the TAB key.
+ * @author Philip Boyde
+ */
+
 public class ZenCodeArea extends CodeArea {
 	private final ExecutorService executor;
 	private static final Set<String> JAVA_LANG_CLASSES = Set.of(
 			"String", "Object", "System", "StringBuilder", "Thread", "Exception", "Runtime",
 			"Integer", "Double", "Float", "Character", "Boolean", "Math", "Void", "Short", "Long", "Byte"
 	);
+
+	/**
+	 * Constructs a {@code ZenCodeArea} with the specified text size and font.
+	 * <p>
+	 * This constructor initializes the code area with line numbers and sets up
+	 * asynchronous syntax highlighting. The highlighting task is scheduled to
+	 * run after a short delay whenever the text changes, ensuring that updates
+	 * do not block the UI thread. The method also initializes a single-threaded
+	 * executor for background tasks and applies the given font and text size.
+	 * </p>
+	 *
+	 * @author Philip Boyde
+	 * @param textSize The size of the text in the code area.
+	 * @param font The font to be used for displaying text.
+	 */
 
 	public ZenCodeArea(int textSize, String font, String sourcePath) {
 		setParagraphGraphicFactory(LineNumberFactory.get(this));
@@ -85,9 +112,26 @@ public class ZenCodeArea extends CodeArea {
 		ProjectController.getInstance().setCurrentClass(currentClass);
 	}
 
+	/**
+	 * Updates the syntax highlighting of the code area.
+	 */
 	public void update() {
 		applyHighlighting(computeHighlighting(getText()));
 	}
+
+	/**
+	 * Computes syntax highlighting asynchronously.
+	 * <p>
+	 * This method retrieves the current text from the editor and creates a {@link Task}
+	 * that runs the syntax highlighting computation in a background thread. The task
+	 * is executed using the single-threaded executor to ensure that syntax highlighting
+	 * does not block the UI thread.
+	 * </p>
+	 *
+	 * @author Philip Boyde
+	 * @return A {@link Task} that will compute and return the {@link StyleSpans}
+	 *  containing syntax highlighting information.
+	 */
 
 	private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
 		String text = getText();
@@ -101,6 +145,21 @@ public class ZenCodeArea extends CodeArea {
 		return task;
 
 	}
+
+	/**
+	 * Applies syntax highlighting and sets up key bindings for indentation and auto-closing braces.
+	 * <p>
+	 * This method applies syntax highlighting to the text area using the provided {@link StyleSpans}.
+	 * Additionally, it sets up custom key bindings for better code editing experience:
+	 * </p>
+	 * <ul>
+	 *     <li><b>Tab key ({@code TAB}):</b> Inserts four spaces instead of moving focus.</li>
+	 *     <li><b>Auto-closing braces (When {@code { }} is typed, it automatically inserts a matching closing brace with a space in between and moves the caret inside. )</li>
+	 * </ul>
+	 *
+	 * @author Philip Boyde
+	 * @param highlighting The {@link StyleSpans} containing syntax highlighting information.
+	 */
 
 	private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
 		setStyleSpans(0, highlighting);
@@ -287,6 +346,37 @@ public class ZenCodeArea extends CodeArea {
 		}
 	}
 
+	/**
+	 * Determines the syntax highlighting style for a given token.
+	 * <p>
+	 * This method assigns a CSS style class based on the token's type and text.
+	 * It first checks if the token represents a class name, method name, or variable
+	 * using the provided {@link SemanticAnalyzer}. If not, it categorizes the token
+	 * based on its type using a {@code switch} statement.
+	 * </p>
+	 *
+	 * <p><b>Token Categories:</b></p>
+	 * <ul>
+	 *     <li><b>Class Names:</b> Tokens that match known class names are styled as {@code "class-name"}.</li>
+	 *     <li><b>Method Names:</b> Tokens that match known method names are styled as {@code "method-name"}.</li>
+	 *     <li><b>Variables:</b> Tokens that match known variable names are styled as {@code "variable"}.</li>
+	 *     <li><b>Access Modifiers:</b> {@code public, private, protected, static, final}, etc., are styled as {@code "access-modifier"}.</li>
+	 *     <li><b>Keywords:</b> Control flow and Java-specific keywords (e.g., {@code if, else, while}) are styled as {@code "keyword"}.</li>
+	 *     <li><b>Data Types:</b> Primitive types (e.g., {@code int, boolean, double}) are styled as {@code "datatype"}.</li>
+	 *     <li><b>Strings:</b> String and character literals are styled as {@code "strings"}.</li>
+	 *     <li><b>Literals:</b> Numeric and boolean literals are styled as {@code "literal"}.</li>
+	 *     <li><b>Operators:</b> Arithmetic, logical, and bitwise operators are styled as {@code "operator"}.</li>
+	 *     <li><b>Brackets:</b> Parentheses, curly braces, and square brackets are styled as {@code "bracket"}.</li>
+	 *     <li><b>Comments:</b> Line and block comments are styled as {@code "comment"}.</li>
+	 *     <li><b>Identifiers:</b> Other identifiers that do not match specific categories are styled as {@code "identifier"}.</li>
+	 *     <li><b>Default:</b> Any unrecognized token is assigned the {@code "default"} style.</li>
+	 * </ul>
+	 *
+	 * @author Philip Boyde
+	 * @param tokenType   The type of the token, as defined by {@link JavaLexer}.
+	 * @param tokenText   The text representation of the token.
+	 * @return A string representing the CSS style class for syntax highlighting.
+	 */
 
 	private static String getStyleForToken(int tokenType, String tokenText) {
 
@@ -337,6 +427,13 @@ public class ZenCodeArea extends CodeArea {
 			default -> "default";
 		};
 	}
+
+	/**
+	 * Updates the appearance of the code area with the specified font family and size.
+	 *
+	 * @param fontFamily the font family
+	 * @param size the font size
+	 */
 
 	public void updateAppearance(String fontFamily, int size) {setStyle("-fx-font-family: " + fontFamily + "; -fx-font-size: " + size + ";");}
 

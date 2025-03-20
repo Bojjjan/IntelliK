@@ -13,13 +13,41 @@ import main.zenit.zencodearea.Context;
 
 import java.util.*;
 
+/**
+ * This class analyzes Java source code to collect semantic information during the parsing process.
+ * It extends {@link JavaParserBaseListener} and overrides various methods to capture the names of
+ * classes, methods, and variables, as well as to track the type of Java class (e.g., Runnable, Interface, Enum).
+ * <p>
+ * The class provides methods to access these semantic details after the parsing process is complete.
+ * </p>
+ * @author Philip Boyde
+ */
+
 public class SemanticAnalyzer extends JavaParserBaseListener {
 
     private final CommonTokenStream tokenStream;
 
+    /**
+     * Called when a class declaration is encountered during the parse process.
+     * <p>
+     * This method extracts the class name and checks if it contains a main method.
+     * If a class has a main method, it is marked as a runnable class ({@link ClassContext.JavaClassType#RUNNABLE}).
+     * </p>
+     *
+     * @author Philip Boyde
+     */
+
     public SemanticAnalyzer(CommonTokenStream tokenStream) {
         this.tokenStream = tokenStream;
     }
+
+    /**
+     * Determines if the class contains a main method.
+     *
+     * @author Philip Boyde
+     * @param ctx The context object containing the class declaration.
+     * @return {@code true} if the class contains the main method, {@code false} otherwise.
+     */
 
     private boolean consistOfMainMethod(JavaParser.ClassDeclarationContext ctx) {
         if (ctx.classBody() == null) {
@@ -236,6 +264,13 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
         return true;
     }
 
+    /**
+     * Called when a method declaration is encountered during the parse process.
+     *
+     * @author Philip Boyde
+     * @param ctx The context object containing the details of the method declaration.
+     */
+
     @Override
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
         String methodName = ctx.identifier().getText();
@@ -278,6 +313,14 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
         }
     }
 
+    /**
+     * Called when an interface declaration is encountered during the parse process.
+     * If no class has been marked yet, it marks the current type as an interface.
+     *
+     * @author Philip Boyde
+     * @param ctx The context object containing the details of the interface declaration.
+     */
+
     @Override
     public void enterInterfaceDeclaration(JavaParser.InterfaceDeclarationContext ctx) {
         ClassContext ct = createClassContext(ctx);
@@ -285,6 +328,14 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
         ct.setStyle(computeStyle(ct));
         ProjectController.getInstance().addClass(ct);
     }
+
+    /**
+     * Called when an enum declaration is encountered during the parse process.
+     * If no class has been marked yet, it marks the current type as an enum.
+     *
+     * @author Philip Boyde
+     * @param ctx The context object containing the details of the enum declaration.
+     */
 
     @Override
     public void enterEnumDeclaration(JavaParser.EnumDeclarationContext ctx) {
@@ -296,6 +347,13 @@ public class SemanticAnalyzer extends JavaParserBaseListener {
         ct.setStyle(computeStyle(ct));
         ProjectController.getInstance().addClass(ct);
     }
+
+    /**
+     * Called when a variable declaration is encountered during the parse process.
+     *
+     * @author Philip Boyde
+     * @param ctx The context object containing the details of the variable declaration.
+     */
 
     @Override
     public void enterVariableDeclarator(JavaParser.VariableDeclaratorContext ctx) {
