@@ -16,11 +16,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
 
 import main.zenit.filesystem.ProjectFile;
 import main.zenit.filesystem.RunnableClass;
@@ -41,60 +39,41 @@ public class ProjectMetadataController extends AnchorPane {
 
 	private Stage propertyStage;
 
-	private FileController fileController;
-	private MainController mc;
+	private final FileController fileController;
+	private final MainController mc;
 
-	private ProjectFile projectFile;
+	private final ProjectFile projectFile;
 	private Metadata metadata;
 	
-	private boolean darkmode;
+	private final boolean darkmode;
 	private boolean taUpdated = false;
 
 	private RunnableClass[] runnableClasses;
 	private RunnableClass selectedRunnableClass;
 	
-	private FileChooser.ExtensionFilter libraryFilter = new FileChooser.ExtensionFilter("Libraries", "*.jar", "*.zip");
+	private final FileChooser.ExtensionFilter libraryFilter = new FileChooser.ExtensionFilter("Libraries", "*.jar", "*.zip");
 
 	@FXML private AnchorPane header;
-	
-	@FXML
-	private ImageView logo;
-	@FXML
-	private Text title;
-	@FXML
-	private ListView<String> directoryPathList;
-	@FXML
-	private ListView<String> sourcepathList;
-	@FXML
-	private ListView<String> internalLibrariesList;
-	@FXML
-	private ListView<String> externalLibrariesList;
-	@FXML
-	private ListView<String> runnableClassesList;
-
-	@FXML
-	private TextArea taProgramArguments;
-	@FXML
-	private TextArea taVMArguments;
-
-	@FXML
-	private ComboBox<String> JREVersions;
-
-	@FXML
-	private Button addInternalLibrary;
-	@FXML
-	private Button removeInternalLibrary;
-	@FXML
-	private Button addExternalLibrary;
-	@FXML
-	private Button removeExternalLibrary;
-	@FXML
-	private Button save;
-	@FXML
-	private Button run;
+	@FXML private ImageView logo;
+	@FXML private Text title;
+	@FXML private ListView<String> directoryPathList;
+	@FXML private ListView<String> sourcepathList;
+	@FXML private ListView<String> internalLibrariesList;
+	@FXML private ListView<String> externalLibrariesList;
+	@FXML private ListView<String> runnableClassesList;
+	@FXML private TextArea taProgramArguments;
+	@FXML private TextArea taVMArguments;
+	@FXML private ComboBox<String> JREVersions;
+	@FXML private Button addInternalLibrary;
+	@FXML private Button removeInternalLibrary;
+	@FXML private Button addExternalLibrary;
+	@FXML private Button removeExternalLibrary;
+	@FXML private Button save;
+	@FXML private Button run;
 	
     private double xOffset = 0;
     private double yOffset = 0;
+	private final Stage mainStage;
 
 	/**
 	 * Sets up new object. Use {@link #start()} to open window.
@@ -102,11 +81,12 @@ public class ProjectMetadataController extends AnchorPane {
 	 * @param projectFile The project to display information about
 	 * @param darkmode {@code true} if dark mode is enabled
 	 */
-	public ProjectMetadataController(FileController fc, ProjectFile projectFile, boolean darkmode, MainController mc) {
+	public ProjectMetadataController(FileController fc, ProjectFile projectFile, boolean darkmode, MainController mc, Stage mainStage) {
 		this.projectFile = projectFile;
-		fileController = fc;
+		this.fileController = fc;
 		this.darkmode = darkmode;
 		this.mc = mc;
+		this.mainStage = mainStage;
 	}
 	
 	/**
@@ -126,7 +106,27 @@ public class ProjectMetadataController extends AnchorPane {
 			propertyStage.setResizable(false);
 			propertyStage.setScene(scene);
 			propertyStage.initStyle(StageStyle.UNDECORATED);
-			
+
+
+			propertyStage.initModality(Modality.WINDOW_MODAL);
+
+			propertyStage.initOwner(mainStage);
+
+			propertyStage.setOnShown(event -> {
+				Stage owner = (Stage) propertyStage.getOwner();
+				if (owner != null) {
+					double centerX = owner.getX() + (owner.getWidth() - propertyStage.getWidth()) / 2;
+					double centerY = owner.getY() + (owner.getHeight() - propertyStage.getHeight()) / 2;
+					propertyStage.setX(centerX);
+					propertyStage.setY(centerY);
+				}
+			});
+
+			scene.setFill(Color.TRANSPARENT);
+			propertyStage.initStyle(StageStyle.TRANSPARENT);
+			root.setStyle("-fx-background-color: transparent;");
+			root.requestFocus();
+
 			//gets metadata file
 			File metadataFile = projectFile.getMetadata();
 			if (metadataFile != null) {
@@ -176,7 +176,7 @@ public class ProjectMetadataController extends AnchorPane {
 		
 		title.setText(projectFile.getName() + " settings");
 		
-		logo.setImage(new Image(getClass().getResource("/zenit/setup/zenit.png").toExternalForm()));
+		logo.setImage(new Image(getClass().getResource("/zenit/setup/logo.png").toExternalForm()));
 		logo.setFitWidth(55);
 		
 		String directory = metadata.getDirectory();

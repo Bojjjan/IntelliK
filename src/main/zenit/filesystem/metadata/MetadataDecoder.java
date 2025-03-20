@@ -31,7 +31,7 @@ public class MetadataDecoder {
 			//Decode lines
 			while (line != null) {
 				//Version
-				if (line.equals("ZENIT METADATA")) {
+				if (line.equals("INTELLIK METADATA")) {
 					metadata.setVersion(lines.removeFirst());
 					
 				//Directory
@@ -101,7 +101,7 @@ public class MetadataDecoder {
 				line = lines.removeFirst();
 			}
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 		} catch (NoSuchElementException e) {}
 	}
 	

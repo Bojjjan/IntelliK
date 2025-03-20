@@ -114,6 +114,24 @@
 	-fx-background-color: #444;
 }
 
+#filepath .scroll-bar:vertical {
+	-fx-opacity: 0;
+	-fx-pref-width: 0;
+	-fx-pref-height: 0;
+	-fx-min-width: 0;
+	-fx-min-height: 0;
+	-fx-max-width: 0;
+	-fx-max-height: 0;
+}
+
+#filepath .scroll-bar:horizontal {
+	-fx-opacity: 40;
+	-fx-padding: 0;
+	-fx-pref-width: 0;
+	-fx-pref-height: 6px;
+}
+
+
 #directoryPathList .list-cell, #sourcepathList .list-cell, #filepath .list-cell {
 	-fx-background-color: #444;
 }

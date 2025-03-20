@@ -13,14 +13,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class NewFolderController extends AnchorPane {
 	
 	private Stage stage;
-	private boolean darkmode;
+	private final boolean darkmode;
 	
 	@FXML private ImageView logo;
 	@FXML private AnchorPane header;
@@ -30,12 +32,14 @@ public class NewFolderController extends AnchorPane {
     private double xOffset = 0;
     private double yOffset = 0;
     
-    private File workspace;
+    private final File workspace;
+	private final Stage mainStage;
 	
 	
-	public NewFolderController(File workspace, boolean darkmode) {
+	public NewFolderController(File workspace, Stage mainStage, boolean darkmode) {
 		this.workspace = workspace;
 		this.darkmode = darkmode;
+		this.mainStage = mainStage;
 	}
 	
 	/**
@@ -58,10 +62,30 @@ public class NewFolderController extends AnchorPane {
 			
 			initialize();
 			ifDarkModeChanged(darkmode);
+
+
+			stage.initModality(Modality.WINDOW_MODAL);
+			stage.initOwner(mainStage);
+
+			stage.setOnShown(event -> {
+				Stage owner = (Stage) stage.getOwner();
+				if (owner != null) {
+					double centerX = owner.getX() + (owner.getWidth() - stage.getWidth()) / 2;
+					double centerY = owner.getY() + (owner.getHeight() - stage.getHeight()) / 2;
+					stage.setX(centerX);
+					stage.setY(centerY);
+				}
+			});
+
+
+			scene.setFill(Color.TRANSPARENT);
+			stage.initStyle(StageStyle.TRANSPARENT);
+			root.setStyle("-fx-background-color: transparent;");
+			root.requestFocus();
 			stage.showAndWait();
 				
 		} catch (IOException e) {
-			
+			e.getMessage();
 		}
 
 	}

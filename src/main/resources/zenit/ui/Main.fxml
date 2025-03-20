@@ -37,8 +37,6 @@
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                            </accelerator></MenuItem>
-
-						 <MenuItem fx:id="newJavaClass" onAction="#newJavaClass" text="New JavaClass" />
                         <MenuItem fx:id="newFolder" onAction="#newFolder" text="New folder">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
