@@ -20,8 +20,7 @@ public class CodeSnippets {
 		createPackage = packagename != null;
 
 		StringBuilder st = new StringBuilder();
-		System.out.println(packagename);
-		if (createPackage) { packagePathGenerator(st, packagename, classname); }
+		if (createPackage) { st.append("package ").append(packagename).append(";\n"); }
 
 		return switch (typeCode) {
 			case (EMPTY) -> "";
@@ -31,22 +30,6 @@ public class CodeSnippets {
 			case (EXCEPTION) -> newException(classname, st);
 			default -> throw new TypeCodeException();
 		};
-	}
-
-	private static void packagePathGenerator(StringBuilder st, String packagename, String classname){
-
-		/*
-		int i = classname.indexOf(".java");
-		classname = classname.substring(0, i);
-
-
-
-		System.out.println("class name: " + classname);
-		int y = packagename.indexOf("." + classname);
-		packagename = packagename.substring(0, y);
-		System.out.println("New package name: " + packagename);
-		*/
-		st.append("package ").append(packagename).append(";\n");
 	}
 
 	/**

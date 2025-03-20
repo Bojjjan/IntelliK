@@ -182,8 +182,7 @@ public class FileNameHelpers {
 		for (int index = 0; index < srcIndex; index++) {
 			newFilepath += folders[index] + "/";
 		}
-		
-		System.out.println(newFilepath);
+
 		return new File(newFilepath);
 	}
 	
