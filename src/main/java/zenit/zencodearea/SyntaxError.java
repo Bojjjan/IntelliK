@@ -23,11 +23,6 @@ public record SyntaxError(int startIndex, int stopIndex, String message) {
             if (offendingSymbol instanceof Token token) {
                 startIndex = token.getStartIndex();
                 stopIndex = token.getStopIndex();
-                if(token.getType() == JavaLexer.LPAREN || token.getType() == JavaLexer.RPAREN ||
-                        token.getType() == JavaLexer.LBRACE || token.getType() == JavaLexer.RBRACE ||
-                        token.getType() == JavaLexer.LBRACK || token.getType() == JavaLexer.RBRACK) {
-                    return;
-                }
             } else if (recognizer instanceof Parser parser) {
                 TokenSource tokenSource = parser.getInputStream().getTokenSource();
                 if (tokenSource instanceof Lexer lexer) {
