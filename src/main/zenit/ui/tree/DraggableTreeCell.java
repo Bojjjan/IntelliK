@@ -14,10 +14,24 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * This class is used to create a draggable tree cell in the tree view.
+ * It works by overriding the updateItem method and adding drag and drop
+ * This class gets added to the tree view in the FileTree class
+ *
+ * @author Mojtaba Hauari
+ */
+
 public class DraggableTreeCell extends TreeCell<String> {
 
 
-
+    /**
+     * This method is used to initialize the draggable tree cell
+     * It adds drag and drop functionality to the tree cell
+     * @param treeView The tree view that the cell is in
+     *
+     * @author Mojtaba Hauari
+     */
     public DraggableTreeCell(TreeView<String> treeView) {
 
         setOnDragDetected(event -> {
@@ -38,7 +52,13 @@ public class DraggableTreeCell extends TreeCell<String> {
         });
 
 
-
+         //* This method is used to handle the drop event
+         //* It moves the file from the source to the target
+         //* It also updates the tree view to reflect the changes
+         //* This firstly checks if the target is the root directory
+         //* then moves the file to the root directory
+         //* if the target is any other folder like directory or package
+         //* then it moves the file to that folder
         setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
@@ -151,6 +171,13 @@ public class DraggableTreeCell extends TreeCell<String> {
     }
 
 
+    /**
+     * this method is used to update the item in the tree cell after a drag and drop
+     * @param item The item to update
+     * @param empty A boolean to check if the item is empty
+     *
+     * @author Mojtaba Hauari
+     */
 
     @Override
     protected void updateItem(String item, boolean empty) {
