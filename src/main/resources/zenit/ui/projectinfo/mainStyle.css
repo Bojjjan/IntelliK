@@ -4,18 +4,23 @@
 	-fx-border-width: 0;
 }
 
+
 #setup-header {
-	 -fx-background-color:
-        linear-gradient(from 0% 50% to 100% 50%, rgb(241, 211, 79) 0%, rgb(137,161,208));
+	-fx-background-color: linear-gradient(from 0% 50% to 100% 50%, rgb(209, 76, 50) 0%, rgb(252, 179, 19));
+	-fx-background-radius: 12 12 0 0;
+	-fx-border-radius: 12 12 0 0;
 }
+
+
 
 #anchor {
-	-fx-background-color: #444;
+	-fx-background-color: #1e1e1e;
+	-fx-background-radius: 0 0 12 12;
+	-fx-border-radius: 0 0 12 12;
 }
 
-.anchor-pane {
-	-fx-background-color: #444;
-}
+
+
 
 /* Tab styling */
 .tab-pane {
@@ -26,6 +31,10 @@
 }
 
 .tab-header-area .tab-header-background {
+	-fx-background-color: #333;
+}
+
+.header {
 	-fx-background-color: #333;
 }
 
@@ -54,13 +63,41 @@
 	 -fx-fill: #fffa;
 }
 
-/* List styling */
+
+/* Menu file type list */
+#fileType {
+	-fx-background-color: #303030;
+	-fx-text-fill: white;
+	-fx-border-radius: 0px;
+}
+
+.context-menu {
+	-fx-background-color: #303030;
+	-fx-border-color: #303030;
+	-fx-border-width: 0px;
+	-fx-padding: 0px;
+}
+
+.menu-item {
+	-fx-background-color: #404040;
+	-fx-text-fill: white;
+	-fx-border-width: 0px;
+	-fx-padding: 5px 10px;
+}
+
+
+.menu-item:hover {
+	-fx-background-color: #707070;
+}
+
+
+
 .list-view {
 	-fx-background-color: #333;
 }
 
 .list-cell:filled:selected:focused, .list-cell:filled:selected {
-    -fx-background-color: #252525;
+    -fx-background-color: #707070;
     -fx-text-fill: #fffa;
 }
 
@@ -69,13 +106,31 @@
 }
 
 .list-cell:filled:hover {
-    -fx-background-color: #707070;
+    -fx-background-color: #252525;
     -fx-text-fill: #fffa;
 }
 
 #directoryPathList, #sourcepathList, #filepath {
 	-fx-background-color: #444;
 }
+
+#filepath .scroll-bar:vertical {
+	-fx-opacity: 0;
+	-fx-pref-width: 0;
+	-fx-pref-height: 0;
+	-fx-min-width: 0;
+	-fx-min-height: 0;
+	-fx-max-width: 0;
+	-fx-max-height: 0;
+}
+
+#filepath .scroll-bar:horizontal {
+	-fx-opacity: 40;
+	-fx-padding: 0;
+	-fx-pref-width: 0;
+	-fx-pref-height: 6px;
+}
+
 
 #directoryPathList .list-cell, #sourcepathList .list-cell, #filepath .list-cell {
 	-fx-background-color: #444;
@@ -98,6 +153,11 @@
 	-fx-text-fill: #fffa;
 	-fx-text-box-border: #333;
 	-fx-focus-color: #333;
+
+}
+
+#tfName {
+	-fx-border-radius: 0px;
 }
 
 .text-area .content {

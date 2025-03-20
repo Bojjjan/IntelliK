@@ -29,7 +29,7 @@ public class MetadataEncoder {
 		//Version
 		line = metadata.getVersion();
 		if (line != null) {
-			lines.add("ZENIT METADATA");
+			lines.add("INTELLIK METADATA");
 			lines.add(line);
 		}
 		

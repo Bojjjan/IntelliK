@@ -1,5 +1,7 @@
 package main.zenit.filesystem.helpers;
 
+import main.zenit.filesystem.metadata.Metadata;
+
 import java.io.File;
 import java.util.regex.Pattern;
 
@@ -38,18 +40,72 @@ public class FileNameHelpers {
 	 * Returns the packagename from a filepath, if the project contains a src-folder and
 	 * the package is put in that src-folder.
 	 *
-	 * @param file          Filepath to search through
+	 * @param file Filepath to search through
 	 * @param workspacePath
 	 * @return Returns the name of the package if found, otherwise null
 	 */
-	public static String getPackagenameFromFile(File file, String workspacePath) {
+	public static String getPackagenameFromFile(File file, String workspacePath, String projectPath) { // the new file is in another folder/ created via treeview (right click)
 		String packagename = null;
+
+		if (file != null) {
+
+			projectPath = projectPath.substring(workspacePath.length());
+			File meatadataFile = findMetadataFileFromPath(workspacePath, projectPath);
+
+			if(meatadataFile != null){
+				Metadata metadata = new Metadata(meatadataFile);
+
+				int index = projectPath.indexOf(metadata.getSourcepath());
+				if (index != -1) {
+					String remainingPath = projectPath.substring((index + metadata.getSourcepath().length()));
+
+					if (remainingPath.startsWith(File.separator)) {
+						remainingPath = remainingPath.substring(1);
+					}
+
+					if (remainingPath.isEmpty()) return null;
+					return remainingPath.replace(File.separator, ".");
+				}
+			}
+
+			return internalPathExtractor(file.getAbsolutePath(), workspacePath);
+		}
+
+		return null;
+    }
+
+	public static String getPackagenameFromFile(File file, String workspacePath) { // The new file is in root dir
+		String packagename = null;
+
+		/*
 		if (file != null) {
 			packagename = internalPathExtractor(file.getAbsolutePath(), workspacePath);
 		}
-		
+		 */
+
 		return packagename;
 	}
+
+	private static File findMetadataFileFromPath(String workspacePath, String projectPath){
+		File currentPath = new File(workspacePath);
+
+		String[] pathParts = projectPath.split("/|\\\\");
+
+		for (String part : pathParts) {
+			currentPath = new File(currentPath, part);
+
+			if (!currentPath.exists() || !currentPath.isDirectory()) { continue; }
+
+			File metadataFile = new File(currentPath, ".metadata");
+			if (metadataFile.exists()) {
+				return metadataFile;
+			}
+		}
+
+
+		return null;
+	}
+
 	
 	/**
 	 * Returns the classname from a filepath, if the project contains a src-folder and
@@ -182,15 +238,15 @@ public class FileNameHelpers {
 	 */
 	public static String[] getFoldersAsStringArray(File file) {
 		String[] folders;
-		String filepath = file.getAbsolutePath(); //Get the path in string
-		folders = filepath.split(Pattern.quote(File.separator));// Split path into the different folders
+		String filepath = file.getAbsolutePath();
+		folders = filepath.split(Pattern.quote(File.separator));
 
 		return folders;
 	}
 
 	/**
 	 * Extracts the internal path from the given file path relative to the workspace path.
-	 * Converts the internal path to a package name format.
+	 * Converts the internal path to a package name format. e.g. (src.main.test)
 	 *
 	 * @author Philip Boyde
 	 * @param filePath      The absolute file path.
@@ -205,18 +261,14 @@ public class FileNameHelpers {
 			String internalPath = filePath.substring(rmLength);
 			String[] folders = internalPath.split(Pattern.quote(File.separator));
 
-			// remove the file type from file name
-			String lastFolder = folders[folders.length - 1];
-			int dotIndex = lastFolder.lastIndexOf('.');
-			if (dotIndex != -1) {
-				folders[folders.length - 1] = lastFolder.substring(0, dotIndex);
-			}
+			// remove class name
+			folders[folders.length - 1] = "";
 
-			// make a string with package format e.g. (src.main.test)
+			// format
 			for (int i = 0; i <= (folders.length-1); i++){
 				packagename.append(folders[i]);
 
-				if (i < folders.length - 1) {
+				if (i < folders.length - 2) {
 					packagename.append(".");
 				}
 

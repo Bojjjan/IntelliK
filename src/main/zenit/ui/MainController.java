@@ -77,6 +77,9 @@ public class MainController extends VBox implements ThemeCustomizable {
 
 	@FXML
 	private AnchorPane consolePane;
+
+	@FXML
+	private MenuItem newJavaClass;
 		
 	@FXML 
 	private SplitPane splitPane;
@@ -343,10 +346,18 @@ public class MainController extends VBox implements ThemeCustomizable {
 	 *                 CodeSnippets} class.
 	 * @return The File if created, otherwise null.
 	 */
+
+
+	/*
 	public File createFile(File parent, int typeCode) {
 		File file = null;
-		String className = DialogBoxes.inputDialog(null, "New file", "Create new file", "Enter new file name",
-				"File name");
+
+		NewFileController nfc = new NewFileController(fileController.getWorkspace(), stage, isDarkMode);
+		nfc.start();
+		//nfc.startBehavior(typeCode);
+
+		//String className = DialogBoxes.inputDialog(null, "New file", "Create new file", "Enter new file name","File name");
+
 		if (className != null) {
 			String filepath = parent.getPath() + "/" + className;
 			file = new File(filepath);
@@ -357,6 +368,8 @@ public class MainController extends VBox implements ThemeCustomizable {
 		}
 		return file;
 	}
+
+	 */
 
 	/**
 	 * If a tab is open, attempt to call its shortcutsTrigger-method.
@@ -518,10 +531,15 @@ public class MainController extends VBox implements ThemeCustomizable {
 	public void newTab(Event event) {
 		addTab();
 	}
-	
+
+	@FXML
+	public void newJavaClass(){
+		System.out.println("Hello");
+	}
+
 	@FXML
 	public void newFile() {
-		NewFileController nfc = new NewFileController(fileController.getWorkspace(), isDarkMode);
+		NewFileController nfc = new NewFileController(fileController.getWorkspace(), stage ,isDarkMode);
 		nfc.start();
 		File newFile = nfc.getNewFile();
 
@@ -530,10 +548,23 @@ public class MainController extends VBox implements ThemeCustomizable {
 			openFile(newFile);
 		}
 	}
+
+	public void newFile(FileTreeItem<String> parent, int typeCode) {
+		NewFileController nfc = new NewFileController(fileController.getWorkspace(), stage ,isDarkMode);
+		nfc.startBehavior(typeCode, parent.getFile());
+		nfc.start();
+		File newFile = nfc.getNewFile();
+
+		if (newFile != null) {
+			FileTreeItem<String> newItem = new FileTreeItem<String>(newFile, newFile.getName(), FileTreeItem.CLASS);
+			parent.getChildren().add(newItem);
+			openFile(newFile);
+		}
+	}
 	
 	@FXML
 	public void newFolder() {
-		new NewFolderController(fileController.getWorkspace(), isDarkMode).start();
+		new NewFolderController(fileController.getWorkspace(),stage , isDarkMode).start();
 		initTree();
 	}
 	
@@ -1290,7 +1321,7 @@ public class MainController extends VBox implements ThemeCustomizable {
 	 * @param projectFile Project to open settings for
 	 */
 	public void showProjectProperties(ProjectFile projectFile) {
-		pmc = new ProjectMetadataController(fileController, projectFile, isDarkMode, this);
+		pmc = new ProjectMetadataController(fileController, projectFile, isDarkMode, this, stage);
 		pmc.start();
 	}
 	

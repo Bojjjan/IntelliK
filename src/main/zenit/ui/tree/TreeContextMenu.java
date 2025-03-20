@@ -20,17 +20,17 @@ import main.zenit.ui.MainController;
  */
 public class TreeContextMenu extends ContextMenu implements EventHandler<ActionEvent>{
 	
-	private MainController controller;
-	private TreeView<String> treeView;
+	private final MainController controller;
+	private final TreeView<String> treeView;
 	
-	private Menu createItem = new Menu("New...");
-	private MenuItem createClass = new MenuItem("New class");
-	private MenuItem createInterface = new MenuItem("New interface");
-	private MenuItem createPackage = new MenuItem("New package");
-	private MenuItem renameItem = new MenuItem("Rename");
-	private MenuItem deleteItem = new MenuItem("Delete");
-	private MenuItem importJar = new MenuItem("Import jar");
-	private MenuItem properties = new MenuItem("Properties");
+	private final Menu createItem = new Menu("New...");
+	private final MenuItem createClass = new MenuItem("New class");
+	private final MenuItem createInterface = new MenuItem("New interface");
+	private final MenuItem createPackage = new MenuItem("New package");
+	private final MenuItem renameItem = new MenuItem("Rename");
+	private final MenuItem deleteItem = new MenuItem("Delete");
+	private final MenuItem importJar = new MenuItem("Import jar");
+	private final MenuItem properties = new MenuItem("Properties");
 	
 	/**
 	 * Creates a new {@link TreeContextMenu} that can manipulate a specific {@link
@@ -114,13 +114,10 @@ public class TreeContextMenu extends ContextMenu implements EventHandler<ActionE
 	 * main.java.zenit.filesystem.helpers.CodeSnippets CodeSnippets}
 	 */
 	private void newFile(int typeCode) {
-		FileTreeItem<String> parent = (FileTreeItem<String>) 
-				treeView.getSelectionModel().getSelectedItem();
-		File newFile = controller.createFile(parent.getFile(), typeCode);
-		if (newFile != null) {
-			FileTreeItem<String> newItem = new FileTreeItem<String>(newFile, newFile.getName(), FileTreeItem.CLASS);
-			parent.getChildren().add(newItem);
-		}
+
+		FileTreeItem<String> parent = (FileTreeItem<String>) treeView.getSelectionModel().getSelectedItem();
+		controller.newFile(parent, typeCode);
+
 	}
 
 	/**
