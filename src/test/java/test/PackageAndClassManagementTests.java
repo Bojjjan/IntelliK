@@ -18,6 +18,7 @@ import static org.testfx.matcher.control.TextMatchers.hasText;
  * Test class using JUNIT5 FxRobot and the ApplicationTest TestFx framework
  * Scope: TPI517, TPI518, TPI519, TPI520, TPI521, TPI522
  * @author Abdulkadir Adde
+ * @author Mojtaba Hauari
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PackageAndClassManagementTests extends ApplicationTest {
