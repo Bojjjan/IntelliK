@@ -35,7 +35,7 @@ git clone https://github.com/Bojjjan/IntelliK.git
 6. Click **Apply**, then **Run**
 
 > [!Note]
-> If the program does not start make sure that project structures source folder is ``java`` and  ``antlr4``
+> If the program does not start make sure that project structures source folder is ``src`` and  ``antlr4``
 
 <br>
 
@@ -43,7 +43,7 @@ git clone https://github.com/Bojjjan/IntelliK.git
 1. **Open Eclipse**
 2. Navigate to **File** → **Import...** → **General** → **Existing Projects into Workspace**
 3. Click **Next >**
-4. Click **Browse...** and select the newly unzipped folder named **Zenit**
+4. Click **Browse...** and select the newly unzipped folder named **IntelliK**
 5. Click **Open**
 6. Click **Finish**
 7. Add the following in **[VM Arguments](#3.-VM-arguments)** inside **Run Configurations**:
