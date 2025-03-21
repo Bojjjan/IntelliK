@@ -190,8 +190,7 @@ public class FileTab extends Tab {
 		String previousText = zenCodeArea.getParagraph(previousLine).getText();
 
 		String spaces = " ".repeat(StringUtilities.countLeadingSpaces(previousText));
-
-		zenCodeArea.insertText(zenCodeArea.getCaretPosition(), spaces);
+		zenCodeArea.insertText(zenCodeArea.getCaretPosition(), "\n" + spaces);
 	}
 
 
